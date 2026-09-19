@@ -11,3 +11,17 @@
   height: 100%;
   stroke: currentColor;
 }
+
+.reg-icon--spin {
+  animation: regIconSpin 0.9s linear infinite;
+}
+
+@keyframes regIconSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

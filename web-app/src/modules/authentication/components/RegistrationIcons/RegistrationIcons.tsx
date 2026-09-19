@@ -197,3 +197,44 @@ export const GoogleIcon = ({ className = '', size = 18 }: IconProps) => (
     </svg>
   </span>
 )
+
+export const LocationTargetIcon = ({ className = '', size = 16, color = '#FB923C' }: IconProps) => (
+  <span className={`reg-icon ${className}`} style={{ width: size, height: size, color }}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="22" y1="12" x2="18" y2="12" />
+      <line x1="6" y1="12" x2="2" y2="12" />
+      <line x1="12" y1="6" x2="12" y2="2" />
+      <line x1="12" y1="22" x2="12" y2="18" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  </span>
+)
+
+export const InfoCircleIcon = ({ className = '', size = 16, color = '#2563EB' }: IconProps) => (
+  <span className={`reg-icon ${className}`} style={{ width: size, height: size, color }}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="16" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
+    </svg>
+  </span>
+)
+
+export const SpinnerIcon = ({ className = '', size = 16, color = '#FB923C' }: IconProps) => (
+  <span className={`reg-icon reg-icon--spin ${className}`} style={{ width: size, height: size, color }}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+    </svg>
+  </span>
+)
+
+export const CheckCircleIcon = ({ className = '', size = 16, color = '#16A34A' }: IconProps) => (
+  <span className={`reg-icon ${className}`} style={{ width: size, height: size, color }}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+  </span>
+)
+

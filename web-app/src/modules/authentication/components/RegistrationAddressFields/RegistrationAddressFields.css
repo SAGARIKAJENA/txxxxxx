@@ -1,68 +1,110 @@
-.reg-address-fields {
+.reg-address-section {
   display: flex;
   flex-direction: column;
-  gap: clamp(14px, 1.3vw, 18px);
-}
-
-.reg-address-fields__header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  gap: clamp(12px, 1.2vw, 16px);
   width: 100%;
 }
 
-.reg-address-fields__add-btn {
+.reg-address-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.reg-address-section__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reg-address-section__title {
+  font-size: clamp(0.9375rem, 1vw, 1.0625rem);
+  font-weight: 700;
+  color: #083b75;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.reg-address-section__subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.reg-address-section__location-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  color: #b91c1c;
+}
+
+.reg-address-section__location-error-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: #991b1b;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.reg-address-section__two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.reg-pincode-control-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.reg-pincode-status-box {
+  position: absolute;
+  right: 12px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: #ffffff;
-  border: 1px solid #f97316;
-  border-radius: 999px;
-  padding: 3px 12px;
-  font-size: clamp(0.75rem, 0.8vw, 0.85rem);
+  gap: 6px;
+  pointer-events: none;
+}
+
+.reg-pincode-counter {
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #f97316;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  line-height: 1.2;
+  color: #94a3b8;
+  font-variant-numeric: tabular-nums;
 }
 
-.reg-address-fields__add-btn:hover {
-  background: #fff7ed;
+.reg-pincode-counter--complete {
+  color: #16a34a;
 }
 
-.reg-address-fields__dynamic-line2 {
-  animation: regFadeDown 0.2s ease-out;
+.reg-pincode-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes regFadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.reg-address-fields__three-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.15fr;
-  gap: clamp(12px, 1.2vw, 16px);
-}
-
-@media (max-width: 960px) and (min-width: 641px) {
-  .reg-address-fields__three-col {
-    grid-template-columns: 1fr 1fr;
-  }
-  .reg-address-fields__three-col > :last-child {
-    grid-column: span 2;
-  }
-}
-
+/* Responsiveness: Web view also mobile view (Rule 8) */
 @media (max-width: 640px) {
-  .reg-address-fields__three-col {
+  .reg-address-section__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .reg-address-section__two-col {
     grid-template-columns: 1fr;
     gap: 14px;
   }

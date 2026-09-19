@@ -11,7 +11,9 @@ export interface RegistrationFormState {
   mobile: string
   addressLine1: string
   addressLine2: string
+  areaLocality: string
   city: string
+  district: string
   pincode: string
   state: string
   password: string
@@ -34,7 +36,9 @@ export const INITIAL_REGISTRATION_VALUES: RegistrationFormState = {
   mobile: '',
   addressLine1: '',
   addressLine2: '',
+  areaLocality: '',
   city: '',
+  district: '',
   pincode: '',
   state: '',
   password: '',
@@ -170,16 +174,15 @@ export const validateField = (
       const trimmed = String(val ?? '').trim()
       if (!trimmed) return 'Address Line 1 is required'
       if (trimmed.length < 3) {
-        return 'Please enter a valid address'
+        return 'Please enter a valid house / building, street'
       }
       return undefined
     }
 
-    case 'city': {
+    case 'addressLine2': {
       const trimmed = String(val ?? '').trim()
-      if (!trimmed) return 'City is required'
-      if (!/^[a-zA-Z0-9\s.,'()/-]{2,}$/.test(trimmed)) {
-        return 'Please enter a valid city'
+      if (trimmed && trimmed.length < 2) {
+        return 'Please enter a valid landmark / suite'
       }
       return undefined
     }
@@ -189,6 +192,35 @@ export const validateField = (
       if (!str) return 'PIN Code is required'
       if (str.length !== 6) {
         return 'PIN Code must be exactly 6 digits'
+      }
+      if (!/^[1-9][0-9]{5}$/.test(str)) {
+        return 'Enter a valid 6-digit Indian PIN code'
+      }
+      return undefined
+    }
+
+    case 'areaLocality': {
+      const trimmed = String(val ?? '').trim()
+      if (trimmed && trimmed.length < 2) {
+        return 'Please enter a valid area / locality'
+      }
+      return undefined
+    }
+
+    case 'city': {
+      const trimmed = String(val ?? '').trim()
+      if (!trimmed) return 'City is required'
+      if (!/^[a-zA-Z\s.'-]{2,}$/.test(trimmed)) {
+        return 'Please enter a valid city'
+      }
+      return undefined
+    }
+
+    case 'district': {
+      const trimmed = String(val ?? '').trim()
+      if (!trimmed) return 'District is required'
+      if (!/^[a-zA-Z\s.'-]{2,}$/.test(trimmed)) {
+        return 'Please enter a valid district'
       }
       return undefined
     }
@@ -258,6 +290,7 @@ const MANDATORY_FIELDS: Array<keyof RegistrationFormState> = [
   'mobile',
   'addressLine1',
   'city',
+  'district',
   'pincode',
   'state',
   'password',
@@ -271,8 +304,9 @@ export const checkIsFormValid = (values: RegistrationFormState): boolean => {
   )
 
   const optionalValid =
-    !values.fatherSpouseName ||
-    validateField('fatherSpouseName', values) === undefined
+    (!values.fatherSpouseName || validateField('fatherSpouseName', values) === undefined) &&
+    (!values.addressLine2 || validateField('addressLine2', values) === undefined) &&
+    (!values.areaLocality || validateField('areaLocality', values) === undefined)
 
   return mandatoryValid && optionalValid
 }
