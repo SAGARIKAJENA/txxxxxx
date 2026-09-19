@@ -75,15 +75,10 @@ export const SignInCard: React.FC<SignInCardProps> = ({
         otp,
       })
 
-      const isAlreadyRegistered = authFlowService.isRegistered(cleanMobile)
-      if (isAlreadyRegistered) {
-        setAuthMode('passcode')
-      } else {
-        authStorage.setTokens(session.tokens)
-        authStorage.setUser(session.user)
-        setUser(session.user)
-        navigate(routePaths.dashboard)
-      }
+      authStorage.setTokens(session.tokens)
+      authStorage.setUser(session.user)
+      setUser(session.user)
+      navigate(routePaths.dashboard)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid OTP. Please try again.')
     } finally {

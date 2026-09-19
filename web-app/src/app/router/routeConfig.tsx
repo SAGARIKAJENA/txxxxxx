@@ -43,11 +43,11 @@ export const routeConfig: RouteObject[] = [
   },
   {
     path: routePaths.registration,
-    element: <Navigate to={routePaths.auth.register} replace />,
+    element: <Navigate to={routePaths.auth.login} replace />,
   },
   {
     path: routePaths.auth.createProfile,
-    element: <Navigate to={routePaths.auth.register} replace />,
+    element: <Navigate to={routePaths.auth.login} replace />,
   },
   {
     path: routePaths.customerType,

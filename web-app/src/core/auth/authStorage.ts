@@ -3,13 +3,15 @@ import { localStore } from '../storage/localStorage'
 
 import type { AuthTokens, AuthUser, RegisteredUserRecord } from './authTypes'
 
-const SCHEMA_VERSION = 'v2_fresh_auth'
+const SCHEMA_VERSION = 'v8_production_clean'
 try {
   if (localStore.get<string>('taxedge.auth_schema') !== SCHEMA_VERSION) {
     localStore.remove(STORAGE_KEYS.registeredUsers)
     localStore.remove(STORAGE_KEYS.accessToken)
     localStore.remove(STORAGE_KEYS.refreshToken)
     localStore.remove(STORAGE_KEYS.user)
+    localStore.remove('taxedge.userApplications')
+    localStore.remove('taxedge.applicationDrafts')
     localStore.set('taxedge.auth_schema', SCHEMA_VERSION)
   }
 } catch {
@@ -69,5 +71,7 @@ export const authStorage = {
   clearAll(): void {
     this.clear()
     localStore.remove(STORAGE_KEYS.registeredUsers)
+    localStore.remove('taxedge.userApplications')
+    localStore.remove('taxedge.applicationDrafts')
   },
 }

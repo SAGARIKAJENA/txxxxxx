@@ -25,7 +25,7 @@ export const CustomerDashboard = () => {
   return (
     <div className="dashboard">
       {/* 1. Hero Banner */}
-      <DashboardHero userName={user?.fullName || 'Sagarika'} brief={data.brief} />
+      <DashboardHero userName={user?.fullName || 'User'} brief={data.brief} />
 
       {/* 2. Services Grid */}
       <QuickServices />

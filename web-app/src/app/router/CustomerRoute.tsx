@@ -30,8 +30,8 @@ export const CustomerRoute = () => {
   if (!user.isProfileComplete && !isDashboardOrProfile) {
     return (
       <Navigate
-        to={routePaths.auth.register}
-        state={{ returnTo: location.pathname }}
+        to={routePaths.dashboard}
+        state={{ returnTo: location.pathname, openProfileModal: true }}
         replace
       />
     )

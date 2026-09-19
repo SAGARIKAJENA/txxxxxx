@@ -14,7 +14,7 @@ const getGreeting = (): string => {
 }
 
 export const DashboardHero = ({ userName }: DashboardHeroProps) => {
-  const firstName = userName ? userName.split(' ')[0] : 'Sagarika'
+  const firstName = userName ? userName.split(' ')[0] : 'User'
 
   return (
     <section className="dashboard-hero" aria-label="TaxEdge Overview Banner">

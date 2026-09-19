@@ -1,8 +1,21 @@
+import { Navigate } from 'react-router-dom'
+import { routePaths } from '@core/config'
+import { useAuthStore } from '@store/index'
 import { AuthIdentityHeroPanel } from '../../components/AuthIdentityHeroPanel/AuthIdentityHeroPanel'
 import { RegistrationCard } from '../../components/RegistrationCard/RegistrationCard'
 import './Register.css'
 
 export const Register = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const user = useAuthStore((state) => state.user)
+
+  if (!isAuthenticated) {
+    return <Navigate to={routePaths.auth.login} replace />
+  }
+
+  if (user?.isProfileComplete) {
+    return <Navigate to={routePaths.dashboard} replace />
+  }
   return (
     <div className="register-screen">
       {/* Left 45% Stage: Branded Identity Hero Panel */}

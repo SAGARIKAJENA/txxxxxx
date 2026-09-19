@@ -51,16 +51,11 @@ const mockUser = (mobile: string): AuthUser => {
     }
   }
 
-  const stored = authStorage.getUser()
-  if (stored && stored.fullName && stored.isProfileComplete && stored.fullName !== 'Customer') {
-    return stored
-  }
-
   return {
     id: `usr_${Date.now().toString(36)}`,
-    fullName: stored?.fullName || '',
-    email: stored?.email || '',
-    mobile: clean || stored?.mobile || '',
+    fullName: '',
+    email: '',
+    mobile: clean,
     role: 'CUSTOMER',
     permissions: [],
     isProfileComplete: false,

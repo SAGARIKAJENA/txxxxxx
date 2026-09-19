@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { initialsOf } from '@shared/utils'
@@ -45,6 +45,14 @@ export const DashboardLayout = () => {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const [selectedServiceTarget, setSelectedServiceTarget] = useState<string>('')
+
+  useEffect(() => {
+    const locState = location.state as { openProfileModal?: boolean; returnTo?: string } | null
+    if (locState?.openProfileModal && !user?.isProfileComplete) {
+      setSelectedServiceTarget(locState.returnTo || '')
+      setIsProfileModalOpen(true)
+    }
+  }, [location.state, user?.isProfileComplete])
 
   const handleConfirmCompleteProfile = () => {
     setIsProfileModalOpen(false)

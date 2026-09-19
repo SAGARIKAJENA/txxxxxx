@@ -1,4 +1,7 @@
 import React from 'react'
+import { Navigate } from 'react-router-dom'
+import { routePaths } from '@core/config'
+import { useAuthStore } from '@store/index'
 import { SignInCard } from '../../components/SignInCard/SignInCard'
 import './Login.css'
 
@@ -9,6 +12,11 @@ const FEATURE_BADGES = [
 ]
 
 export const Login: React.FC = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+
+  if (isAuthenticated) {
+    return <Navigate to={routePaths.dashboard} replace />
+  }
   return (
     <div className="login-screen">
       <div className="login-bg" />
