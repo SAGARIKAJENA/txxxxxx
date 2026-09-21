@@ -1,18 +1,618 @@
 .gst-compliance-page {
   padding: 2rem 2.5rem;
-  background-color: var(--color-bg, #f8fafc);
+  background-color: #f8fafc;
   min-height: calc(100vh - 64px);
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.gst-compliance-wrapper {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* Header */
+.gst-compliance-header {
+  margin-bottom: 1.5rem;
+}
+
+.gst-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.02em;
+}
+
+.gst-subtitle {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Layout Grid */
+.gst-compliance-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Left Column */
+.gst-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.gst-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Blue Alert Banner */
+.gst-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  color: #1e40af;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.info-banner-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.info-banner-text {
+  color: #1e3a8a;
+  font-weight: 450;
+}
+
+/* Form Card */
+.gst-form-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #eff6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+}
+
+.card-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.gst-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.req-asterisk {
+  color: #ef4444;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.925rem;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   box-sizing: border-box;
 }
 
-.gst-compliance-container {
-  max-width: 1100px;
-  margin: 0 auto;
+.form-textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.925rem;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.form-input::placeholder,
+.form-select option[value=""],
+.form-textarea::placeholder {
+  color: #94a3b8;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.form-input.has-error,
+.form-select.has-error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.form-error {
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* Reconciliation Documents Section */
+.recon-docs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recon-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0.5rem 0 0.25rem 0;
+}
+
+.recon-doc-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.recon-doc-card.has-error {
+  border-color: #fca5a5;
+  background-color: #fff5f5;
+}
+
+.recon-doc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recon-doc-title-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.recon-doc-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.badge-required {
+  background-color: #fee2e2;
+  color: #dc2626;
+  font-size: 0.725rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+}
+
+.recon-doc-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Single Upload File Button (Centered horizontally) */
+.single-upload-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 0 0.5rem 0;
+  width: 100%;
+}
+
+.btn-upload-file-orange {
+  height: 44px;
+  padding: 0 1.75rem;
+  background: linear-gradient(135deg, #ff5722 0%, #f4511e 100%);
+  border: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 24px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
+  user-select: none;
+}
+
+.btn-upload-file-orange:hover {
+  background: linear-gradient(135deg, #f4511e 0%, #e64a19 100%);
+  box-shadow: 0 6px 18px rgba(255, 87, 34, 0.48);
+  transform: translateY(-1px);
+}
+
+.btn-upload-file-orange:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
+}
+
+/* Uploaded File Card & Actions (After Upload) */
+.uploaded-file-card {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 0.85rem 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-sizing: border-box;
+}
+
+.uploaded-file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.file-check-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.file-type-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.uploaded-filename {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.uploaded-filesize {
+  font-size: 0.775rem;
+  color: #64748b;
+}
+
+.uploaded-file-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-file-action {
+  height: 36px;
+  padding: 0 0.85rem;
+  border-radius: 8px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.btn-view {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+.btn-view:hover {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.btn-replace {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.btn-replace:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.btn-delete {
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+}
+
+.btn-delete:hover {
+  background-color: #fee2e2;
+  border-color: #f87171;
+}
+
+
+/* Submit Request Button */
+.submit-btn-wrapper {
+  margin-top: 0.5rem;
+}
+
+.gst-btn-submit-primary {
+  width: 100%;
+  height: 52px;
+  background-color: #ff6600;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+}
+
+.gst-btn-submit-primary:hover:not(:disabled) {
+  background-color: #ea580c;
+}
+
+.gst-btn-submit-primary:disabled {
+  background-color: #fdba74;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Success Card */
+.gst-success-card {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.success-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  background-color: #dcfce7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+}
+
+.success-app-id {
+  font-size: 1rem;
+  color: #2563eb;
+  margin: 0.5rem 0;
+}
+
+.success-message {
+  font-size: 0.95rem;
+  color: #475569;
+  max-width: 480px;
+  margin: 0.5rem auto 1.5rem auto;
+  line-height: 1.5;
+}
+
+/* Right Column Side Cards */
+.gst-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.side-card {
+  border-radius: 14px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+/* Helpful Information Card */
+.helpful-info-card {
+  background-color: #fffef0;
+  border: 1px solid #fef08a;
+}
+
+.side-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bulb-icon {
+  font-size: 1.2rem;
+}
+
+.side-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0;
+}
+
+.helpful-subtitle {
+  font-size: 0.85rem;
+  color: #475569;
+  margin: 0 0 0.85rem 0;
+}
+
+.helpful-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.helpful-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  color: #334155;
+}
+
+.check-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.helpful-footer {
+  font-size: 0.825rem;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+  border-top: 1px solid #fef08a;
+  padding-top: 0.75rem;
+}
+
+/* Need Help Card */
+.need-help-card {
+  background-color: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.headset-icon {
+  font-size: 1.2rem;
+}
+
+.help-subtitle {
+  font-size: 0.85rem;
+  color: #475569;
+  margin: 0 0 1rem 0;
+  line-height: 1.45;
+}
+
+.btn-contact-support {
+  width: 100%;
+  height: 42px;
+  background-color: transparent;
+  border: 1.5px solid #0284c7;
+  color: #0284c7;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-contact-support:hover {
+  background-color: #e0f2fe;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .gst-compliance-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
   .gst-compliance-page {
-    padding: 1rem 0.75rem;
+    padding: 1.25rem 1rem;
+  }
+
+  .gst-form-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .recon-doc-actions {
+    flex-direction: column;
   }
 }
+
+
 

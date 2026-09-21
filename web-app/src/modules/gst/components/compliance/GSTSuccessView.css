@@ -1,0 +1,306 @@
+/* GST Success View Web Container */
+.gst-success-page-container {
+  width: 100%;
+  max-width: 820px;
+  margin: 1.5rem auto 3.5rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* Green Badge & Rings with Celebration Sparks */
+.gst-success-badge-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gst-spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.spark-top-left { top: 4px; left: 10px; background-color: #eab308; box-shadow: 0 0 6px #fde047; }
+.spark-top-right { top: 2px; right: 12px; background-color: #22c55e; box-shadow: 0 0 6px #86efac; }
+.spark-bottom-left { bottom: 6px; left: 14px; background-color: #22c55e; box-shadow: 0 0 6px #86efac; }
+.spark-bottom-right { bottom: 8px; right: 10px; background-color: #eab308; box-shadow: 0 0 6px #fde047; }
+
+/* Icon Badges inside Details Card Grid */
+.gst-success-grid-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.gst-meta-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.gst-meta-icon-badge.blue { background-color: #eff6ff; }
+.gst-meta-icon-badge.green { background-color: #f0fdf4; }
+.gst-meta-icon-badge.orange { background-color: #fff7ed; }
+.gst-meta-icon-badge.purple { background-color: #f5f3ff; }
+
+.gst-meta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.gst-meta-subtime {
+  font-size: 0.775rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.gst-success-badge-ring-outer {
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  background-color: #e8f5e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gst-success-badge-ring-inner {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background-color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.38);
+}
+
+/* Titles */
+.gst-success-main-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.6rem 0;
+  text-align: center;
+  letter-spacing: -0.025em;
+}
+
+.gst-success-main-subtitle {
+  font-size: 1.05rem;
+  color: #64748b;
+  text-align: center;
+  max-width: 620px;
+  margin: 0 0 2rem 0;
+  line-height: 1.55;
+}
+
+/* Details Card */
+.gst-success-card {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  box-sizing: border-box;
+}
+
+.gst-success-details-card {
+  padding: 2rem 2.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.gst-success-ref-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gst-success-ref-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gst-success-meta-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.gst-success-ref-id {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #2563eb;
+  letter-spacing: -0.01em;
+}
+
+.gst-success-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.25rem;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  color: #1d4ed8;
+  font-size: 0.925rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gst-success-copy-btn:hover {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.gst-success-card-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 1.35rem 0;
+}
+
+.gst-success-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.gst-success-meta-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.gst-text-blue { color: #2563eb; }
+
+/* What Happens Next Card */
+.gst-success-next-card-blue {
+  width: 100%;
+  background-color: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 18px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  box-sizing: border-box;
+}
+
+.gst-next-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.gst-next-info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gst-next-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.gst-next-card-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.gst-next-card-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  font-size: 0.975rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.gst-bullet-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ff6600;
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+/* Action Buttons Row */
+.gst-success-actions-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.gst-success-btn-primary {
+  flex: 1;
+  height: 54px;
+  background: linear-gradient(135deg, #ff5722 0%, #f4511e 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(255, 87, 34, 0.35);
+}
+
+.gst-success-btn-primary:hover {
+  background: linear-gradient(135deg, #f4511e 0%, #e64a19 100%);
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.48);
+  transform: translateY(-1px);
+}
+
+.gst-success-btn-secondary {
+  flex: 1;
+  height: 54px;
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gst-success-btn-secondary:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+  .gst-success-actions-row {
+    flex-direction: column;
+  }
+}
+
