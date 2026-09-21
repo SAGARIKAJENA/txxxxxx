@@ -9,7 +9,6 @@ import {
 } from '../RegistrationIcons/RegistrationIcons'
 import { RegistrationSelect } from '../RegistrationSelect/RegistrationSelect'
 import { AddressLocationButton } from './AddressLocationButton'
-import { PostalInfoBanner } from './PostalInfoBanner'
 import { AreaLocalitySelect } from './AreaLocalitySelect'
 import { CANONICAL_INDIAN_STATES_AND_UTS } from '@shared/services'
 import './RegistrationAddressFields.css'
@@ -71,9 +70,6 @@ export const RegistrationAddressFields: React.FC<RegistrationAddressFieldsProps>
       <div className="reg-address-section__header">
         <div className="reg-address-section__title-group">
           <h3 className="reg-address-section__title">Current Address</h3>
-          <span className="reg-address-section__subtitle">
-            Provide your residential or communication address
-          </span>
         </div>
 
         {onUseCurrentLocation && (
@@ -99,11 +95,6 @@ export const RegistrationAddressFields: React.FC<RegistrationAddressFieldsProps>
             </button>
           )}
         </div>
-      )}
-
-      {/* Postal Directory Info Banner */}
-      {showPostalBanner && (
-        <PostalInfoBanner onDismiss={onDismissPostalBanner} />
       )}
 
       {/* Address Line 1 (Full Width) */}

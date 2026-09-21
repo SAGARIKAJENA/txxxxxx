@@ -153,27 +153,67 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
     try {
       const res = await detectCurrentLocation()
       if (res.success) {
+        let areaCandidate = res.areaLocality
+
+        // If a valid PIN code was detected via GPS, fetch verified postal info and village post offices
+        if (res.pincode && res.pincode.length === 6) {
+          setPincodeStatus('verifying')
+          try {
+            const pinRes = await lookupPincode(res.pincode)
+            if (pinRes.valid) {
+              setPincodeStatus('valid')
+
+              // If GPS did not detect an area or detected a generic one matching city/district, use the verified postal village
+              const isGeneric =
+                !areaCandidate ||
+                areaCandidate.toLowerCase() === res.city.toLowerCase() ||
+                areaCandidate.toLowerCase() === res.district.toLowerCase()
+
+              if (isGeneric && pinRes.areaLocality) {
+                areaCandidate = pinRes.areaLocality
+              }
+
+              // Place detected area at the top of available options in the dropdown
+              const mergedBranches = Array.from(
+                new Set([areaCandidate, ...pinRes.postOffices].filter(Boolean))
+              )
+              setAvailablePostOffices(mergedBranches)
+            } else {
+              if (areaCandidate) {
+                setAvailablePostOffices([areaCandidate])
+              }
+              setPincodeStatus('valid')
+            }
+          } catch {
+            if (areaCandidate) {
+              setAvailablePostOffices([areaCandidate])
+            }
+            setPincodeStatus('valid')
+          }
+        } else if (areaCandidate) {
+          setAvailablePostOffices([areaCandidate])
+        }
+
         setValues((current) => ({
           ...current,
           addressLine1: res.addressLine1 || current.addressLine1,
           addressLine2: res.addressLine2 || current.addressLine2,
-          areaLocality: res.areaLocality || current.areaLocality,
+          areaLocality: areaCandidate || current.areaLocality,
           city: res.city || current.city,
           district: res.district || current.district,
           state: res.state || current.state,
           pincode: res.pincode || current.pincode,
         }))
         setShowPostalBanner(true)
-        if (res.pincode && res.pincode.length === 6) {
-          setPincodeStatus('valid')
-        }
         setErrors((prevErr) => ({
           ...prevErr,
           addressLine1: undefined,
+          addressLine2: undefined,
           city: undefined,
           district: undefined,
           state: undefined,
           pincode: undefined,
+          areaLocality: undefined,
         }))
       } else {
         setLocationError(

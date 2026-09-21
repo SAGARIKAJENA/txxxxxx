@@ -1,4 +1,5 @@
-import { POSTAL_CIRCLE_PREFIX_MAP } from './postalCirclePrefixes'
+import { resolvePostalCircle } from './postalCirclePrefixes'
+import { resolveUpdatedApTsDistrict } from './apTelanganaDistrictMaster'
 
 export interface OfflinePincodeEntry {
   pincode: string
@@ -131,7 +132,7 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
   '500081': {
     pincode: '500081',
     city: 'Hyderabad',
-    district: 'K.V.Rangareddy',
+    district: 'Ranga Reddy',
     state: 'Telangana',
     areaLocality: 'Madhapur / Hitec City',
     postOffices: ['Madhapur S.O', 'Cyberabad S.O'],
@@ -188,7 +189,7 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
   '520001': {
     pincode: '520001',
     city: 'Vijayawada',
-    district: 'Krishna',
+    district: 'NTR',
     state: 'Andhra Pradesh',
     areaLocality: 'Governorpet',
     postOffices: ['Vijayawada H.O', 'Governorpet S.O'],
@@ -417,10 +418,174 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     areaLocality: 'Clock Tower / Chityal Zone',
     postOffices: ['Nalgonda H.O', 'Clock Tower S.O'],
   },
+  // All 8 Union Territories & Special Regions
+  '194101': {
+    pincode: '194101',
+    city: 'Leh',
+    district: 'Leh',
+    state: 'Ladakh',
+    areaLocality: 'Main Bazaar',
+    postOffices: ['Leh H.O', 'Choglamsar S.O', 'Shey B.O'],
+  },
+  '194103': {
+    pincode: '194103',
+    city: 'Kargil',
+    district: 'Kargil',
+    state: 'Ladakh',
+    areaLocality: 'Baroo / Main Market',
+    postOffices: ['Kargil H.O', 'Drass S.O', 'Sankoo S.O'],
+  },
+  '682555': {
+    pincode: '682555',
+    city: 'Kavaratti',
+    district: 'Lakshadweep',
+    state: 'Lakshadweep',
+    areaLocality: 'Secretariat Road',
+    postOffices: ['Kavaratti S.O'],
+  },
+  '682553': {
+    pincode: '682553',
+    city: 'Agatti',
+    district: 'Lakshadweep',
+    state: 'Lakshadweep',
+    areaLocality: 'Airport Zone',
+    postOffices: ['Agatti S.O'],
+  },
+  '403001': {
+    pincode: '403001',
+    city: 'Panaji',
+    district: 'North Goa',
+    state: 'Goa',
+    areaLocality: 'Fontainhas / Campal',
+    postOffices: ['Panaji H.O', 'Altinho S.O', 'Miramar S.O'],
+  },
+  '403601': {
+    pincode: '403601',
+    city: 'Margao',
+    district: 'South Goa',
+    state: 'Goa',
+    areaLocality: 'Pajifond / Station Road',
+    postOffices: ['Margao H.O', 'Fatorda S.O', 'Aquem S.O'],
+  },
+  '737101': {
+    pincode: '737101',
+    city: 'Gangtok',
+    district: 'East Sikkim',
+    state: 'Sikkim',
+    areaLocality: 'MG Marg / Deorali',
+    postOffices: ['Gangtok H.O', 'Tadong S.O', 'Deorali S.O'],
+  },
+  '737126': {
+    pincode: '737126',
+    city: 'Namchi',
+    district: 'South Sikkim',
+    state: 'Sikkim',
+    areaLocality: 'Central Park',
+    postOffices: ['Namchi S.O', 'Jorethang S.O'],
+  },
+  '744101': {
+    pincode: '744101',
+    city: 'Port Blair',
+    district: 'South Andaman',
+    state: 'Andaman and Nicobar Islands',
+    areaLocality: 'Aberdeen Bazaar',
+    postOffices: ['Port Blair H.O', 'Haddo S.O', 'Shadipur S.O'],
+  },
+  '744301': {
+    pincode: '744301',
+    city: 'Car Nicobar',
+    district: 'Nicobar',
+    state: 'Andaman and Nicobar Islands',
+    areaLocality: 'Malacca',
+    postOffices: ['Car Nicobar S.O'],
+  },
+  '396210': {
+    pincode: '396210',
+    city: 'Daman',
+    district: 'Daman',
+    state: 'Dadra and Nagar Haveli and Daman and Diu',
+    areaLocality: 'Nani Daman / Moti Daman',
+    postOffices: ['Daman S.O', 'Nani Daman S.O', 'Moti Daman S.O'],
+  },
+  '396230': {
+    pincode: '396230',
+    city: 'Silvassa',
+    district: 'Dadra and Nagar Haveli',
+    state: 'Dadra and Nagar Haveli and Daman and Diu',
+    areaLocality: 'Tokarkhada / Naroli Road',
+    postOffices: ['Silvassa S.O', 'Naroli S.O', 'Amli S.O'],
+  },
+  '362520': {
+    pincode: '362520',
+    city: 'Diu',
+    district: 'Diu',
+    state: 'Dadra and Nagar Haveli and Daman and Diu',
+    areaLocality: 'Fort Area / Bunder',
+    postOffices: ['Diu S.O', 'Ghoghla S.O', 'Vanakbara S.O'],
+  },
+  '605001': {
+    pincode: '605001',
+    city: 'Puducherry',
+    district: 'Puducherry',
+    state: 'Puducherry',
+    areaLocality: 'White Town / Promenade',
+    postOffices: ['Pondicherry H.O', 'Muthialpet S.O'],
+  },
+  '609609': {
+    pincode: '609609',
+    city: 'Karaikal',
+    district: 'Karaikal',
+    state: 'Puducherry',
+    areaLocality: 'Church Street',
+    postOffices: ['Karaikal H.O'],
+  },
+  '160017': {
+    pincode: '160017',
+    city: 'Chandigarh',
+    district: 'Chandigarh',
+    state: 'Chandigarh',
+    areaLocality: 'Sector 17 City Centre',
+    postOffices: ['Chandigarh Sector 17 S.O', 'G.P.O Chandigarh'],
+  },
+  '791111': {
+    pincode: '791111',
+    city: 'Itanagar',
+    district: 'Papum Pare',
+    state: 'Arunachal Pradesh',
+    areaLocality: 'Secretariat Road / Ganga Market',
+    postOffices: ['Itanagar H.O'],
+  },
+  '797001': {
+    pincode: '797001',
+    city: 'Kohima',
+    district: 'Kohima',
+    state: 'Nagaland',
+    areaLocality: 'BOC / Main Town',
+    postOffices: ['Kohima H.O'],
+  },
+  '796001': {
+    pincode: '796001',
+    city: 'Aizawl',
+    district: 'Aizawl',
+    state: 'Mizoram',
+    areaLocality: 'Zarkawt / Dawrpui',
+    postOffices: ['Aizawl H.O'],
+  },
+  '795001': {
+    pincode: '795001',
+    city: 'Imphal',
+    district: 'Imphal East',
+    state: 'Manipur',
+    areaLocality: 'Paona Bazaar',
+    postOffices: ['Imphal H.O'],
+  },
 }
 
 /**
  * Functional lookup from offline master.
+ * Hierarchical resolution:
+ * 1. Exact 6-digit PIN in OFFLINE_PINCODE_MASTER
+ * 2. resolvePostalCircle (enclaves, 3-digit sub-regions, 2-digit circles, 1-digit zones)
  * Rule 2: NO LOOPS. Pure functional lookup.
  */
 export const lookupOfflinePincode = (pincode: string): OfflinePincodeEntry | null => {
@@ -430,20 +595,46 @@ export const lookupOfflinePincode = (pincode: string): OfflinePincodeEntry | nul
   // 1. Direct exact match in master dictionary
   const directMatch = OFFLINE_PINCODE_MASTER[digitsOnly]
   if (directMatch) {
+    const apTs = resolveUpdatedApTsDistrict(
+      digitsOnly,
+      directMatch.district,
+      directMatch.city,
+      directMatch.areaLocality
+    )
+    if (apTs) {
+      return {
+        ...directMatch,
+        district: apTs.district,
+        city: directMatch.city || apTs.city,
+        state: apTs.state,
+      }
+    }
     return directMatch
   }
 
-  // 2. Functional prefix lookup using 2-digit postal circle
-  const prefix2 = digitsOnly.slice(0, 2)
-  const circleMatch = POSTAL_CIRCLE_PREFIX_MAP[prefix2]
-  if (circleMatch) {
+  // 2. High-priority resolution for reorganized districts of AP (26) & TS (33)
+  const apTs = resolveUpdatedApTsDistrict(digitsOnly)
+  if (apTs) {
     return {
       pincode: digitsOnly,
-      city: circleMatch.defaultCity,
-      district: circleMatch.defaultDistrict,
-      state: circleMatch.state,
-      areaLocality: '',
-      postOffices: [circleMatch.defaultCity],
+      city: apTs.city,
+      district: apTs.district,
+      state: apTs.state,
+      areaLocality: apTs.city,
+      postOffices: [apTs.city],
+    }
+  }
+
+  // 3. Functional hierarchical resolution
+  const resolved = resolvePostalCircle(digitsOnly)
+  if (resolved) {
+    return {
+      pincode: digitsOnly,
+      city: resolved.defaultCity,
+      district: resolved.defaultDistrict,
+      state: resolved.state,
+      areaLocality: resolved.defaultCity,
+      postOffices: [resolved.defaultCity],
     }
   }
 

@@ -33,8 +33,12 @@ export const AreaLocalitySelect: React.FC<AreaLocalitySelectProps> = ({
 
   // Dynamically resolve all areas covering the active city
   const cityLocalities = useMemo(() => {
-    return getLocalitiesForCity(cityName, postalBranches)
-  }, [cityName, postalBranches])
+    const list = getLocalitiesForCity(cityName, postalBranches)
+    if (value && !list.includes(value)) {
+      return [value, ...list]
+    }
+    return list
+  }, [cityName, postalBranches, value])
 
   const handleClose = useCallback(() => {
     setIsOpen(false)
@@ -123,7 +127,7 @@ export const AreaLocalitySelect: React.FC<AreaLocalitySelectProps> = ({
           <MapIcon size={18} color="#F97316" />
         </span>
         <span className={`area-select__value ${!value ? 'area-select__value--placeholder' : ''}`}>
-          {value || (cityName ? `Select area in ${cityName}` : placeholder)}
+          {value || (cityName ? `Select area / village in ${cityName}` : placeholder)}
         </span>
         <span className={`area-select__chevron ${isOpen ? 'area-select__chevron--open' : ''}`}>
           <ChevronDownIcon size={15} />
@@ -139,7 +143,7 @@ export const AreaLocalitySelect: React.FC<AreaLocalitySelectProps> = ({
               ref={searchInputRef}
               type="text"
               className="area-select__search-input"
-              placeholder={cityName ? `Search areas in ${cityName}...` : 'Search or type area name...'}
+              placeholder={cityName ? `Search area or village in ${cityName}...` : 'Search or type area / village name...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onClick={(e) => e.stopPropagation()}
@@ -148,7 +152,7 @@ export const AreaLocalitySelect: React.FC<AreaLocalitySelectProps> = ({
 
           {cityName && (
             <div className="area-select__header-badge">
-              Areas covering {cityName} ({cityLocalities.length})
+              Areas & Villages covering {cityName} ({cityLocalities.length})
             </div>
           )}
 
@@ -161,15 +165,15 @@ export const AreaLocalitySelect: React.FC<AreaLocalitySelectProps> = ({
                 role="option"
                 aria-selected={false}
               >
-                <span>+ Use &quot;{searchQuery.trim()}&quot; as custom locality</span>
+                <span>+ Use &quot;{searchQuery.trim()}&quot; as custom area / village</span>
               </li>
             )}
 
             {filteredOptions.length === 0 && searchQuery.trim().length === 0 ? (
               <li className="area-select__empty">
                 {cityName
-                  ? `No preset areas for ${cityName}. Type above to add.`
-                  : 'Enter PIN Code or City to load areas, or type above.'}
+                  ? `No preset areas for ${cityName}. Type above to add your village or locality.`
+                  : 'Enter PIN Code or City to load areas & villages, or type above.'}
               </li>
             ) : (
               filteredOptions.map((item) => (
