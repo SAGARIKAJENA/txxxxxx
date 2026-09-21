@@ -178,14 +178,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     postOffices: ['Jaipur G.P.O', 'Ashok Nagar S.O'],
   },
   // All other States & Union Territories
-  '744101': {
-    pincode: '744101',
-    city: 'Port Blair',
-    district: 'South Andaman',
-    state: 'Andaman and Nicobar Islands',
-    areaLocality: 'Aberdeen Bazaar',
-    postOffices: ['Port Blair H.O', 'Aberdeen Bazaar S.O', 'Dollygunj S.O'],
-  },
   '520001': {
     pincode: '520001',
     city: 'Vijayawada',
@@ -193,14 +185,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     state: 'Andhra Pradesh',
     areaLocality: 'Governorpet',
     postOffices: ['Vijayawada H.O', 'Governorpet S.O'],
-  },
-  '791111': {
-    pincode: '791111',
-    city: 'Itanagar',
-    district: 'Papum Pare',
-    state: 'Arunachal Pradesh',
-    areaLocality: 'Ganga Market',
-    postOffices: ['Itanagar H.O', 'Naharlagun S.O'],
   },
   '781001': {
     pincode: '781001',
@@ -218,14 +202,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     areaLocality: 'Fraser Road',
     postOffices: ['Patna G.P.O', 'Bankipore S.O'],
   },
-  '160017': {
-    pincode: '160017',
-    city: 'Chandigarh',
-    district: 'Chandigarh',
-    state: 'Chandigarh',
-    areaLocality: 'Sector 17',
-    postOffices: ['Sector 17 H.O', 'Sector 22 S.O'],
-  },
   '492001': {
     pincode: '492001',
     city: 'Raipur',
@@ -233,22 +209,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     state: 'Chhattisgarh',
     areaLocality: 'Jaistambh Chowk',
     postOffices: ['Raipur H.O', 'Pandri S.O'],
-  },
-  '396210': {
-    pincode: '396210',
-    city: 'Daman',
-    district: 'Daman',
-    state: 'Dadra and Nagar Haveli and Daman and Diu',
-    areaLocality: 'Moti Daman',
-    postOffices: ['Daman S.O', 'Nani Daman S.O'],
-  },
-  '403001': {
-    pincode: '403001',
-    city: 'Panaji',
-    district: 'North Goa',
-    state: 'Goa',
-    areaLocality: 'Fontainhas',
-    postOffices: ['Panaji H.O', 'Altinho S.O'],
   },
   '122001': {
     pincode: '122001',
@@ -290,22 +250,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     areaLocality: 'Statue Junction',
     postOffices: ['Thiruvananthapuram G.P.O', 'Palayam S.O'],
   },
-  '194101': {
-    pincode: '194101',
-    city: 'Leh',
-    district: 'Leh',
-    state: 'Ladakh',
-    areaLocality: 'Main Market',
-    postOffices: ['Leh H.O', 'Choglamsar B.O'],
-  },
-  '682555': {
-    pincode: '682555',
-    city: 'Kavaratti',
-    district: 'Lakshadweep',
-    state: 'Lakshadweep',
-    areaLocality: 'Kavaratti Island',
-    postOffices: ['Kavaratti S.O'],
-  },
   '462001': {
     pincode: '462001',
     city: 'Bhopal',
@@ -313,14 +257,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     state: 'Madhya Pradesh',
     areaLocality: 'New Market / MP Nagar',
     postOffices: ['Bhopal G.P.O', 'T.T. Nagar S.O'],
-  },
-  '795001': {
-    pincode: '795001',
-    city: 'Imphal',
-    district: 'Imphal West',
-    state: 'Manipur',
-    areaLocality: 'Thangal Bazar',
-    postOffices: ['Imphal H.O'],
   },
   '793001': {
     pincode: '793001',
@@ -330,22 +266,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     areaLocality: 'Police Bazar',
     postOffices: ['Shillong G.P.O', 'Laban S.O'],
   },
-  '796001': {
-    pincode: '796001',
-    city: 'Aizawl',
-    district: 'Aizawl',
-    state: 'Mizoram',
-    areaLocality: 'Zarkawt',
-    postOffices: ['Aizawl H.O'],
-  },
-  '797001': {
-    pincode: '797001',
-    city: 'Kohima',
-    district: 'Kohima',
-    state: 'Nagaland',
-    areaLocality: 'BOC',
-    postOffices: ['Kohima H.O'],
-  },
   '751001': {
     pincode: '751001',
     city: 'Bhubaneswar',
@@ -354,14 +274,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     areaLocality: 'Master Canteen / Saheed Nagar',
     postOffices: ['Bhubaneswar G.P.O', 'Saheed Nagar S.O'],
   },
-  '605001': {
-    pincode: '605001',
-    city: 'Puducherry',
-    district: 'Puducherry',
-    state: 'Puducherry',
-    areaLocality: 'White Town',
-    postOffices: ['Pondicherry H.O'],
-  },
   '141001': {
     pincode: '141001',
     city: 'Ludhiana',
@@ -369,14 +281,6 @@ export const OFFLINE_PINCODE_MASTER: Record<string, OfflinePincodeEntry> = {
     state: 'Punjab',
     areaLocality: 'Clock Tower',
     postOffices: ['Ludhiana H.O'],
-  },
-  '737101': {
-    pincode: '737101',
-    city: 'Gangtok',
-    district: 'East Sikkim',
-    state: 'Sikkim',
-    areaLocality: 'MG Marg',
-    postOffices: ['Gangtok H.O'],
   },
   '799001': {
     pincode: '799001',

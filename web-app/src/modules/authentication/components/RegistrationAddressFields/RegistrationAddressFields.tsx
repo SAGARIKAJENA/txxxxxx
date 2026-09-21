@@ -10,6 +10,7 @@ import {
 import { RegistrationSelect } from '../RegistrationSelect/RegistrationSelect'
 import { AddressLocationButton } from './AddressLocationButton'
 import { AreaLocalitySelect } from './AreaLocalitySelect'
+import { PostalInfoBanner } from './PostalInfoBanner'
 import { CANONICAL_INDIAN_STATES_AND_UTS } from '@shared/services'
 import './RegistrationAddressFields.css'
 
@@ -95,6 +96,11 @@ export const RegistrationAddressFields: React.FC<RegistrationAddressFieldsProps>
             </button>
           )}
         </div>
+      )}
+
+      {/* Dismissible Postal Autofill Banner */}
+      {showPostalBanner && (
+        <PostalInfoBanner onDismiss={onDismissPostalBanner} />
       )}
 
       {/* Address Line 1 (Full Width) */}
