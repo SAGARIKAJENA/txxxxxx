@@ -49,7 +49,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
   const [isDetectingLocation, setIsDetectingLocation] = useState(false)
   const [locationError, setLocationError] = useState<string | null>(null)
   const [pincodeStatus, setPincodeStatus] = useState<'idle' | 'verifying' | 'valid' | 'invalid'>('idle')
-  const [showPostalBanner, setShowPostalBanner] = useState(false)
   const [availablePostOffices, setAvailablePostOffices] = useState<string[]>([])
 
 
@@ -92,7 +91,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
           .then((res) => {
             if (res.valid) {
               setPincodeStatus('valid')
-              setShowPostalBanner(true)
               setAvailablePostOffices(res.postOffices)
               setValues((current) => ({
                 ...current,
@@ -117,7 +115,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
           })
       } else {
         setPincodeStatus('idle')
-        setShowPostalBanner(false)
       }
     }
 
@@ -196,7 +193,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
           state: res.state || current.state,
           pincode: res.pincode || current.pincode,
         }))
-        setShowPostalBanner(true)
         setErrors((prevErr) => ({
           ...prevErr,
           city: undefined,
@@ -414,8 +410,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
         onClearLocationError={() => setLocationError(null)}
         onUseCurrentLocation={handleUseCurrentLocation}
         pincodeStatus={pincodeStatus}
-        showPostalBanner={showPostalBanner}
-        onDismissPostalBanner={() => setShowPostalBanner(false)}
         availablePostOffices={availablePostOffices}
         onChange={handleChange}
         onBlur={handleBlur}

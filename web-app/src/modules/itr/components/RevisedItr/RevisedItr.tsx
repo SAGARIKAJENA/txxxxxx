@@ -1,256 +1,229 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { routePaths } from '@core/config'
-import { useAppStore } from '@store/index'
-import {
-  validateItrUploadFile,
-  type ItrUploadedFile,
-} from '../../validation/itrUploadValidation'
-import {
-  REVISED_STEPS_METADATA,
-  type RevisedStepMeta,
-} from './RevisedItr'
-import {
-  RevisedStep1View,
-  RevisedStep2View,
-  RevisedStep3View,
-  RevisedStep4View,
-  RevisedStep5View,
-} from './RevisedItrSteps'
-import { FlowStepper } from '@shared/components/FlowStepper'
+import React from 'react'
+import { useRevisedItr } from '../../hooks/useRevisedItr'
+import { Step1FindOriginalReturn } from './Step1FindOriginalReturn'
+import { Step2ReasonForRevision } from './Step2ReasonForRevision'
+import { Step6ApplicationReceived } from './Step6ApplicationReceived'
+import { MissedIncomeStep3, MissedIncomeStep4, MissedIncomeStep5 } from './MissedIncome'
+import { WrongDeductionStep3, WrongDeductionStep4, WrongDeductionStep5 } from './WrongDeduction'
+import { IncorrectBankStep3, IncorrectBankStep4, IncorrectBankStep5 } from './IncorrectBankDetails'
+import { OtherCorrectionStep3, OtherCorrectionStep4, OtherCorrectionStep5 } from './Other'
+import { StepActionBar, PaymentCheckout } from '@shared/components'
 import './RevisedItr.css'
 
-export const RevisedItr = () => {
-  const navigate = useNavigate()
-  const pushToast = useAppStore((state) => state.pushToast)
-  const [currentStep, setCurrentStep] = useState(1)
+export const RevisedItr: React.FC = () => {
+  const {
+    step,
+    showPayment,
+    isSubmitted,
+    applicationId,
+    ackNumber,
+    selectedAy,
+    isDropdownOpen,
+    isReturnFound,
+    returnDetails,
+    selectedReason,
+    otherReasonText,
+    incomeCorrections,
+    deductionCorrections,
+    bankCorrections,
+    uploadedDocuments,
+    isLoading,
+    errors,
+    dropdownRef,
+    handleKeyDown,
+    handleAckChange,
+    handleSelectAy,
+    handleToggleDropdown,
+    handleSelectReason,
+    handleOtherReasonChange,
+    handleIncomeChange,
+    handleDeductionChange,
+    handleBankChange,
+    handleFileUpload,
+    handleFileRemove,
+    handleBack,
+    handleContinue,
+    handlePaymentSuccess,
+    handleDownloadReceipt,
+    goToStep,
+  } = useRevisedItr()
 
-  // Screen 1 states
-  const [ackNumber, setAckNumber] = useState('284419250714208')
-  const [selectedAY, setSelectedAY] = useState('AY 2025-26')
-
-  // Screen 2 state
-  const [selectedReason, setSelectedReason] = useState('missed_income')
-
-  // Screen 3 states (preloaded values)
-  const [salaryIncome, setSalaryIncome] = useState('6,18,400')
-  const [otherIncome, setOtherIncome] = useState('2,79,280')
-  const [deduction80C, setDeduction80C] = useState('1,50,000')
-  const [deduction80D, setDeduction80D] = useState('28,000')
-  const [homeLoan, setHomeLoan] = useState('1,42,000')
-  const [bankAccount, setBankAccount] = useState('HDFC •••• 1826')
-  const [ifscCode, setIfscCode] = useState('HDFC0000412')
-  const [taxableIncome, setTaxableIncome] = useState('5,17,680')
-
-  // Screen 4 states: File uploads and notes
-  const [uploadedFiles, setUploadedFiles] = useState<Record<string, ItrUploadedFile>>({})
-  const [uploadError, setUploadError] = useState<string | null>(null)
-  const [notes, setNotes] = useState('')
-
-  const activeMeta: RevisedStepMeta =
-    REVISED_STEPS_METADATA.filter((s) => s.stepNumber === currentStep)[0] ||
-    REVISED_STEPS_METADATA[0]
-
-  const handleFileSelect = (id: string, file: File) => {
-    const result = validateItrUploadFile(file, 10, ['pdf', 'jpg', 'jpeg', 'png'])
-    if (!result.isValid || !result.fileInfo) {
-      const msg = result.error || 'Invalid file. Maximum size is 10 MB.'
-      setUploadError(msg)
-      pushToast(msg, 'error')
-      return
-    }
-
-    setUploadError(null)
-    setUploadedFiles((prev) => ({
-      ...prev,
-      [id]: result.fileInfo!,
-    }))
-    pushToast(`"${file.name}" uploaded successfully!`, 'success')
+  const originalAmounts = {
+    salaryOriginal: returnDetails?.salaryOriginal ?? 0,
+    otherOriginal: returnDetails?.otherOriginal ?? 0,
+    taxableOriginal: returnDetails?.taxableOriginal ?? 0,
   }
 
-  const handleFileRemove = (id: string) => {
-    setUploadedFiles((prev) => {
-      const next = { ...prev }
-      delete next[id]
-      return next
-    })
-    pushToast('Document removed', 'info')
-  }
-
-  const handleNextStep = () => {
-    if (currentStep === 4) {
-      const uploadedCount = Object.keys(uploadedFiles).length
-      if (uploadedCount === 0) {
-        const errorMsg = 'Please upload at least one supporting document before proceeding.'
-        setUploadError(errorMsg)
-        pushToast(errorMsg, 'error')
-        return
-      }
-    }
-    setUploadError(null)
-    if (currentStep < 5) {
-      setCurrentStep((prev) => prev + 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      navigate(routePaths.itr.root)
-    }
-  }
-
-  const handlePrevStep = () => {
-    setUploadError(null)
-    if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      navigate(routePaths.itr.root)
-    }
-  }
+  const Step4Component =
+    selectedReason === 'wrong_deduction' ? WrongDeductionStep4 :
+    selectedReason === 'incorrect_bank' ? IncorrectBankStep4 :
+    selectedReason === 'other' ? OtherCorrectionStep4 :
+    MissedIncomeStep4
 
   return (
-    <div className="revised-flow-page">
-      {/* 1. Top Meta & Stepper */}
-      <div className="revised-flow-topbar">
-        <div className="revised-flow-top-meta">
-          <span className="revised-flow-section-tag">SECTION 5 · REVISED ITR</span>
-          <span className="revised-flow-doc-badge">Recommended design — confirm with client</span>
-        </div>
+    <div className="revised-itr-page">
+      <div className="revised-itr-content-area">
+        {showPayment ? (
+          <PaymentCheckout
+            amount={999}
+            serviceTitle="Revised ITR Filing Assistance"
+            applicationRef={ackNumber || 'REV-ITR-2025'}
+            applicantName={returnDetails?.personalInfo?.fullName || 'Sagarika Jena'}
+            onBack={handleBack}
+            onSuccess={handlePaymentSuccess}
+          />
+        ) : isSubmitted ? (
+          <Step6ApplicationReceived
+            applicationId={applicationId}
+            selectedAy={selectedAy}
+            returnDetails={returnDetails}
+            uploadedDocuments={uploadedDocuments}
+            onBack={handleBack}
+            onDownloadReceipt={handleDownloadReceipt}
+          />
+        ) : (
+          <>
+            {/* Step 1: Find Original Return */}
+            {step === 1 && (
+              <Step1FindOriginalReturn
+                ackNumber={ackNumber}
+                selectedAy={selectedAy}
+                isDropdownOpen={isDropdownOpen}
+                isReturnFound={isReturnFound}
+                returnDetails={returnDetails}
+                ackError={errors.ackError}
+                ayError={errors.ayError}
+                dropdownRef={dropdownRef}
+                onAckChange={handleAckChange}
+                onKeyDown={handleKeyDown}
+                onToggleDropdown={handleToggleDropdown}
+                onSelectAy={handleSelectAy}
+              />
+            )}
 
-        <FlowStepper
-          steps={REVISED_STEPS_METADATA}
-          currentStep={currentStep}
-          onStepClick={(step) => setCurrentStep(step)}
-          ariaLabel="Revised ITR Steps"
-        />
+            {/* Step 2: Reason for Revision */}
+            {step === 2 && (
+              <Step2ReasonForRevision
+                selectedReason={selectedReason}
+                otherReasonText={otherReasonText}
+                reasonError={errors.reasonError}
+                otherReasonError={errors.otherReasonError}
+                onSelectReason={handleSelectReason}
+                onOtherReasonChange={handleOtherReasonChange}
+              />
+            )}
 
-        {/* Top Note Box (Screen 1 only) */}
-        {currentStep === 1 && (
-          <div className="revised-top-note-box">
-            <div className="revised-top-note-header">
-              <span className="revised-top-note-icon">⚠️</span>
-              <strong className="revised-top-note-title">Note</strong>
-            </div>
-            <p className="revised-top-note-text">
-              Also listed by name only in the requirements. The flow below follows standard
-              practice for correcting a return that was already filed, and should be confirmed with
-              the client before development.
-            </p>
-          </div>
+            {/* Step 3: Update Details */}
+            {step === 3 && (
+              selectedReason === 'wrong_deduction' ? (
+                <WrongDeductionStep3
+                  deductionCorrections={deductionCorrections}
+                  originalAmounts={originalAmounts}
+                  taxableError={errors.taxableIncomeError}
+                  onDeductionChange={handleDeductionChange}
+                  onKeyDown={handleKeyDown}
+                />
+              ) : selectedReason === 'incorrect_bank' ? (
+                <IncorrectBankStep3
+                  bankCorrections={bankCorrections}
+                  bankAccountError={errors.bankAccountError}
+                  ifscError={errors.ifscError}
+                  onBankChange={handleBankChange}
+                  onKeyDown={handleKeyDown}
+                />
+              ) : selectedReason === 'other' ? (
+                <OtherCorrectionStep3
+                  otherReasonText={otherReasonText}
+                  incomeCorrections={incomeCorrections}
+                  deductionCorrections={deductionCorrections}
+                  bankCorrections={bankCorrections}
+                  originalAmounts={originalAmounts}
+                  salaryError={errors.salaryIncomeError}
+                  taxableError={errors.taxableIncomeError}
+                  bankAccountError={errors.bankAccountError}
+                  ifscError={errors.ifscError}
+                  onChange={handleIncomeChange}
+                  onDeductionChange={handleDeductionChange}
+                  onBankChange={handleBankChange}
+                  onKeyDown={handleKeyDown}
+                />
+              ) : (
+                <MissedIncomeStep3
+                  incomeCorrections={incomeCorrections}
+                  originalAmounts={originalAmounts}
+                  salaryError={errors.salaryIncomeError}
+                  taxableError={errors.taxableIncomeError}
+                  onChange={handleIncomeChange}
+                  onKeyDown={handleKeyDown}
+                />
+              )
+            )}
+
+            {/* Step 4: Upload Documents */}
+            {step === 4 && (
+              <Step4Component
+                selectedAy={selectedAy}
+                uploadedDocuments={uploadedDocuments}
+                documentsError={errors.documentsError}
+                onUpload={handleFileUpload}
+                onRemove={handleFileRemove}
+              />
+            )}
+
+            {/* Step 5: Review Revised ITR */}
+            {step === 5 && (
+              selectedReason === 'wrong_deduction' ? (
+                <WrongDeductionStep5
+                  ackNumber={ackNumber}
+                  selectedAy={selectedAy}
+                  returnDetails={returnDetails}
+                  deductionCorrections={deductionCorrections}
+                  uploadedDocuments={uploadedDocuments}
+                  onEditStep={goToStep}
+                />
+              ) : selectedReason === 'incorrect_bank' ? (
+                <IncorrectBankStep5
+                  ackNumber={ackNumber}
+                  selectedAy={selectedAy}
+                  returnDetails={returnDetails}
+                  bankCorrections={bankCorrections}
+                  uploadedDocuments={uploadedDocuments}
+                  onEditStep={goToStep}
+                />
+              ) : selectedReason === 'other' ? (
+                <OtherCorrectionStep5
+                  ackNumber={ackNumber}
+                  selectedAy={selectedAy}
+                  returnDetails={returnDetails}
+                  incomeCorrections={incomeCorrections}
+                  deductionCorrections={deductionCorrections}
+                  bankCorrections={bankCorrections}
+                  otherReasonText={otherReasonText}
+                  uploadedDocuments={uploadedDocuments}
+                  onEditStep={goToStep}
+                />
+              ) : (
+                <MissedIncomeStep5
+                  ackNumber={ackNumber}
+                  selectedAy={selectedAy}
+                  returnDetails={returnDetails}
+                  incomeCorrections={incomeCorrections}
+                  uploadedDocuments={uploadedDocuments}
+                  onEditStep={goToStep}
+                />
+              )
+            )}
+
+            {/* Reusable Action Bar */}
+            <StepActionBar
+              onBack={handleBack}
+              onNext={handleContinue}
+              backLabel={step === 1 ? 'Cancel' : 'Back'}
+              nextLabel={step === 5 ? 'Proceed to Payment →' : 'Continue'}
+              isSubmitting={isLoading}
+            />
+          </>
         )}
-      </div>
-
-      {/* 2. Main 2-Column Grid */}
-      <div className="revised-flow-layout">
-        {/* Left Column: Main Card */}
-        <div className="revised-flow-main-card">
-          <span className="revised-card-header-label">WHAT THE CUSTOMER SEES</span>
-
-          {currentStep === 1 && (
-            <RevisedStep1View
-              ackNumber={ackNumber}
-              setAckNumber={setAckNumber}
-              selectedAY={selectedAY}
-              setSelectedAY={setSelectedAY}
-              onFindReturn={() => alert('Original return fetched from ITD!')}
-            />
-          )}
-
-          {currentStep === 2 && (
-            <RevisedStep2View
-              selectedReason={selectedReason}
-              onSelectReason={setSelectedReason}
-            />
-          )}
-
-          {currentStep === 3 && (
-            <RevisedStep3View
-              salaryIncome={salaryIncome}
-              setSalaryIncome={setSalaryIncome}
-              otherIncome={otherIncome}
-              setOtherIncome={setOtherIncome}
-              deduction80C={deduction80C}
-              setDeduction80C={setDeduction80C}
-              deduction80D={deduction80D}
-              setDeduction80D={setDeduction80D}
-              homeLoan={homeLoan}
-              setHomeLoan={setHomeLoan}
-              bankAccount={bankAccount}
-              setBankAccount={setBankAccount}
-              ifscCode={ifscCode}
-              setIfscCode={setIfscCode}
-              taxableIncome={taxableIncome}
-              setTaxableIncome={setTaxableIncome}
-            />
-          )}
-
-          {currentStep === 4 && (
-            <RevisedStep4View
-              uploadedFiles={uploadedFiles}
-              onFileSelect={handleFileSelect}
-              onFileRemove={handleFileRemove}
-              uploadError={uploadError}
-              notes={notes}
-              setNotes={setNotes}
-            />
-          )}
-
-          {currentStep === 5 && (
-            <RevisedStep5View
-              selectedAY={selectedAY}
-              onRequestChange={() => setCurrentStep(3)}
-              onApproveAndFile={() => alert('Revised return submitted for processing!')}
-            />
-          )}
-
-          {/* Bottom Action Bar */}
-          <div className="revised-flow-bottom-bar">
-            <button
-              type="button"
-              className="revised-bottom-back-btn"
-              onClick={handlePrevStep}
-            >
-              Back
-            </button>
-
-            <button
-              type="button"
-              className="revised-bottom-next-btn"
-              onClick={handleNextStep}
-            >
-              {currentStep < 5 ? 'Continue' : 'Finish'}
-            </button>
-          </div>
-        </div>
-
-        {/* Right Column: Side Explanatory Panel */}
-        <aside className="revised-flow-side-panel">
-          <div className="revised-side-card">
-            <div className="revised-side-card-tag">WHAT THE CUSTOMER SEES</div>
-            <p className="revised-side-card-text">{activeMeta.customerSees}</p>
-          </div>
-
-          <div className="revised-side-card">
-            <div className="revised-side-card-tag">WHAT HAPPENS NEXT</div>
-            <p className="revised-side-card-text">{activeMeta.happensNext}</p>
-          </div>
-
-          <div className="revised-side-card">
-            <div className="revised-side-card-title">Flow</div>
-            <div className="revised-flow-list">
-              {REVISED_STEPS_METADATA.map((s) => (
-                <div
-                  key={s.stepNumber}
-                  className={`revised-flow-item ${
-                    s.stepNumber === currentStep ? 'revised-flow-item--active' : ''
-                  }`}
-                  onClick={() => setCurrentStep(s.stepNumber)}
-                >
-                  <span className="revised-flow-num">{s.stepNumber}</span>
-                  <span>{s.flowLabel}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </aside>
       </div>
     </div>
   )
