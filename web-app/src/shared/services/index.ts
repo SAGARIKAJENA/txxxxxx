@@ -3,4 +3,5 @@ export * from './postalCirclePrefixes'
 export * from './cityLocalitiesMaster'
 export * from './pincodeService'
 export * from './locationService'
+export * from './apTelanganaDistrictMaster'
 

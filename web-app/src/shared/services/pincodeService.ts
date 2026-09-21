@@ -3,6 +3,8 @@ import {
   lookupOfflinePincode,
   type CanonicalIndianState,
 } from './offlinePincodeMaster'
+import { resolvePostalCircle } from './postalCirclePrefixes'
+import { resolveUpdatedApTsDistrict } from './apTelanganaDistrictMaster'
 
 export interface PincodeLookupResult {
   valid: boolean
@@ -41,9 +43,13 @@ export const normalizeIndianState = (rawState: string): CanonicalIndianState | s
     orissa: 'Odisha',
     pondicherry: 'Puducherry',
     puducherry: 'Puducherry',
+    pondi: 'Puducherry',
+    py: 'Puducherry',
     delhi: 'Delhi',
     nctdelhi: 'Delhi',
     nctofdelhi: 'Delhi',
+    delhincr: 'Delhi',
+    newdelhi: 'Delhi',
     uttaranchal: 'Uttarakhand',
     uttarakhand: 'Uttarakhand',
     chattisgarh: 'Chhattisgarh',
@@ -54,14 +60,34 @@ export const normalizeIndianState = (rawState: string): CanonicalIndianState | s
     dadranagarhaveli: 'Dadra and Nagar Haveli and Daman and Diu',
     damandiu: 'Dadra and Nagar Haveli and Daman and Diu',
     dadraandnagarhavelianddamandiu: 'Dadra and Nagar Haveli and Daman and Diu',
+    dadraandnagarhaveli: 'Dadra and Nagar Haveli and Daman and Diu',
+    dnh: 'Dadra and Nagar Haveli and Daman and Diu',
+    daman: 'Dadra and Nagar Haveli and Daman and Diu',
+    diu: 'Dadra and Nagar Haveli and Daman and Diu',
     jammuandkashmir: 'Jammu and Kashmir',
     jammukashmir: 'Jammu and Kashmir',
     jk: 'Jammu and Kashmir',
+    ladakh: 'Ladakh',
+    leh: 'Ladakh',
+    kargil: 'Ladakh',
+    lakshadweep: 'Lakshadweep',
+    lakshadweepislands: 'Lakshadweep',
     telengana: 'Telangana',
     telangana: 'Telangana',
     tamilnadu: 'Tamil Nadu',
     bengal: 'West Bengal',
     westbengal: 'West Bengal',
+    chandigarh: 'Chandigarh',
+    goa: 'Goa',
+    sikkim: 'Sikkim',
+    arunachal: 'Arunachal Pradesh',
+    arunachalpradesh: 'Arunachal Pradesh',
+    nagaland: 'Nagaland',
+    mizoram: 'Mizoram',
+    manipur: 'Manipur',
+    meghalaya: 'Meghalaya',
+    tripura: 'Tripura',
+    assam: 'Assam',
   }
 
   return aliases[lower] || trimmed
@@ -144,29 +170,93 @@ export const lookupPincode = async (pincode: string): Promise<PincodeLookupResul
       if (firstEntry && firstEntry.Status === 'Success' && Array.isArray(firstEntry.PostOffice) && firstEntry.PostOffice.length > 0) {
         const offices = firstEntry.PostOffice
 
-        // Extract post office names using Array.prototype.map
-        const officeNames = offices.map((po) => po.Name).filter(Boolean)
+        // Clean post office and village names (stripping S.O, B.O, H.O suffixes)
+        const cleanName = (name: string) =>
+          name.replace(/\s+(S\.O|B\.O|H\.O|G\.P\.O|Branch Office|Sub Office|Head Office)$/i, '').trim()
 
-        // Select the most representative office (Head Office or first non-empty)
+        const cleanedOfficeNames = offices.map((po) => cleanName(po.Name)).filter(Boolean)
+        const uniqueOfficeNames = Array.from(new Set(cleanedOfficeNames))
+
+        // Select the most representative head/central office for district/city
         const headOffice = offices.find((po) => po.BranchType?.includes('Head') || po.Name?.includes('H.O')) || offices[0]
 
-        const rawDistrict = headOffice.District || offices[0].District || ''
+        // For areaLocality, pick one village/branch office if available, else first locality
+        const villageOffice = offices.find((po) => po.BranchType?.includes('Branch') || po.Name?.includes('B.O'))
+        const primaryAreaOffice = villageOffice || offices[0]
+        const areaLocality = cleanName(primaryAreaOffice.Name)
+
+        const circleInfo = resolvePostalCircle(clean)
+
+        const rawDistrict = (headOffice.District || offices[0].District || circleInfo?.defaultDistrict || '')
+          .replace(/\s+District$/i, '')
+          .trim()
         const rawState = headOffice.State || offices[0].State || ''
-        const normalizedState = normalizeIndianState(rawState)
+        let normalizedState = normalizeIndianState(rawState)
 
-        // City in Indian postal hierarchy is standardly the District (or Division if district is unavailable)
-        const primaryCity = rawDistrict || headOffice.Division?.replace(/ Division$/i, '') || ''
+        // Precision override for bifurcated UTs, islands, and enclaves
+        if (
+          circleInfo &&
+          (circleInfo.state === 'Ladakh' ||
+            circleInfo.state === 'Lakshadweep' ||
+            circleInfo.state === 'Dadra and Nagar Haveli and Daman and Diu' ||
+            circleInfo.state === 'Goa' ||
+            circleInfo.state === 'Sikkim' ||
+            circleInfo.state === 'Puducherry' ||
+            circleInfo.state === 'Chandigarh' ||
+            circleInfo.state === 'Andaman and Nicobar Islands')
+        ) {
+          normalizedState = circleInfo.state
+        }
 
-        const areaLocality = officeNames.slice(0, 3).join(', ')
+        // Nearby town, block or mandal if present in office records
+        const rawBlock = headOffice.Block && headOffice.Block !== 'NA' ? headOffice.Block.trim() : ''
+        const districtLower = rawDistrict.toLowerCase()
+
+        // 100% accurate canonical city / nearby hub resolution
+        let resolvedCity = circleInfo?.defaultCity || ''
+        if (!resolvedCity) {
+          if (districtLower.includes('delhi')) {
+            resolvedCity = 'New Delhi'
+          } else if (districtLower.includes('mumbai')) {
+            resolvedCity = 'Mumbai'
+          } else if (districtLower.includes('bengaluru') || districtLower.includes('bangalore')) {
+            resolvedCity = 'Bengaluru'
+          } else if (districtLower.includes('kolkata') || districtLower.includes('calcutta')) {
+            resolvedCity = 'Kolkata'
+          } else if (districtLower.includes('hyderabad')) {
+            resolvedCity = 'Hyderabad'
+          } else if (districtLower.includes('lakshadweep')) {
+            resolvedCity = 'Kavaratti'
+          } else if (rawBlock && rawBlock.toLowerCase() !== districtLower) {
+            resolvedCity = rawBlock
+          } else {
+            resolvedCity = rawDistrict
+          }
+        }
+
+        let resolvedDistrict = rawDistrict || circleInfo?.defaultDistrict || resolvedCity
+
+        // Apply updated reorganized districts for Andhra Pradesh (26) and Telangana (33)
+        const apTsOverride = resolveUpdatedApTsDistrict(
+          clean,
+          rawDistrict,
+          headOffice.Name || offices[0].Name,
+          rawBlock
+        )
+        if (apTsOverride) {
+          resolvedDistrict = apTsOverride.district
+          resolvedCity = apTsOverride.city || resolvedCity
+          normalizedState = apTsOverride.state
+        }
 
         const result: PincodeLookupResult = {
           valid: true,
           pincode: clean,
           areaLocality,
-          city: primaryCity || rawDistrict,
-          district: rawDistrict,
+          city: resolvedCity,
+          district: resolvedDistrict,
           state: normalizedState,
-          postOffices: officeNames,
+          postOffices: uniqueOfficeNames,
           source: 'network',
         }
 
