@@ -10,7 +10,6 @@ import {
 import { RegistrationSelect } from '../RegistrationSelect/RegistrationSelect'
 import { AddressLocationButton } from './AddressLocationButton'
 import { AreaLocalitySelect } from './AreaLocalitySelect'
-import { PostalInfoBanner } from './PostalInfoBanner'
 import { CANONICAL_INDIAN_STATES_AND_UTS } from '@shared/services'
 import './RegistrationAddressFields.css'
 
@@ -42,8 +41,6 @@ export interface RegistrationAddressFieldsProps {
   onClearLocationError?: () => void
   onUseCurrentLocation?: () => void
   pincodeStatus?: 'idle' | 'verifying' | 'valid' | 'invalid'
-  showPostalBanner?: boolean
-  onDismissPostalBanner?: () => void
   availablePostOffices?: string[]
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
   onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => void
@@ -57,8 +54,6 @@ export const RegistrationAddressFields: React.FC<RegistrationAddressFieldsProps>
   onClearLocationError,
   onUseCurrentLocation,
   pincodeStatus = 'idle',
-  showPostalBanner = false,
-  onDismissPostalBanner,
   availablePostOffices = [],
   onChange,
   onBlur,
@@ -96,11 +91,6 @@ export const RegistrationAddressFields: React.FC<RegistrationAddressFieldsProps>
             </button>
           )}
         </div>
-      )}
-
-      {/* Dismissible Postal Autofill Banner */}
-      {showPostalBanner && (
-        <PostalInfoBanner onDismiss={onDismissPostalBanner} />
       )}
 
       {/* Address Line 1 (Full Width) */}
