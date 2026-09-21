@@ -18,7 +18,7 @@ const QUICK_SERVICE_LIST: QuickServiceItem[] = [
     id: 'incorporation',
     label: 'Incorporation',
     description: 'Company & LLP Registration',
-    to: '#quick-services',
+    to: routePaths.incorporation.root,
     iconImg: '/assets/images/services/icon-incorporation.png',
   },
   {
@@ -60,7 +60,7 @@ const QUICK_SERVICE_LIST: QuickServiceItem[] = [
     id: 'business',
     label: 'Business',
     description: 'Trade License & Compliance',
-    to: '#quick-services',
+    to: routePaths.business.root,
     iconImg: '/assets/images/services/icon-business.png',
   },
   {

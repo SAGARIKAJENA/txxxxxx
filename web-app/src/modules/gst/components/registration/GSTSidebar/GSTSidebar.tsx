@@ -116,7 +116,7 @@ export const GSTSidebar = ({ step: _step }: GSTSidebarProps) => {
           <p className="gst-sidebar-help-card__text">
             Our experts are here to assist you with your GST registration.
           </p>
-          <Link to={routePaths.chat} className="gst-sidebar-help-card__link">
+          <Link to={routePaths.support} className="gst-sidebar-help-card__link">
             <span>Chat with us</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12" />

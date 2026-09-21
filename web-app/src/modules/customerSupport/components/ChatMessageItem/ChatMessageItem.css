@@ -1,0 +1,121 @@
+.cs-msg-item {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.85rem;
+  animation: cs-msg-fadeIn 0.2s ease-out;
+}
+
+@keyframes cs-msg-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cs-msg-item--user {
+  justify-content: flex-end;
+}
+
+.cs-msg-item--executive {
+  justify-content: flex-start;
+}
+
+.cs-msg-item__bubble {
+  max-width: 76%;
+  padding: 0.85rem 1.15rem 0.65rem 1.15rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  word-break: break-word;
+  line-height: 1.5;
+  font-size: 0.94rem;
+}
+
+/* User Bubble: Premium Emerald/Deep Blue */
+.cs-msg-item--user .cs-msg-item__bubble {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  border-radius: 18px 18px 4px 18px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* Executive Bubble: Crisp Card with Distinct Header */
+.cs-msg-item--executive .cs-msg-item__bubble {
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.cs-msg-item__sender-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #032b69;
+  margin-bottom: 0.25rem;
+}
+
+.cs-msg-item__text {
+  margin: 0;
+  font-size: 0.94rem;
+  white-space: pre-wrap;
+}
+
+.cs-msg-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.cs-msg-item--user .cs-msg-item__meta {
+  justify-content: flex-end;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cs-msg-item--executive .cs-msg-item__meta {
+  justify-content: flex-start;
+  color: #94a3b8;
+}
+
+.cs-msg-item__time {
+  font-size: 0.72rem;
+}
+
+.cs-msg-item__status {
+  font-size: 0.75rem;
+  letter-spacing: -1px;
+}
+
+.cs-msg-item__attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.cs-msg-item__attachment-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+
+.cs-msg-item__attachment-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.cs-msg-item__attachment-name {
+  font-weight: 600;
+}
+
+.cs-msg-item__attachment-size {
+  opacity: 0.75;
+  font-size: 0.75rem;
+}

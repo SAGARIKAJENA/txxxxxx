@@ -8,7 +8,7 @@ import { authFlowService } from '../../services/authFlowService'
 import { lookupPincode, detectCurrentLocation } from '@shared/services'
 import { RegistrationPersonalFields } from '../RegistrationPersonalFields/RegistrationPersonalFields'
 import { RegistrationIdentityFields } from '../RegistrationIdentityFields/RegistrationIdentityFields'
-import { RegistrationAddressFields } from '../RegistrationAddressFields/RegistrationAddressFields'
+import { RegistrationResidentialFields } from '../RegistrationResidentialFields/RegistrationResidentialFields'
 import { RegistrationSecurityFields } from '../RegistrationSecurityFields/RegistrationSecurityFields'
 import {
   checkIsFormValid,
@@ -39,12 +39,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
     email: user?.email || '',
   }))
 
-  React.useEffect(() => {
-    const targetMobile = (locationState?.mobile || user?.mobile || '').replace(/\D/g, '').slice(0, 10)
-    if (targetMobile && !values.mobile) {
-      setValues((prev) => ({ ...prev, mobile: targetMobile }))
-    }
-  }, [locationState?.mobile, user?.mobile, values.mobile])
 
   const [errors, setErrors] = useState<RegistrationFormErrors>({})
   const [touched, setTouched] = useState<Partial<Record<keyof RegistrationFormState, boolean>>>({})
@@ -196,8 +190,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
 
         setValues((current) => ({
           ...current,
-          addressLine1: res.addressLine1 || current.addressLine1,
-          addressLine2: res.addressLine2 || current.addressLine2,
           areaLocality: areaCandidate || current.areaLocality,
           city: res.city || current.city,
           district: res.district || current.district,
@@ -207,8 +199,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
         setShowPostalBanner(true)
         setErrors((prevErr) => ({
           ...prevErr,
-          addressLine1: undefined,
-          addressLine2: undefined,
           city: undefined,
           district: undefined,
           state: undefined,
@@ -293,8 +283,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
       const cleanMobile = values.mobile.replace(/\D/g, '')
 
       const formattedAddress = [
-        values.addressLine1.trim(),
-        values.addressLine2.trim(),
         values.areaLocality.trim(),
         values.city.trim(),
         values.district.trim(),
@@ -316,8 +304,8 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
         fatherSpouseName: values.fatherSpouseName.trim(),
         pan: values.pan.trim(),
         aadhaar: values.aadhaar.trim(),
-        addressLine1: values.addressLine1.trim(),
-        addressLine2: values.addressLine2.trim(),
+        addressLine1: '',
+        addressLine2: '',
         areaLocality: values.areaLocality.trim(),
         city: values.city.trim(),
         district: values.district.trim(),
@@ -344,7 +332,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
       if (onStep1Success) {
         onStep1Success()
       } else {
-        navigate(locationState?.returnTo || routePaths.customerType, { replace: true })
+        navigate(routePaths.customerType, {
+          state: { returnTo: locationState?.returnTo },
+          replace: true,
+        })
       }
     } catch (err) {
       setErrors((prev) => ({
@@ -403,10 +394,8 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
         onBlur={handleBlur}
       />
 
-      <RegistrationAddressFields
+      <RegistrationResidentialFields
         values={{
-          addressLine1: values.addressLine1,
-          addressLine2: values.addressLine2,
           pincode: values.pincode,
           areaLocality: values.areaLocality,
           city: values.city,
@@ -414,8 +403,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
           state: values.state,
         }}
         errors={{
-          addressLine1: touched.addressLine1 ? errors.addressLine1 : undefined,
-          addressLine2: touched.addressLine2 ? errors.addressLine2 : undefined,
           pincode: touched.pincode ? errors.pincode : undefined,
           areaLocality: touched.areaLocality ? errors.areaLocality : undefined,
           city: touched.city ? errors.city : undefined,

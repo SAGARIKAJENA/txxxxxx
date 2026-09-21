@@ -9,8 +9,6 @@ export interface RegistrationFormState {
   pan: string
   aadhaar: string
   mobile: string
-  addressLine1: string
-  addressLine2: string
   areaLocality: string
   city: string
   district: string
@@ -34,8 +32,6 @@ export const INITIAL_REGISTRATION_VALUES: RegistrationFormState = {
   pan: '',
   aadhaar: '',
   mobile: '',
-  addressLine1: '',
-  addressLine2: '',
   areaLocality: '',
   city: '',
   district: '',
@@ -170,22 +166,6 @@ export const validateField = (
       return validateMobileNumber(str) || undefined
     }
 
-    case 'addressLine1': {
-      const trimmed = String(val ?? '').trim()
-      if (!trimmed) return 'Address Line 1 is required'
-      if (trimmed.length < 3) {
-        return 'Please enter a valid house / building, street'
-      }
-      return undefined
-    }
-
-    case 'addressLine2': {
-      const trimmed = String(val ?? '').trim()
-      if (trimmed && trimmed.length < 2) {
-        return 'Please enter a valid landmark / suite'
-      }
-      return undefined
-    }
 
     case 'pincode': {
       const str = String(val ?? '').replace(/\D/g, '')
@@ -288,7 +268,6 @@ const MANDATORY_FIELDS: Array<keyof RegistrationFormState> = [
   'pan',
   'aadhaar',
   'mobile',
-  'addressLine1',
   'city',
   'district',
   'pincode',
@@ -305,7 +284,6 @@ export const checkIsFormValid = (values: RegistrationFormState): boolean => {
 
   const optionalValid =
     (!values.fatherSpouseName || validateField('fatherSpouseName', values) === undefined) &&
-    (!values.addressLine2 || validateField('addressLine2', values) === undefined) &&
     (!values.areaLocality || validateField('areaLocality', values) === undefined)
 
   return mandatoryValid && optionalValid

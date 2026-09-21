@@ -270,13 +270,29 @@ export const lookupPincode = async (pincode: string): Promise<PincodeLookupResul
   // 3. Fallback to Offline Master Dictionary
   const offlineMatch = lookupOfflinePincode(clean)
   if (offlineMatch) {
+    let finalDistrict = offlineMatch.district
+    let finalCity = offlineMatch.city
+    let finalState = offlineMatch.state
+
+    // Apply updated reorganized districts for Andhra Pradesh (26) and Telangana (33)
+    const apTsOverride = resolveUpdatedApTsDistrict(
+      clean,
+      finalDistrict,
+      finalCity
+    )
+    if (apTsOverride) {
+      finalDistrict = apTsOverride.district
+      finalCity = apTsOverride.city || finalCity
+      finalState = apTsOverride.state
+    }
+
     const result: PincodeLookupResult = {
       valid: true,
       pincode: clean,
       areaLocality: offlineMatch.areaLocality,
-      city: offlineMatch.city,
-      district: offlineMatch.district,
-      state: offlineMatch.state,
+      city: finalCity,
+      district: finalDistrict,
+      state: finalState,
       postOffices: offlineMatch.postOffices,
       source: 'offline-master',
     }

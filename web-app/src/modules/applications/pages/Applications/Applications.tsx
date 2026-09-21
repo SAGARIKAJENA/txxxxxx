@@ -13,7 +13,7 @@ import './Applications.css'
 
 export const Applications: React.FC = () => {
   const { data, isLoading } = useApplications()
-  const allApplications = data ?? []
+  const allApplications = useMemo(() => data ?? [], [data])
 
   const [activeCategory, setActiveCategory] = useState<ApplicationCategory>('All')
   const [activeOverviewFilter, setActiveOverviewFilter] = useState<ApplicationOverviewFilter>('ALL')
