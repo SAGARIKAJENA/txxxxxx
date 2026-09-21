@@ -1,0 +1,135 @@
+.cs-input-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  padding: 0.85rem 1.25rem;
+  border-radius: 0 0 16px 16px;
+}
+
+.cs-input-bar__tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 0.4rem;
+}
+
+.cs-input-bar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #1e293b;
+}
+
+.cs-input-bar__chip-icon {
+  width: 14px;
+  height: 14px;
+  color: #032b69;
+}
+
+.cs-input-bar__chip-remove {
+  background: none;
+  border: none;
+  font-size: 1.15rem;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 0 0.2rem;
+  line-height: 1;
+}
+
+.cs-input-bar__chip-remove:hover {
+  color: #ef4444;
+}
+
+.cs-input-bar__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.cs-input-bar__file-input {
+  display: none;
+}
+
+.cs-input-bar__btn-attach {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.cs-input-bar__btn-attach:hover {
+  background-color: #f1f5f9;
+  color: #032b69;
+}
+
+.cs-input-bar__attach-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.cs-input-bar__field-wrapper {
+  flex: 1;
+}
+
+.cs-input-bar__input {
+  width: 100%;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  outline: none;
+  color: #0f172a;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.cs-input-bar__input:focus {
+  border-color: #032b69;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(3, 43, 105, 0.1);
+}
+
+.cs-input-bar__btn-send {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background-color: #e2e8f0;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: not-allowed;
+  transition: all 0.2s ease;
+}
+
+.cs-input-bar__btn-send--active {
+  background: #032b69;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(3, 43, 105, 0.25);
+}
+
+.cs-input-bar__btn-send--active:hover {
+  background: #022254;
+  transform: scale(1.04);
+}
+
+.cs-input-bar__send-icon {
+  width: 18px;
+  height: 18px;
+  transform: translate(-1px, 1px);
+}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { initialsOf } from '@shared/utils'
@@ -74,9 +74,10 @@ export const DashboardLayout = () => {
     return { sectionTitle: 'Overview', label: 'Dashboard' }
   }, [location.pathname])
 
+  const notificationsCount = data?.recentApplications?.length ?? 0
   const badges: Partial<Record<'applications' | 'notifications', string>> = {
     applications: data?.brief ? String(data.brief.activeApplications) : undefined,
-    notifications: '3',
+    notifications: notificationsCount > 0 ? String(notificationsCount) : undefined,
   }
 
   const customerCode = user ? `TE-CUS-${user.id.slice(-5).toUpperCase()}` : ''
@@ -209,12 +210,14 @@ export const DashboardLayout = () => {
           </div>
 
           <div className="shell__header-actions">
-            <button className="shell__icon-button" type="button" aria-label="Notifications" title="Notifications">
+            <NavLink className="shell__icon-button" to={routePaths.notifications} aria-label="Notifications" title="Notifications">
               <BellIcon />
-              <span className="shell__badge-pill" aria-hidden="true">0</span>
-            </button>
+              {badges.notifications && badges.notifications !== '0' && (
+                <span className="shell__badge-pill" aria-hidden="true">{badges.notifications}</span>
+              )}
+            </NavLink>
 
-            <NavLink className="shell__icon-button" to={routePaths.chat} aria-label="Chat with support" title="Messages">
+            <NavLink className="shell__icon-button" to={routePaths.support} aria-label="Chat with support" title="Messages">
               <ChatIcon />
             </NavLink>
 
@@ -227,7 +230,9 @@ export const DashboardLayout = () => {
         </header>
 
         <main className="shell__content">
-          <Outlet />
+          <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>Loading...</div>}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
 

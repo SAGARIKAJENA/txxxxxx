@@ -46,6 +46,12 @@ export const routePaths = {
   },
   loans: '/loans',
   insurance: '/insurance',
+  incorporation: {
+    root: '/incorporation',
+  },
+  business: {
+    root: '/business',
+  },
   payments: '/payments',
   paymentReceipt: (id = ':id') => `/payments/receipt/${id}`,
   paymentReceiptDirect: '/payments/receipt',
@@ -54,8 +60,8 @@ export const routePaths = {
   services: '/services',
   allServices: '/all-services',
   profile: '/profile',
-  chat: '/chat',
   support: '/support',
+  notifications: '/notifications',
   staff: {
     root: '/staff',
     dashboard: '/staff/dashboard',

@@ -9,18 +9,20 @@ import { NotFound } from '../pages/NotFound'
 import { routePaths } from '@core/config'
 import { applicationsRoutes } from '@modules/applications'
 import { authenticationRoutes } from '@modules/authentication'
-import { chatRoutes } from '@modules/chat'
+import { businessRoutes } from '@modules/business'
+import { customerSupportRoutes } from '@modules/customerSupport'
 import { CustomerTypePage } from '@modules/customerType'
 import { dashboardRoutes } from '@modules/dashboard'
 import { documentsRoutes } from '@modules/documents'
 import { gstRoutes } from '@modules/gst'
+import { incorporationRoutes } from '@modules/incorporation'
 import { insuranceRoutes } from '@modules/insurance'
 import { itrRoutes } from '@modules/itr'
 import { loansRoutes } from '@modules/loans'
 import { paymentsRoutes } from '@modules/payments'
 import { profileRoutes } from '@modules/profile'
 import { staffRoutes } from '@modules/staff'
-import { supportRoutes } from '@modules/support'
+import { notificationsRoutes } from '@modules/notifications'
 
 import { CustomerRoute } from './CustomerRoute'
 import { PublicRoute } from './PublicRoute'
@@ -79,6 +81,8 @@ export const routeConfig: RouteObject[] = [
         children: [
           { index: true, element: <Navigate to={routePaths.dashboard} replace /> },
           ...dashboardRoutes,
+          ...incorporationRoutes,
+          ...businessRoutes,
           ...gstRoutes,
           ...itrRoutes,
           ...loansRoutes,
@@ -87,8 +91,8 @@ export const routeConfig: RouteObject[] = [
           ...documentsRoutes,
           ...applicationsRoutes,
           ...profileRoutes,
-          ...chatRoutes,
-          ...supportRoutes,
+          ...customerSupportRoutes,
+          ...notificationsRoutes,
         ],
       },
     ],

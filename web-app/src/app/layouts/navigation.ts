@@ -24,13 +24,13 @@ export const navSections: NavSection[] = [
   {
     title: 'Services',
     items: [
-      { label: 'Incorporation', to: '#incorporation', icon: '🏢' },
+      { label: 'Incorporation', to: routePaths.incorporation.root, icon: '🏢' },
       { label: 'GST', to: routePaths.gst.root, icon: '%' },
       { label: 'ITR & TDS', to: routePaths.itr.root, icon: '₹' },
       { label: 'Projects', to: '#projects', icon: '📋' },
       { label: 'Loans', to: routePaths.loans, icon: '◈' },
       { label: 'Insurance', to: routePaths.insurance, icon: '☂' },
-      { label: 'Business', to: '#business', icon: '💼' },
+      { label: 'Business', to: routePaths.business.root, icon: '💼' },
     ],
   },
   {
@@ -39,7 +39,7 @@ export const navSections: NavSection[] = [
       { label: 'Applications', to: routePaths.applications, icon: '☰', badgeKey: 'applications' },
       { label: 'Document Vault', to: routePaths.documents, icon: '🗎' },
       { label: 'Payments', to: routePaths.payments, icon: '⇄' },
-      { label: 'Notifications', to: routePaths.chat, icon: '🔔', badgeKey: 'notifications' },
+      { label: 'Notifications', to: routePaths.notifications, icon: '🔔', badgeKey: 'notifications' },
       { label: 'Support Chat', to: routePaths.support, icon: '💬' },
       { label: 'Profile', to: routePaths.profile, icon: '☺' },
     ],

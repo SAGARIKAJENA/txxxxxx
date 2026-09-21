@@ -20,6 +20,7 @@ export interface NominatimAddress {
   building?: string
   flats?: string
   office?: string
+  junction?: string
   amenity?: string
   shop?: string
   place?: string

@@ -59,6 +59,7 @@ const mockUser = (mobile: string): AuthUser => {
       email: demoExisting.email,
       mobile: clean,
       role: 'CUSTOMER',
+      customerType: 'INDIVIDUAL',
       permissions: [],
       isProfileComplete: true,
     }
@@ -68,7 +69,7 @@ const mockUser = (mobile: string): AuthUser => {
   if (registeredRecord?.user) {
     return {
       ...registeredRecord.user,
-      isProfileComplete: Boolean(registeredRecord.isRegistered),
+      isProfileComplete: Boolean(registeredRecord.user.isProfileComplete),
     }
   }
 
@@ -78,6 +79,7 @@ const mockUser = (mobile: string): AuthUser => {
     email: '',
     mobile: clean,
     role: 'CUSTOMER',
+    customerType: 'INDIVIDUAL',
     permissions: [],
     isProfileComplete: false,
   }
