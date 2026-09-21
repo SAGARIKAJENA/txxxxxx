@@ -178,6 +178,10 @@
   padding: 1.25rem 0 0.5rem 0;
   width: 100%;
 }
+
+.gst-notice-dropzone {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;

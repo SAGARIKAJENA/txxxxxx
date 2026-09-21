@@ -9,7 +9,7 @@ interface Step6ApplicationReceivedProps {
   selectedAy: string
   returnDetails: OriginalReturnDetails | null
   uploadedDocuments: Partial<Record<DocumentTypeId, UploadedDocument>>
-  onBack: () => void
+  onBack?: () => void
   onDownloadReceipt: () => void
 }
 
@@ -25,7 +25,6 @@ export const Step6ApplicationReceived: React.FC<Step6ApplicationReceivedProps> =
   selectedAy,
   returnDetails,
   uploadedDocuments,
-  onBack,
   onDownloadReceipt,
 }) => {
   const navigate = useNavigate()

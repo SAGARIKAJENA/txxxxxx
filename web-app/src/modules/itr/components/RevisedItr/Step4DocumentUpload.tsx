@@ -121,42 +121,52 @@ export const Step4DocumentUpload: React.FC<Step4DocumentUploadProps> = ({
       <section className="step4-section">
         <h3 className="section-category-title">Required Documents</h3>
         <div className="docs-cards-list">
-          {requiredSlots.map((slot) => (
-            <DocumentCard
-              key={slot.id}
-              id={slot.id}
-              title={slot.title}
-              subtitle={slot.subtitle}
-              isRequired={slot.isRequired}
-              iconBg={slot.iconBg}
-              iconColor={slot.iconColor}
-              icon={renderSlotIcon(slot.id)}
-              uploadedDocument={uploadedDocuments[slot.id]}
-              onUpload={onUpload}
-              onRemove={onRemove}
-            />
-          ))}
+          {requiredSlots.map((slot) => {
+            const doc = uploadedDocuments[slot.id]
+            return (
+              <DocumentCard
+                key={slot.id}
+                id={slot.id}
+                title={slot.title}
+                subtitle={slot.subtitle}
+                isRequired={slot.isRequired}
+                iconBg={slot.iconBg}
+                iconColor={slot.iconColor}
+                icon={renderSlotIcon(slot.id)}
+                isUploaded={Boolean(doc)}
+                fileName={doc?.fileName || doc?.file?.name}
+                file={doc?.file}
+                onUpload={(_, file) => onUpload(slot.id, file)}
+                onRemove={() => onRemove(slot.id)}
+              />
+            )
+          })}
         </div>
       </section>
 
       <section className="step4-section">
         <h3 className="section-category-title">Additional Documents</h3>
         <div className="docs-cards-list">
-          {additionalSlots.map((slot) => (
-            <DocumentCard
-              key={slot.id}
-              id={slot.id}
-              title={slot.title}
-              subtitle={slot.subtitle}
-              isRequired={slot.isRequired}
-              iconBg={slot.iconBg}
-              iconColor={slot.iconColor}
-              icon={renderSlotIcon(slot.id)}
-              uploadedDocument={uploadedDocuments[slot.id]}
-              onUpload={onUpload}
-              onRemove={onRemove}
-            />
-          ))}
+          {additionalSlots.map((slot) => {
+            const doc = uploadedDocuments[slot.id]
+            return (
+              <DocumentCard
+                key={slot.id}
+                id={slot.id}
+                title={slot.title}
+                subtitle={slot.subtitle}
+                isRequired={slot.isRequired}
+                iconBg={slot.iconBg}
+                iconColor={slot.iconColor}
+                icon={renderSlotIcon(slot.id)}
+                isUploaded={Boolean(doc)}
+                fileName={doc?.fileName || doc?.file?.name}
+                file={doc?.file}
+                onUpload={(_, file) => onUpload(slot.id, file)}
+                onRemove={() => onRemove(slot.id)}
+              />
+            )
+          })}
         </div>
       </section>
     </div>

@@ -26,7 +26,6 @@ export const WrongDeductionStep5: React.FC<WrongDeductionStep5Props> = ({
 }) => {
   const originalGross = returnDetails?.salaryOriginal || 812400
   const originalTaxable = returnDetails?.taxableOriginal || 492400
-  const originalDeductions = Math.max(0, originalGross - originalTaxable)
 
   const userTaxableEntered = (deductionCorrections.taxableIncome ?? '').trim() !== ''
   const revisedTaxable = userTaxableEntered
