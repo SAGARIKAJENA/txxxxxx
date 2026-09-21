@@ -61,9 +61,12 @@ export interface AuthUser {
   aadhaar?: string
   addressLine1?: string
   addressLine2?: string
+  areaLocality?: string
   city?: string
+  district?: string
   pincode?: string
   state?: string
+  address?: string
   customerType?: string
 }
 

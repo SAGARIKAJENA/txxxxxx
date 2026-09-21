@@ -8,7 +8,6 @@ import {
   AddressProofIcon,
   BankProofIcon,
   PhotoIcon,
-  CameraButtonIcon,
   CloudUploadIcon,
   CheckCircleIcon,
   ViewEyeIcon,
@@ -20,7 +19,7 @@ import './GSTDocCard.css'
 interface GSTDocCardProps {
   doc: DocumentItem
   isReplacing: boolean
-  onTriggerCamera: (id: string) => void
+  onTriggerCamera?: (id: string) => void
   onTriggerUpload: (id: string) => void
   onStartReplace: (id: string) => void
   onCancelReplace: () => void
@@ -51,7 +50,6 @@ const getDocIcon = (id: string): ReactNode => {
 export const GSTDocCard: FC<GSTDocCardProps> = ({
   doc,
   isReplacing,
-  onTriggerCamera,
   onTriggerUpload,
   onStartReplace,
   onCancelReplace,
@@ -61,15 +59,6 @@ export const GSTDocCard: FC<GSTDocCardProps> = ({
 }) => {
   const [addressWarning, setAddressWarning] = useState(false)
   const showUploadButtons = !doc.isUploaded || isReplacing
-
-  const handleCameraClick = () => {
-    if (doc.id === 'address_proof' && !doc.addressProofType) {
-      setAddressWarning(true)
-      return
-    }
-    setAddressWarning(false)
-    onTriggerCamera(doc.id)
-  }
 
   const handleUploadClick = () => {
     if (doc.id === 'address_proof' && !doc.addressProofType) {
@@ -147,15 +136,6 @@ export const GSTDocCard: FC<GSTDocCardProps> = ({
         <div className="gst-doc-card__right">
           {showUploadButtons ? (
             <div className="gst-doc-upload-btn-group">
-              <button
-                type="button"
-                className="gst-doc-btn-camera"
-                onClick={handleCameraClick}
-              >
-                <CameraButtonIcon />
-                Camera
-              </button>
-
               <button
                 type="button"
                 className="gst-doc-btn-upload-file"

@@ -5,6 +5,7 @@ import type { AuthUser } from '@core/auth'
 import { routePaths } from '@core/config'
 import { useAuthStore } from '@store/index'
 import { authFlowService } from '../../services/authFlowService'
+import { lookupPincode, detectCurrentLocation } from '@shared/services'
 import { RegistrationPersonalFields } from '../RegistrationPersonalFields/RegistrationPersonalFields'
 import { RegistrationIdentityFields } from '../RegistrationIdentityFields/RegistrationIdentityFields'
 import { RegistrationAddressFields } from '../RegistrationAddressFields/RegistrationAddressFields'
@@ -44,11 +45,19 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
       setValues((prev) => ({ ...prev, mobile: targetMobile }))
     }
   }, [locationState?.mobile, user?.mobile, values.mobile])
+
   const [errors, setErrors] = useState<RegistrationFormErrors>({})
   const [touched, setTouched] = useState<Partial<Record<keyof RegistrationFormState, boolean>>>({})
-  const [showLine2, setShowLine2] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+
+  // Address Auto-Fill & Location State
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false)
+  const [locationError, setLocationError] = useState<string | null>(null)
+  const [pincodeStatus, setPincodeStatus] = useState<'idle' | 'verifying' | 'valid' | 'invalid'>('idle')
+  const [showPostalBanner, setShowPostalBanner] = useState(false)
+  const [availablePostOffices, setAvailablePostOffices] = useState<string[]>([])
+
 
   const isFormValid = checkIsFormValid(values)
 
@@ -81,6 +90,43 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
     const nextValues = { ...values, [key]: formatted }
     setValues(nextValues)
 
+    // Trigger instant / debounced PIN code lookup when exactly 6 digits are entered
+    if (key === 'pincode') {
+      if (formatted.length === 6) {
+        setPincodeStatus('verifying')
+        lookupPincode(formatted)
+          .then((res) => {
+            if (res.valid) {
+              setPincodeStatus('valid')
+              setShowPostalBanner(true)
+              setAvailablePostOffices(res.postOffices)
+              setValues((current) => ({
+                ...current,
+                city: res.city || current.city,
+                district: res.district || current.district,
+                state: res.state || current.state,
+                areaLocality: res.areaLocality || current.areaLocality,
+              }))
+              setErrors((prevErr) => ({
+                ...prevErr,
+                pincode: undefined,
+                city: undefined,
+                district: undefined,
+                state: undefined,
+              }))
+            } else {
+              setPincodeStatus('invalid')
+            }
+          })
+          .catch(() => {
+            setPincodeStatus('idle')
+          })
+      } else {
+        setPincodeStatus('idle')
+        setShowPostalBanner(false)
+      }
+    }
+
     if (key === 'aadhaar') {
       // While user enters Aadhaar number, do not show error so user can enter freely
       setErrors((prevErr) => ({ ...prevErr, aadhaar: undefined }))
@@ -98,6 +144,46 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
           return updated
         })
       }
+    }
+  }
+
+  const handleUseCurrentLocation = async () => {
+    setIsDetectingLocation(true)
+    setLocationError(null)
+    try {
+      const res = await detectCurrentLocation()
+      if (res.success) {
+        setValues((current) => ({
+          ...current,
+          addressLine1: res.addressLine1 || current.addressLine1,
+          addressLine2: res.addressLine2 || current.addressLine2,
+          areaLocality: res.areaLocality || current.areaLocality,
+          city: res.city || current.city,
+          district: res.district || current.district,
+          state: res.state || current.state,
+          pincode: res.pincode || current.pincode,
+        }))
+        setShowPostalBanner(true)
+        if (res.pincode && res.pincode.length === 6) {
+          setPincodeStatus('valid')
+        }
+        setErrors((prevErr) => ({
+          ...prevErr,
+          addressLine1: undefined,
+          city: undefined,
+          district: undefined,
+          state: undefined,
+          pincode: undefined,
+        }))
+      } else {
+        setLocationError(
+          res.error || 'Unable to detect location. Please enter your address manually.'
+        )
+      }
+    } catch {
+      setLocationError('Location detection error. Please enter address manually.')
+    } finally {
+      setIsDetectingLocation(false)
     }
   }
 
@@ -153,7 +239,9 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
     if (hasAnyError || !isFormValid) {
       setErrors(newErrors)
       const allTouched: Partial<Record<keyof RegistrationFormState, boolean>> = {}
-      Object.keys(values).forEach((k) => { allTouched[k as keyof RegistrationFormState] = true })
+      Object.keys(values).forEach((k) => {
+        allTouched[k as keyof RegistrationFormState] = true
+      })
       setTouched(allTouched)
       return
     }
@@ -163,6 +251,18 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
 
     try {
       const cleanMobile = values.mobile.replace(/\D/g, '')
+
+      const formattedAddress = [
+        values.addressLine1.trim(),
+        values.addressLine2.trim(),
+        values.areaLocality.trim(),
+        values.city.trim(),
+        values.district.trim(),
+        values.state.trim() + (values.pincode ? ` - ${values.pincode.trim()}` : ''),
+      ]
+        .filter(Boolean)
+        .join(', ')
+
       const user: AuthUser = {
         id: `usr_${Date.now().toString(36)}`,
         fullName: values.fullName.trim(),
@@ -178,9 +278,12 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
         aadhaar: values.aadhaar.trim(),
         addressLine1: values.addressLine1.trim(),
         addressLine2: values.addressLine2.trim(),
+        areaLocality: values.areaLocality.trim(),
         city: values.city.trim(),
+        district: values.district.trim(),
         pincode: values.pincode.trim(),
         state: values.state.trim(),
+        address: formattedAddress,
       }
 
       await authFlowService.saveRegistrationStep1({
@@ -264,19 +367,29 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
         values={{
           addressLine1: values.addressLine1,
           addressLine2: values.addressLine2,
-          city: values.city,
           pincode: values.pincode,
+          areaLocality: values.areaLocality,
+          city: values.city,
+          district: values.district,
           state: values.state,
         }}
         errors={{
           addressLine1: touched.addressLine1 ? errors.addressLine1 : undefined,
           addressLine2: touched.addressLine2 ? errors.addressLine2 : undefined,
-          city: touched.city ? errors.city : undefined,
           pincode: touched.pincode ? errors.pincode : undefined,
+          areaLocality: touched.areaLocality ? errors.areaLocality : undefined,
+          city: touched.city ? errors.city : undefined,
+          district: touched.district ? errors.district : undefined,
           state: touched.state ? errors.state : undefined,
         }}
-        showLine2={showLine2}
-        onToggleLine2={() => setShowLine2(true)}
+        isDetectingLocation={isDetectingLocation}
+        locationError={locationError}
+        onClearLocationError={() => setLocationError(null)}
+        onUseCurrentLocation={handleUseCurrentLocation}
+        pincodeStatus={pincodeStatus}
+        showPostalBanner={showPostalBanner}
+        onDismissPostalBanner={() => setShowPostalBanner(false)}
+        availablePostOffices={availablePostOffices}
         onChange={handleChange}
         onBlur={handleBlur}
       />
