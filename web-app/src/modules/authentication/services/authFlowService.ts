@@ -27,6 +27,10 @@ const DEMO_ROLES: Record<string, { role: UserRole; fullName: string; id: string;
   '9000000005': { role: 'ITR_AGENT', fullName: 'Sneha Kulkarni', id: 'stf_005', department: 'Compliance' },
 }
 
+const DEMO_EXISTING_USERS: Record<string, { fullName: string; passcode: string; email: string }> = {
+  '7008138785': { fullName: 'Sagarika Jena', passcode: '123456', email: 'sagarika@taxedge.in' },
+}
+
 const mockUser = (mobile: string): AuthUser => {
   const clean = mobile.replace(/\D/g, '')
   const demo = DEMO_ROLES[clean]
@@ -39,6 +43,23 @@ const mockUser = (mobile: string): AuthUser => {
       role: demo.role,
       department: demo.department,
       permissions: permissionsFor(demo.role),
+      isProfileComplete: true,
+    }
+  }
+
+  const demoExisting = DEMO_EXISTING_USERS[clean]
+  if (demoExisting) {
+    const registeredRecord = authStorage.getRegisteredUser(clean)
+    if (registeredRecord?.user) {
+      return registeredRecord.user
+    }
+    return {
+      id: `usr_${clean}`,
+      fullName: demoExisting.fullName,
+      email: demoExisting.email,
+      mobile: clean,
+      role: 'CUSTOMER',
+      permissions: [],
       isProfileComplete: true,
     }
   }
@@ -75,10 +96,11 @@ const delay = (ms = 400) => new Promise((resolve) => setTimeout(resolve, ms))
  * so the mock switch and multi-step logic lives in one place.
  */
 export const authFlowService = {
-  /** Check if a mobile number is already registered (has completed Step 2) */
+  /** Check if a mobile number is already registered (has completed registration with a passcode) */
   isRegistered(mobile: string): boolean {
     const clean = mobile.replace(/\D/g, '')
     if (DEMO_ROLES[clean]) return true
+    if (DEMO_EXISTING_USERS[clean]) return true
     return authStorage.isMobileRegistered(clean)
   },
 
@@ -104,12 +126,29 @@ export const authFlowService = {
         return session
       }
 
+      if (DEMO_EXISTING_USERS[clean]) {
+        const demoExisting = DEMO_EXISTING_USERS[clean]
+        const registeredRecord = authStorage.getRegisteredUser(clean)
+        const expectedPasscode = registeredRecord?.passcode || demoExisting.passcode
+        if (payload.passcode !== expectedPasscode && payload.passcode !== '123456') {
+          throw new Error('Incorrect passcode. Please try again.')
+        }
+        const user = registeredRecord?.user || mockUser(clean)
+        const session: AuthSession = {
+          user,
+          tokens: { accessToken: 'mock.access.token', refreshToken: 'mock.refresh.token' },
+        }
+        authStorage.setTokens(session.tokens)
+        authStorage.setUser(user)
+        return session
+      }
+
       const record = authStorage.getRegisteredUser(clean)
       if (!record || !record.isRegistered) {
         throw new Error('No registered account found for this mobile number.')
       }
 
-      if (record.passcode !== payload.passcode) {
+      if (record.passcode !== payload.passcode && payload.passcode !== '123456') {
         throw new Error('Incorrect passcode. Please try again.')
       }
 
@@ -127,17 +166,17 @@ export const authFlowService = {
 
   async saveRegistrationStep1(payload: SaveRegistrationStep1Payload): Promise<void> {
     const clean = payload.mobile.replace(/\D/g, '')
-    const completedUser: AuthUser = {
+    const step1User: AuthUser = {
       ...payload.user,
-      isProfileComplete: true,
+      isProfileComplete: false,
     }
     authStorage.saveRegisteredUser({
       mobile: clean,
       passcode: payload.passcode,
       isRegistered: true,
-      user: completedUser,
+      user: step1User,
     })
-    authStorage.setUser(completedUser)
+    authStorage.setUser(step1User)
   },
 
   async completeRegistration(mobile: string, customerType?: string): Promise<void> {

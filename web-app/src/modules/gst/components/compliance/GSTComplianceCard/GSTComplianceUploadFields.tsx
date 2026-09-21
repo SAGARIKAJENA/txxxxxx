@@ -6,13 +6,7 @@ interface GSTComplianceUploadFieldsProps {
   requestType: string
 }
 
-export const GSTComplianceUploadFields: React.FC<GSTComplianceUploadFieldsProps> = ({ requestType }) => {
-  if (!requestType) return null
-
-  if (requestType === 'Notice Response') {
-    return <GSTNoticeResponseFields />
-  }
-
+const GSTComplianceUploadFieldsInner: React.FC = () => {
   const [purchaseFile, setPurchaseFile] = useState<File | null>(null)
   const [salesFile, setSalesFile] = useState<File | null>(null)
   const [arnReference, setArnReference] = useState('')
@@ -243,6 +237,16 @@ export const GSTComplianceUploadFields: React.FC<GSTComplianceUploadFieldsProps>
       </div>
     </div>
   )
+}
+
+export const GSTComplianceUploadFields: React.FC<GSTComplianceUploadFieldsProps> = ({ requestType }) => {
+  if (!requestType) return null
+
+  if (requestType === 'Notice Response') {
+    return <GSTNoticeResponseFields />
+  }
+
+  return <GSTComplianceUploadFieldsInner />
 }
 
 export default GSTComplianceUploadFields

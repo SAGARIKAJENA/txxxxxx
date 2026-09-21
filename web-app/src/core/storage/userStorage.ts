@@ -1,8 +1,9 @@
 import { localStore } from './localStorage'
-import type { RecentApplication } from '@modules/dashboard/types/dashboard.types'
+import type { RecentApplication, UpcomingDeadlineItem } from '@modules/dashboard/types/dashboard.types'
 
 const USER_APPLICATIONS_KEY = 'taxedge.userApplications'
 const APPLICATION_DRAFTS_KEY = 'taxedge.applicationDrafts'
+const USER_DEADLINES_KEY = 'taxedge.userDeadlines'
 
 export interface ApplicationDraft {
   serviceId: string
@@ -117,6 +118,26 @@ export const userStorage = {
 
   clearAllDrafts(): void {
     localStore.remove(APPLICATION_DRAFTS_KEY)
+  },
+
+  /* Deadlines Management */
+  getUserDeadlines(): UpcomingDeadlineItem[] {
+    return localStore.get<UpcomingDeadlineItem[]>(USER_DEADLINES_KEY) || []
+  },
+
+  saveUserDeadline(deadline: UpcomingDeadlineItem): void {
+    const list = this.getUserDeadlines()
+    const idx = list.findIndex((d) => d.id === deadline.id)
+    if (idx >= 0) {
+      list[idx] = deadline
+    } else {
+      list.push(deadline)
+    }
+    localStore.set(USER_DEADLINES_KEY, list)
+  },
+
+  clearUserDeadlines(): void {
+    localStore.remove(USER_DEADLINES_KEY)
   },
 }
 

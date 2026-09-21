@@ -37,8 +37,16 @@ export const ItrRefundBankSection: React.FC<ItrRefundBankSectionProps> = ({
       setBankFormError('Please enter the bank name.')
       return
     }
-    if (!newAccountNumber.trim() || newAccountNumber.length < 8) {
-      setBankFormError('Please enter a valid bank account number.')
+    if (!newAccountNumber.trim()) {
+      setBankFormError('Please enter the bank account number.')
+      return
+    }
+    if (newAccountNumber.length < 10 || newAccountNumber.length > 15) {
+      setBankFormError('Bank account number must be between 10 and 15 digits only.')
+      return
+    }
+    if (!newConfirmAccountNumber.trim()) {
+      setBankFormError('Please confirm your bank account number.')
       return
     }
     if (newAccountNumber !== newConfirmAccountNumber) {
@@ -199,10 +207,13 @@ export const ItrRefundBankSection: React.FC<ItrRefundBankSectionProps> = ({
               <input
                 id="new-account-number"
                 type="password"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={15}
                 className="itr-text-input itr-mono"
-                placeholder="Enter full account number"
+                placeholder="Enter 10 to 15 digit account number"
                 value={newAccountNumber}
-                onChange={(e) => setNewAccountNumber(e.target.value.replace(/\D/g, ''))}
+                onChange={(e) => setNewAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 15))}
               />
             </div>
 
@@ -213,10 +224,13 @@ export const ItrRefundBankSection: React.FC<ItrRefundBankSectionProps> = ({
               <input
                 id="new-confirm-account"
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={15}
                 className="itr-text-input itr-mono"
-                placeholder="Re-enter account number"
+                placeholder="Re-enter 10 to 15 digit account number"
                 value={newConfirmAccountNumber}
-                onChange={(e) => setNewConfirmAccountNumber(e.target.value.replace(/\D/g, ''))}
+                onChange={(e) => setNewConfirmAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 15))}
               />
             </div>
 

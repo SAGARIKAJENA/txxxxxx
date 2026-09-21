@@ -118,22 +118,7 @@ const buildUserDashboardSummary = (): DashboardSummary => {
     ],
     recentApplications: applications,
     pendingTasks: [],
-    upcomingDeadlinesList: [
-      {
-        id: 'ud-1',
-        title: 'Advance Tax · Next Instalment',
-        dueLabel: 'Due 15 Sep 2026',
-        daysText: 'Statutory date',
-        daysTone: 'info',
-      },
-      {
-        id: 'ud-2',
-        title: 'Annual Income Tax Return',
-        dueLabel: 'Due 30 Sep 2026',
-        daysText: 'Statutory date',
-        daysTone: 'warning',
-      },
-    ],
+    upcomingDeadlinesList: userStorage.getUserDeadlines(),
     recentActivity: [],
     upcomingDeadlines: [],
   }

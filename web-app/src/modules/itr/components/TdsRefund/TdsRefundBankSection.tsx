@@ -91,10 +91,13 @@ export const TdsRefundBankSection: React.FC<TdsRefundBankSectionProps> = ({
             <input
               id="tds-account-number"
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={15}
               className="tds-input"
               value={bankDetails.accountNumber}
-              onChange={(e) => onChange({ accountNumber: e.target.value })}
-              placeholder="Enter account number"
+              onChange={(e) => onChange({ accountNumber: e.target.value.replace(/\D/g, '').slice(0, 15) })}
+              placeholder="Enter 10 to 15 digit account number"
               required
             />
           </div>
@@ -105,10 +108,13 @@ export const TdsRefundBankSection: React.FC<TdsRefundBankSectionProps> = ({
             <input
               id="tds-confirm-account"
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={15}
               className="tds-input"
               value={bankDetails.confirmAccountNumber}
-              onChange={(e) => onChange({ confirmAccountNumber: e.target.value })}
-              placeholder="Confirm account number"
+              onChange={(e) => onChange({ confirmAccountNumber: e.target.value.replace(/\D/g, '').slice(0, 15) })}
+              placeholder="Confirm 10 to 15 digit account number"
               required
             />
           </div>

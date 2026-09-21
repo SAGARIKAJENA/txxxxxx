@@ -191,6 +191,14 @@ export const TdsRefundCustomerIncome: React.FC<TdsRefundCustomerIncomeProps> = (
 
     if (
       bankDetails.accountNumber &&
+      (bankDetails.accountNumber.trim().length < 10 || bankDetails.accountNumber.trim().length > 15)
+    ) {
+      setError('Bank account number must be between 10 and 15 digits only')
+      return
+    }
+
+    if (
+      bankDetails.accountNumber &&
       bankDetails.confirmAccountNumber &&
       bankDetails.accountNumber.trim() !== bankDetails.confirmAccountNumber.trim()
     ) {
@@ -228,6 +236,8 @@ export const TdsRefundCustomerIncome: React.FC<TdsRefundCustomerIncomeProps> = (
     profile.pan?.trim() &&
     bankDetails.accountHolder?.trim() &&
     bankDetails.accountNumber?.trim() &&
+    bankDetails.accountNumber.trim().length >= 10 &&
+    bankDetails.accountNumber.trim().length <= 15 &&
     bankDetails.confirmAccountNumber?.trim() &&
     bankDetails.accountNumber.trim() === bankDetails.confirmAccountNumber.trim() &&
     bankDetails.ifsc?.trim() &&

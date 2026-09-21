@@ -21,7 +21,11 @@ import type {
 } from '../../validation/registrationValidation'
 import './RegistrationForm.css'
 
-export const RegistrationForm: React.FC = () => {
+export interface RegistrationFormProps {
+  onStep1Success?: () => void
+}
+
+export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Success }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const locationState = location.state as { returnTo?: string; mobile?: string } | null
@@ -166,7 +170,7 @@ export const RegistrationForm: React.FC = () => {
         mobile: cleanMobile,
         role: 'CUSTOMER',
         permissions: [],
-        isProfileComplete: true,
+        isProfileComplete: false,
         gender: values.gender,
         dob: values.dob,
         fatherSpouseName: values.fatherSpouseName.trim(),
@@ -194,7 +198,11 @@ export const RegistrationForm: React.FC = () => {
         },
       })
 
-      navigate(locationState?.returnTo || routePaths.dashboard, { replace: true })
+      if (onStep1Success) {
+        onStep1Success()
+      } else {
+        navigate(locationState?.returnTo || routePaths.customerType, { replace: true })
+      }
     } catch (err) {
       setErrors((prev) => ({
         ...prev,

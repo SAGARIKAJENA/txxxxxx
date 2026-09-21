@@ -1,43 +1,29 @@
 import React, { useMemo, useState } from 'react'
 import { StepActionBar } from '@shared/components'
-import { calculateRegimeTax } from '../FileItr/FileItr'
+import { calculateItrTax, type ItrTaxCalculationResult } from './itrTaxCalculator'
 import { ItrStepHeaderStepper } from './ItrStepHeaderStepper'
 import { ItrOldRegimeDeductionsForm } from './ItrOldRegimeDeductionsForm'
-import type { SalaryDetails, DeductionsData } from './itrFiling.constants'
+import type {
+  SalaryDetails,
+  HousePropertyDetails,
+  BusinessDetails,
+  CapitalGainsDetails,
+  OtherSourcesDetails,
+  DeductionsData,
+} from './itrFiling.constants'
 import './ItrStepRegimeDeductionsView.css'
 
 export type { DeductionsData }
-
-export interface ItrRegimeCalculation {
-  newRegime: {
-    grossTotalIncome: number
-    totalDeductions: number
-    taxableIncome: number
-    taxPayable: number
-  }
-  oldRegime: {
-    grossTotalIncome: number
-    totalDeductions: number
-    taxableIncome: number
-    taxPayable: number
-  }
-}
 
 /* ==========================================================================
    1. Regime Compare Table
    ========================================================================== */
 interface ItrRegimeCompareTableProps {
-  calculation: ItrRegimeCalculation
-  grossIncome: number
-  ded80C: number
-  ded80D: number
+  calculation: ItrTaxCalculationResult
 }
 
 const ItrRegimeCompareTable: React.FC<ItrRegimeCompareTableProps> = ({
   calculation,
-  grossIncome,
-  ded80C,
-  ded80D,
 }) => {
   const formatInr = (num: number): string => num.toLocaleString('en-IN')
 
@@ -73,16 +59,16 @@ const ItrRegimeCompareTable: React.FC<ItrRegimeCompareTableProps> = ({
             <tr>
               <td>Standard Deduction</td>
               <td className="itr-table-col-right">
-                - ₹ {grossIncome > 0 ? formatInr(calculation.newRegime.totalDeductions) : '0'}
+                - ₹ {formatInr(calculation.newRegime.totalDeductions)}
               </td>
               <td className="itr-table-col-right">
-                - ₹ {grossIncome > 0 ? '50,000' : '0'}
+                - ₹ {formatInr(calculation.oldRegime.grossTotalIncome > 0 && calculation.salaryIncome > 0 ? Math.min(calculation.salaryIncome, 50000) : 0)}
               </td>
             </tr>
             <tr>
               <td>Chapter VI-A Deductions</td>
               <td className="itr-table-col-right itr-text-not-applicable">Not Applicable</td>
-              <td className="itr-table-col-right">- ₹ {formatInr(ded80C + ded80D)}</td>
+              <td className="itr-table-col-right">- ₹ {formatInr(calculation.totalChapterVIDeductions)}</td>
             </tr>
             <tr>
               <td>Net Taxable Income</td>
@@ -177,7 +163,12 @@ export interface ItrStepRegimeDeductionsViewProps {
   onBack: () => void
   onNext: () => void
   onSaveDraft?: () => void
+  selectedSources?: string[]
   salaryDetails: SalaryDetails
+  housePropertyDetails?: HousePropertyDetails
+  businessDetails?: BusinessDetails
+  capitalGainsDetails?: CapitalGainsDetails
+  otherSourcesDetails?: OtherSourcesDetails
   selectedRegime: 'new' | 'old' | ''
   onRegimeChange: (regime: 'new' | 'old') => void
   deductions: DeductionsData
@@ -188,7 +179,12 @@ export const ItrStepRegimeDeductionsView: React.FC<ItrStepRegimeDeductionsViewPr
   onBack,
   onNext,
   onSaveDraft,
+  selectedSources = [],
   salaryDetails,
+  housePropertyDetails,
+  businessDetails,
+  capitalGainsDetails,
+  otherSourcesDetails,
   selectedRegime,
   onRegimeChange,
   deductions,
@@ -211,30 +207,27 @@ export const ItrStepRegimeDeductionsView: React.FC<ItrStepRegimeDeductionsViewPr
     hasExistingDeductions ? true : null
   )
 
-  const parseAmount = (val: string): number => {
-    if (!val) return 0
-    const clean = val.replace(/[^0-9.]/g, '')
-    const parsed = parseFloat(clean)
-    return isNaN(parsed) ? 0 : parsed
-  }
-
-  const grossIncome = parseAmount(salaryDetails.grossSalary)
-  const ded80C =
-    parseAmount(deductions.section80C) ||
-    parseAmount(deductions.epf) +
-      parseAmount(deductions.ppf) +
-      parseAmount(deductions.lic) +
-      parseAmount(deductions.elss) +
-      parseAmount(deductions.childrenTuition) +
-      parseAmount(deductions.housingLoanPrincipal)
-  const ded80D =
-    parseAmount(deductions.section80D) ||
-    parseAmount(deductions.selfInsurance) + parseAmount(deductions.parentInsurance)
-  const tds = parseAmount(salaryDetails.tdsDeducted)
-
   const calculation = useMemo(() => {
-    return calculateRegimeTax(grossIncome, ded80C, ded80D, tds)
-  }, [grossIncome, ded80C, ded80D, tds])
+    return calculateItrTax({
+      selectedSources,
+      salaryDetails,
+      housePropertyDetails,
+      businessDetails,
+      capitalGainsDetails,
+      otherSourcesDetails,
+      selectedRegime,
+      deductions,
+    })
+  }, [
+    selectedSources,
+    salaryDetails,
+    housePropertyDetails,
+    businessDetails,
+    capitalGainsDetails,
+    otherSourcesDetails,
+    selectedRegime,
+    deductions,
+  ])
 
   const handleChange = (field: keyof DeductionsData, val: string | boolean) => {
     onDeductionsChange({ ...deductions, [field]: val })
@@ -263,12 +256,7 @@ export const ItrStepRegimeDeductionsView: React.FC<ItrStepRegimeDeductionsViewPr
     <div className="itr-step-view-container">
       <ItrStepHeaderStepper currentStepId={3} />
 
-      <ItrRegimeCompareTable
-        calculation={calculation}
-        grossIncome={grossIncome}
-        ded80C={ded80C}
-        ded80D={ded80D}
-      />
+      <ItrRegimeCompareTable calculation={calculation} />
 
       <ItrRegimeCardsSelector
         selectedRegime={selectedRegime}

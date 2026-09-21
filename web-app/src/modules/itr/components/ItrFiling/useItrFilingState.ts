@@ -3,6 +3,7 @@ import { routePaths } from '@core/config'
 import { useAppStore } from '@store/index'
 import { userStorage } from '@core/storage/userStorage'
 import { useDraftBlocker } from '@shared/hooks'
+import { calculateItrTax } from './itrTaxCalculator'
 import {
   DEFAULT_PREVIOUS_ITR,
   DEFAULT_SALARY_DETAILS,
@@ -198,16 +199,39 @@ export function useItrFilingState() {
     const generatedRef = `ITR-${year}-${randomCode}`
 
     setTimeout(() => {
+      const taxCalc = calculateItrTax({
+        selectedSources,
+        salaryDetails,
+        housePropertyDetails,
+        businessDetails,
+        capitalGainsDetails,
+        otherSourcesDetails,
+        selectedRegime,
+        deductions,
+      })
+
+      const hasBusiness = selectedSources.includes('business')
+      const hasCapital = selectedSources.includes('capital_gains')
+      const formType = hasBusiness ? 'ITR-3' : hasCapital ? 'ITR-2' : 'ITR-1'
+
+      const sourceLabel = selectedSources.includes('salary')
+        ? (salaryDetails.employerName || 'Salaried')
+        : selectedSources.includes('business')
+        ? 'Business'
+        : selectedSources.includes('capital_gains')
+        ? 'Capital Gains'
+        : 'Income Tax Return'
+
       userStorage.saveUserApplication({
         id: `app-itr-${Date.now()}`,
         code: generatedRef,
-        title: `ITR-1 Filing — ${assessmentYear}`,
-        meta: `${salaryDetails.employerName || 'Salaried'} · ₹${salaryDetails.grossSalary || '0'}`,
+        title: `${formType} Filing — ${assessmentYear}`,
+        meta: `${sourceLabel} · ₹${taxCalc.grossTotalIncome.toLocaleString('en-IN')}`,
         statusLabel: 'Submitted',
         statusTone: 'info',
         progress: 25,
         icon: '📄',
-        to: routePaths.dashboard,
+        to: `/applications/track/${generatedRef}`,
       })
 
       userStorage.deleteDraft('itr-filing')

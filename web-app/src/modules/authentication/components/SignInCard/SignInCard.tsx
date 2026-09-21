@@ -24,7 +24,6 @@ export const SignInCard: React.FC<SignInCardProps> = ({
 }) => {
   const navigate = useNavigate()
   const setUser = useAuthStore((state) => state.setUser)
-  const signOut = useAuthStore((state) => state.signOut)
 
   const [authMode, setAuthMode] = useState<AuthMode>(initialMode)
   const [mobile, setMobile] = useState(initialMobile)
@@ -75,6 +74,15 @@ export const SignInCard: React.FC<SignInCardProps> = ({
         otp,
       })
 
+      // Check if user is an existing registered user who already created a passcode
+      const isExistingUser = authFlowService.isRegistered(cleanMobile)
+      if (isExistingUser) {
+        // For existing users: OTP is verified, now prompt for passcode on the same card
+        setAuthMode('passcode')
+        return
+      }
+
+      // For new users: only OTP is required
       authStorage.setTokens(session.tokens)
       authStorage.setUser(session.user)
       setUser(session.user)
@@ -118,8 +126,6 @@ export const SignInCard: React.FC<SignInCardProps> = ({
     setError(null)
     setIsSubmitting(true)
     try {
-      authStorage.removeRegisteredUser(cleanMobile)
-      signOut()
       await authFlowService.sendOtp(cleanMobile)
       setAuthMode('otp')
     } catch (err) {
@@ -141,7 +147,7 @@ export const SignInCard: React.FC<SignInCardProps> = ({
 
   const getSubtitle = () => {
     if (authMode === 'otp') return 'Enter the 6-digit OTP sent to your mobile number'
-    if (authMode === 'passcode') return 'Enter your passcode to sign in to your account'
+    if (authMode === 'passcode') return 'Enter your 6-digit passcode to sign in'
     return 'Sign in to continue to your TaxEdge account'
   }
 

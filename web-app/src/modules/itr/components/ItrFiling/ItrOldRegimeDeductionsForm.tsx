@@ -31,10 +31,12 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
     <input
       id={id}
       type="text"
+      inputMode="numeric"
+      maxLength={14}
       className="itr-input-currency"
       placeholder={placeholder}
       value={value}
-      onChange={(e) => onChange(field, e.target.value)}
+      onChange={(e) => onChange(field, e.target.value.replace(/[^0-9,]/g, ''))}
     />
   </div>
 )

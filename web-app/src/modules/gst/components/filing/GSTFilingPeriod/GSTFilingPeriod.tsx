@@ -74,8 +74,8 @@ export const GSTFilingPeriod: React.FC<GSTFilingPeriodProps> = ({
     if (!frequency) newErrors.frequency = 'Please select a filing frequency'
     if (!financialYear) newErrors.financialYear = 'Please select a financial year'
     if (!returnPeriod) newErrors.returnPeriod = 'Please select a return period'
-    if (!gstin.trim() || gstin.trim().length < 15) {
-      newErrors.gstin = 'Please enter a valid 15-character GSTIN'
+    if (!gstin.trim() || gstin.trim().length < 3) {
+      newErrors.gstin = 'Please enter a valid GSTIN'
     }
     if (filingType === 'regular') {
       if (!returnType) newErrors.returnType = 'Please select a return type'
@@ -105,7 +105,7 @@ export const GSTFilingPeriod: React.FC<GSTFilingPeriodProps> = ({
     frequency &&
     financialYear &&
     returnPeriod &&
-    gstin.trim().length >= 15 &&
+    gstin.trim().length >= 3 &&
     (
       filingType === 'nil' ||
       (filingType === 'regular' && returnType && calculationMethod)

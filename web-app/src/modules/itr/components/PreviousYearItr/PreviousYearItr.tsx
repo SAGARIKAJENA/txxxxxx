@@ -13,13 +13,10 @@ export const PreviousYearItr: React.FC = () => {
   const [page, setPage] = useState<1 | 2>(1)
   const [selectedAy, setSelectedAy] = useState<string>('AY 2024-25')
 
-  const selectedItem =
-    PREVIOUS_AY_OPTIONS.find((opt) => opt.ay === selectedAy) ||
-    PREVIOUS_AY_OPTIONS[1]
+  const selectedItem = PREVIOUS_AY_OPTIONS.find((opt) => opt.ay === selectedAy) || PREVIOUS_AY_OPTIONS[1]
 
   const handleSelectAy = (opt: AssessmentYearOptionItem) => {
-    if (!opt.isEligible) return
-    setSelectedAy(opt.ay)
+    if (opt.isEligible) setSelectedAy(opt.ay)
   }
 
   const handlePage1Continue = () => {
@@ -27,10 +24,7 @@ export const PreviousYearItr: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handlePage2Continue = () => {
-    // Navigate directly into the ITR Filing workflow with the selected previous AY
-    navigate(routePaths.itr.itrFiling)
-  }
+  const handlePage2Continue = () => navigate(routePaths.itr.itrFiling)
 
   const handleBack = () => {
     if (page === 2) {
@@ -43,46 +37,26 @@ export const PreviousYearItr: React.FC = () => {
 
   return (
     <div className="prev-itr-page-container">
-      {/* --- Top Header --- */}
       <header className="prev-itr-header">
         <div className="prev-itr-header-titles">
           <h1 className="prev-itr-header-title">Previous Year ITR</h1>
           <p className="prev-itr-header-subtitle">
-            {page === 1
-              ? 'Select the assessment year you want to file.'
-              : `${selectedAy} Filing Overview`}
+            {page === 1 ? 'Select the assessment year you want to file.' : `${selectedAy} Filing Overview`}
           </p>
         </div>
       </header>
 
       {page === 1 ? (
-        /* ==========================================================================
-           PAGE 1: Choose Assessment Year (2-Column Desktop Grid)
-           ========================================================================== */
         <div className="prev-itr-page1-grid">
-          {/* Left Column: Assessment Year Options */}
           <div className="prev-itr-page1-main">
-            {/* Hero Banner */}
             <section className="prev-itr-hero-card">
-              <div className="prev-itr-hero-icon-box">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="3" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                  <rect x="7" y="14" width="3" height="3" fill="currentColor" />
-                  <rect x="14" y="14" width="3" height="3" fill="currentColor" />
-                </svg>
-              </div>
+              <div className="prev-itr-hero-icon-box">📅</div>
               <div className="prev-itr-hero-text-wrap">
                 <h2 className="prev-itr-hero-title">Choose Assessment Year</h2>
-                <p className="prev-itr-hero-desc">
-                  Only assessment years that are eligible for filing are shown below.
-                </p>
+                <p className="prev-itr-hero-desc">Only assessment years eligible for filing are shown below.</p>
               </div>
             </section>
 
-            {/* Assessment Year Options List */}
             <div className="prev-itr-ay-list" role="radiogroup" aria-label="Assessment Year Selection">
               {PREVIOUS_AY_OPTIONS.map((opt) => {
                 const isSelected = selectedAy === opt.ay && opt.isEligible
@@ -94,12 +68,8 @@ export const PreviousYearItr: React.FC = () => {
 
                 return (
                   <div
-                    key={opt.id}
-                    className={cardClass}
-                    onClick={() => handleSelectAy(opt)}
-                    role="radio"
-                    aria-checked={isSelected}
-                    tabIndex={opt.isEligible ? 0 : -1}
+                    key={opt.id} className={cardClass} onClick={() => handleSelectAy(opt)}
+                    role="radio" aria-checked={isSelected} tabIndex={opt.isEligible ? 0 : -1}
                     onKeyDown={(e) => {
                       if (opt.isEligible && (e.key === 'Enter' || e.key === ' ')) {
                         e.preventDefault()
@@ -108,14 +78,7 @@ export const PreviousYearItr: React.FC = () => {
                     }}
                   >
                     <div className="prev-itr-ay-card-left">
-                      <div className="prev-itr-ay-icon-wrap">
-                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="4" width="18" height="18" rx="2" />
-                          <line x1="16" y1="2" x2="16" y2="6" />
-                          <line x1="8" y1="2" x2="8" y2="6" />
-                          <line x1="3" y1="10" x2="21" y2="10" />
-                        </svg>
-                      </div>
+                      <div className="prev-itr-ay-icon-wrap">📋</div>
                       <div className="prev-itr-ay-info">
                         <strong className="prev-itr-ay-title">{opt.ay}</strong>
                         <span className="prev-itr-ay-subtitle">{opt.subtitle}</span>
@@ -128,11 +91,7 @@ export const PreviousYearItr: React.FC = () => {
                       ) : isSelected ? (
                         <>
                           <span className="prev-itr-badge prev-itr-badge--selected">Selected</span>
-                          <div className="prev-itr-check-circle" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          </div>
+                          <div className="prev-itr-check-circle" aria-hidden="true">✔</div>
                         </>
                       ) : (
                         <span className="prev-itr-badge prev-itr-badge--eligible">Eligible</span>
@@ -144,102 +103,48 @@ export const PreviousYearItr: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Summary Card & Eligibility */}
           <aside className="prev-itr-page1-sidebar">
             <div className="prev-itr-summary-card">
               <div className="prev-itr-summary-header">
                 <span className="prev-itr-summary-title">Selected Filing Details</span>
                 <span className="prev-itr-badge prev-itr-badge--selected">{selectedAy}</span>
               </div>
-
               <div className="prev-itr-summary-rows">
-                <div className="prev-itr-summary-row">
-                  <span className="prev-itr-summary-label">Return Type</span>
-                  <span className="prev-itr-summary-value">Updated Return (ITR-U)</span>
-                </div>
-                <div className="prev-itr-summary-row">
-                  <span className="prev-itr-summary-label">Filing Status</span>
-                  <span className="prev-itr-summary-value" style={{ color: '#059669' }}>Eligible for E-Filing</span>
-                </div>
-                <div className="prev-itr-summary-row">
-                  <span className="prev-itr-summary-label">Validity Window</span>
-                  <span className="prev-itr-summary-value">{selectedItem.subtitle.replace('Updated Return (ITR-U) can be filed ', '')}</span>
-                </div>
+                <div className="prev-itr-summary-row"><span className="prev-itr-summary-label">Return Type</span><span className="prev-itr-summary-value">Updated Return (ITR-U)</span></div>
+                <div className="prev-itr-summary-row"><span className="prev-itr-summary-label">Filing Status</span><span className="prev-itr-summary-value" style={{ color: '#059669' }}>Eligible for E-Filing</span></div>
+                <div className="prev-itr-summary-row"><span className="prev-itr-summary-label">Validity Window</span><span className="prev-itr-summary-value">{selectedItem.subtitle.replace('Updated Return (ITR-U) can be filed ', '')}</span></div>
               </div>
-
-              <button
-                type="button"
-                className="prev-itr-continue-btn"
-                onClick={handlePage1Continue}
-              >
+              <button type="button" className="prev-itr-continue-btn" onClick={handlePage1Continue}>
                 Continue to Application →
               </button>
             </div>
 
-            {/* Eligibility Information Blue Callout */}
             <div className="prev-itr-info-box">
-              <div className="prev-itr-info-icon-circle" aria-hidden="true">
-                i
-              </div>
+              <div className="prev-itr-info-icon-circle" aria-hidden="true">i</div>
               <div className="prev-itr-info-content">
                 <h3 className="prev-itr-info-title">Eligibility Information</h3>
-                <p className="prev-itr-info-desc">
-                  Assessment years are displayed based on the current Income Tax Department filing rules. Closed years cannot be selected.
-                </p>
+                <p className="prev-itr-info-desc">Assessment years are displayed based on current Income Tax Department rules. Closed years cannot be selected.</p>
               </div>
             </div>
           </aside>
         </div>
       ) : (
-        /* ==========================================================================
-           PAGE 2: Same Questions, Different Assessment Year (3-Column Step Grid)
-           ========================================================================== */
         <div className="prev-itr-page2-container">
-          {/* Pill Tag */}
           <div className="prev-itr-pill-tag">
             <span style={{ color: '#ea580c', fontWeight: 800 }}>•</span> Belated Return • {selectedAy}
           </div>
 
-          {/* Intro Heading */}
           <div className="prev-itr-intro-group">
-            <h2 className="prev-itr-intro-title">
-              Same Questions, Different Assessment Year
-            </h2>
-            <p className="prev-itr-intro-desc">
-              Your personal details, income information, and deductions are collected exactly like the regular ITR Filing process. Only the assessment year changes.
-            </p>
+            <h2 className="prev-itr-intro-title">Same Questions, Different Assessment Year</h2>
+            <p className="prev-itr-intro-desc">Your personal details, income information, and deductions are collected exactly like the regular ITR Filing process. Only the assessment year changes.</p>
           </div>
 
-          {/* 3 Step Preview Cards in 3-Column Grid */}
           <div className="prev-itr-step-cards-grid">
             {PREVIOUS_ITR_PREVIEW_STEPS.map((step) => (
               <div key={step.stepNumber} className="prev-itr-step-card">
                 <div className="prev-itr-step-card-header">
                   <div className="prev-itr-step-card-left">
-                    <div className="prev-itr-step-card-icon-box">
-                      {step.stepNumber === 1 && (
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="2" y="7" width="20" height="14" rx="2" />
-                          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-                        </svg>
-                      )}
-                      {step.stepNumber === 2 && (
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                          <polyline points="14 2 14 8 20 8" />
-                          <line x1="16" y1="13" x2="8" y2="13" />
-                          <line x1="16" y1="17" x2="8" y2="17" />
-                        </svg>
-                      )}
-                      {step.stepNumber === 3 && (
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="4" y="2" width="16" height="20" rx="2" />
-                          <line x1="8" y1="6" x2="16" y2="6" />
-                          <line x1="16" y1="14" x2="16" y2="18" />
-                          <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" />
-                        </svg>
-                      )}
-                    </div>
+                    <div className="prev-itr-step-card-icon-box">{step.stepNumber === 1 ? '👤' : step.stepNumber === 2 ? '💰' : '📄'}</div>
                     <strong className="prev-itr-step-card-title">{step.title}</strong>
                   </div>
                   <span className="prev-itr-step-card-badge">{step.tag}</span>
@@ -249,35 +154,17 @@ export const PreviousYearItr: React.FC = () => {
             ))}
           </div>
 
-          {/* No Need to Rebuild Blue Callout (Full Width) */}
           <div className="prev-itr-info-box">
-            <div className="prev-itr-info-icon-circle" aria-hidden="true">
-              i
-            </div>
+            <div className="prev-itr-info-icon-circle" aria-hidden="true">i</div>
             <div className="prev-itr-info-content">
               <h3 className="prev-itr-info-title">No Need to Rebuild</h3>
-              <p className="prev-itr-info-desc">
-                The Previous Year ITR workflow reuses the same forms as the regular ITR Filing process. Only the filing year and return type are different.
-              </p>
+              <p className="prev-itr-info-desc">The Previous Year ITR workflow reuses the same forms as regular ITR Filing. Only the filing year and return type are different.</p>
             </div>
           </div>
 
-          {/* Single Row Action Buttons Below Notice */}
           <div className="prev-itr-action-row">
-            <button
-              type="button"
-              className="prev-itr-btn-back"
-              onClick={handleBack}
-            >
-              ← Back to Year Selection
-            </button>
-            <button
-              type="button"
-              className="prev-itr-btn-submit"
-              onClick={handlePage2Continue}
-            >
-              Start {selectedAy} Filing →
-            </button>
+            <button type="button" className="prev-itr-btn-back" onClick={handleBack}>← Back to Year Selection</button>
+            <button type="button" className="prev-itr-btn-submit" onClick={handlePage2Continue}>Start {selectedAy} Filing →</button>
           </div>
         </div>
       )}

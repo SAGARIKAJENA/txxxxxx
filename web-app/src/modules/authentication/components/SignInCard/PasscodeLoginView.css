@@ -85,11 +85,35 @@
   width: 100%;
 }
 
+.passcode-login-form__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+}
+
 .passcode-login-form__label {
   font-size: 0.8125rem;
   font-weight: 600;
   color: #172033;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0;
+}
+
+.passcode-login-form__toggle-visibility-btn {
+  background: transparent;
+  border: none;
+  color: #0b5ed7;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: color 150ms ease;
+  font-family: inherit;
+}
+
+.passcode-login-form__toggle-visibility-btn:hover {
+  color: #f97316;
+  text-decoration: none;
 }
 
 .passcode-login-form__boxes {
