@@ -74,10 +74,12 @@ export const ItrSalaryIncomeCard: React.FC<ItrSalaryIncomeCardProps> = ({
             <input
               id="salary-gross-amount"
               type="text"
+              inputMode="numeric"
+              maxLength={14}
               className="itr-input-currency"
               placeholder="e.g. 8,50,000"
               value={salaryDetails.grossSalary}
-              onChange={(e) => handleSalaryChange('grossSalary', e.target.value)}
+              onChange={(e) => handleSalaryChange('grossSalary', e.target.value.replace(/[^0-9,]/g, ''))}
             />
           </div>
         </div>
@@ -88,10 +90,12 @@ export const ItrSalaryIncomeCard: React.FC<ItrSalaryIncomeCardProps> = ({
             <input
               id="salary-exempt-amount"
               type="text"
+              inputMode="numeric"
+              maxLength={14}
               className="itr-input-currency"
               placeholder="e.g. 50,000"
               value={salaryDetails.exemptAllowances}
-              onChange={(e) => handleSalaryChange('exemptAllowances', e.target.value)}
+              onChange={(e) => handleSalaryChange('exemptAllowances', e.target.value.replace(/[^0-9,]/g, ''))}
             />
           </div>
         </div>
@@ -104,10 +108,12 @@ export const ItrSalaryIncomeCard: React.FC<ItrSalaryIncomeCardProps> = ({
           <input
             id="salary-tds-amount"
             type="text"
+            inputMode="numeric"
+            maxLength={14}
             className="itr-input-currency"
             placeholder="e.g. 45,000"
             value={salaryDetails.tdsDeducted}
-            onChange={(e) => handleSalaryChange('tdsDeducted', e.target.value)}
+            onChange={(e) => handleSalaryChange('tdsDeducted', e.target.value.replace(/[^0-9,]/g, ''))}
           />
         </div>
       </div>
@@ -188,10 +194,12 @@ export const ItrHousePropertyCard: React.FC<ItrHousePropertyCardProps> = ({
           <input
             id="hp-loan-interest"
             type="text"
+            inputMode="numeric"
+            maxLength={14}
             className="itr-input-currency"
             placeholder={housePropertyDetails.propertyType === 'self_occupied' ? 'Max ₹2,00,000 for self-occupied' : 'e.g. 1,50,000'}
             value={housePropertyDetails.homeLoanInterest}
-            onChange={(e) => handleHousePropertyChange('homeLoanInterest', e.target.value)}
+            onChange={(e) => handleHousePropertyChange('homeLoanInterest', e.target.value.replace(/[^0-9,]/g, ''))}
           />
         </div>
       </div>
@@ -206,10 +214,12 @@ export const ItrHousePropertyCard: React.FC<ItrHousePropertyCardProps> = ({
               <input
                 id="hp-rent"
                 type="text"
+                inputMode="numeric"
+                maxLength={14}
                 className="itr-input-currency"
                 placeholder="e.g. 1,20,000"
                 value={housePropertyDetails.annualRentReceived}
-                onChange={(e) => handleHousePropertyChange('annualRentReceived', e.target.value)}
+                onChange={(e) => handleHousePropertyChange('annualRentReceived', e.target.value.replace(/[^0-9,]/g, ''))}
               />
             </div>
           </div>
@@ -220,10 +230,12 @@ export const ItrHousePropertyCard: React.FC<ItrHousePropertyCardProps> = ({
               <input
                 id="hp-tax"
                 type="text"
+                inputMode="numeric"
+                maxLength={14}
                 className="itr-input-currency"
                 placeholder="e.g. 5,000"
                 value={housePropertyDetails.municipalTaxPaid}
-                onChange={(e) => handleHousePropertyChange('municipalTaxPaid', e.target.value)}
+                onChange={(e) => handleHousePropertyChange('municipalTaxPaid', e.target.value.replace(/[^0-9,]/g, ''))}
               />
             </div>
           </div>
@@ -349,10 +361,12 @@ export const ItrBusinessIncomeCard: React.FC<ItrBusinessIncomeCardProps> = ({
             <input
               id="biz-turnover"
               type="text"
+              inputMode="numeric"
+              maxLength={14}
               className="itr-input-currency"
               placeholder="e.g. 25,00,000"
               value={businessDetails.grossTurnover}
-              onChange={(e) => handleBusinessChange('grossTurnover', e.target.value)}
+              onChange={(e) => handleBusinessChange('grossTurnover', e.target.value.replace(/[^0-9,]/g, ''))}
             />
           </div>
         </div>
@@ -363,10 +377,12 @@ export const ItrBusinessIncomeCard: React.FC<ItrBusinessIncomeCardProps> = ({
             <input
               id="biz-profit"
               type="text"
+              inputMode="numeric"
+              maxLength={14}
               className="itr-input-currency"
               placeholder="e.g. 2,00,000"
               value={businessDetails.declaredNetProfit}
-              onChange={(e) => handleBusinessChange('declaredNetProfit', e.target.value)}
+              onChange={(e) => handleBusinessChange('declaredNetProfit', e.target.value.replace(/[^0-9,]/g, ''))}
             />
           </div>
         </div>
@@ -452,10 +468,12 @@ export const ItrCapitalGainsCard: React.FC<ItrCapitalGainsCardProps> = ({
             <input
               id="cg-stcg"
               type="text"
+              inputMode="numeric"
+              maxLength={14}
               className="itr-input-currency"
               placeholder="e.g. 30,000"
               value={capitalGainsDetails.stcg}
-              onChange={(e) => handleCapitalGainsChange('stcg', e.target.value)}
+              onChange={(e) => handleCapitalGainsChange('stcg', e.target.value.replace(/[^0-9,]/g, ''))}
             />
           </div>
         </div>
@@ -466,10 +484,12 @@ export const ItrCapitalGainsCard: React.FC<ItrCapitalGainsCardProps> = ({
             <input
               id="cg-ltcg"
               type="text"
+              inputMode="numeric"
+              maxLength={14}
               className="itr-input-currency"
               placeholder="e.g. 50,000"
               value={capitalGainsDetails.ltcg}
-              onChange={(e) => handleCapitalGainsChange('ltcg', e.target.value)}
+              onChange={(e) => handleCapitalGainsChange('ltcg', e.target.value.replace(/[^0-9,]/g, ''))}
             />
           </div>
         </div>
@@ -530,10 +550,12 @@ export const ItrOtherSourcesCard: React.FC<ItrOtherSourcesCardProps> = ({
             <input
               id="os-interest"
               type="text"
+              inputMode="numeric"
+              maxLength={14}
               className="itr-input-currency"
               placeholder="e.g. 12,000"
               value={otherSourcesDetails.interestIncome}
-              onChange={(e) => handleOtherSourcesChange('interestIncome', e.target.value)}
+              onChange={(e) => handleOtherSourcesChange('interestIncome', e.target.value.replace(/[^0-9,]/g, ''))}
             />
           </div>
         </div>
@@ -544,10 +566,12 @@ export const ItrOtherSourcesCard: React.FC<ItrOtherSourcesCardProps> = ({
             <input
               id="os-dividend"
               type="text"
+              inputMode="numeric"
+              maxLength={14}
               className="itr-input-currency"
               placeholder="e.g. 5,000"
               value={otherSourcesDetails.dividendIncome}
-              onChange={(e) => handleOtherSourcesChange('dividendIncome', e.target.value)}
+              onChange={(e) => handleOtherSourcesChange('dividendIncome', e.target.value.replace(/[^0-9,]/g, ''))}
             />
           </div>
         </div>
@@ -560,10 +584,12 @@ export const ItrOtherSourcesCard: React.FC<ItrOtherSourcesCardProps> = ({
           <input
             id="os-other"
             type="text"
+            inputMode="numeric"
+            maxLength={14}
             className="itr-input-currency"
             placeholder="e.g. 0"
             value={otherSourcesDetails.otherIncome}
-            onChange={(e) => handleOtherSourcesChange('otherIncome', e.target.value)}
+            onChange={(e) => handleOtherSourcesChange('otherIncome', e.target.value.replace(/[^0-9,]/g, ''))}
           />
         </div>
       </div>

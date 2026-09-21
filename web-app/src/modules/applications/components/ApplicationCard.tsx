@@ -11,7 +11,10 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ item }) => {
   const navigate = useNavigate()
 
   const handleClick = () => {
-    if (item.to) {
+    const targetId = item.reference || item.id
+    if (targetId) {
+      navigate(`/applications/track/${encodeURIComponent(targetId)}`)
+    } else if (item.to) {
       navigate(item.to)
     }
   }

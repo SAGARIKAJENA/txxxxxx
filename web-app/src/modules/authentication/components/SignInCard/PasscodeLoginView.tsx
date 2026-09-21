@@ -26,6 +26,7 @@ export const PasscodeLoginView: React.FC<PasscodeLoginViewProps> = ({
   onGoogleLogin,
 }) => {
   const [digits, setDigits] = useState<string[]>(Array.from({ length: PASSCODE_LENGTH }, () => ''))
+  const [showPasscode, setShowPasscode] = useState(false)
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
 
   // Auto-focus first digit box on mount
@@ -79,7 +80,7 @@ export const PasscodeLoginView: React.FC<PasscodeLoginViewProps> = ({
     <form className="passcode-login-form" onSubmit={handleSubmit} noValidate>
       {/* Top Section: Mobile Number + Passcode Boxes */}
       <div className="passcode-login-form__top-section">
-        {/* Mobile Number Display matching Reference Image 2 */}
+        {/* Mobile Number Display matching Reference Image */}
         <div className="passcode-login-form__mobile-field">
           <div className="passcode-login-form__mobile-label-row">
             <label className="passcode-login-form__label">Mobile Number</label>
@@ -104,9 +105,18 @@ export const PasscodeLoginView: React.FC<PasscodeLoginViewProps> = ({
 
         {/* Passcode 6-Box Input Field */}
         <div className="passcode-login-form__field">
-          <label className="passcode-login-form__label">
-            Enter 6-Digit Passcode
-          </label>
+          <div className="passcode-login-form__label-row">
+            <label className="passcode-login-form__label">
+              Enter 6–Digit Passcode
+            </label>
+            <button
+              type="button"
+              className="passcode-login-form__toggle-visibility-btn"
+              onClick={() => setShowPasscode((prev) => !prev)}
+            >
+              {showPasscode ? 'Hide' : 'Show'}
+            </button>
+          </div>
 
           <div className="passcode-login-form__boxes" onPaste={handlePaste}>
             {digits.map((digit, idx) => (
@@ -115,7 +125,7 @@ export const PasscodeLoginView: React.FC<PasscodeLoginViewProps> = ({
                 ref={(el) => {
                   inputRefs.current[idx] = el
                 }}
-                type="password"
+                type={showPasscode ? 'text' : 'password'}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 maxLength={1}
@@ -125,7 +135,7 @@ export const PasscodeLoginView: React.FC<PasscodeLoginViewProps> = ({
                 value={digit}
                 onChange={(e) => handleDigitChange(idx, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(idx, e)}
-                autoComplete="current-password"
+                autoComplete="off"
                 aria-label={`Digit ${idx + 1} of 6`}
               />
             ))}
@@ -157,7 +167,7 @@ export const PasscodeLoginView: React.FC<PasscodeLoginViewProps> = ({
           }`}
           disabled={!isPasscodeComplete || isSubmitting}
         >
-          <span>{isSubmitting ? 'Signing in...' : 'Login'}</span>
+          <span>{isSubmitting ? 'Verifying...' : 'Verify Passcode'}</span>
         </button>
 
         <div className="passcode-login-form__divider">

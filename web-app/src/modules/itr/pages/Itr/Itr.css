@@ -4,10 +4,22 @@
 
 
 /* 1. Hero Banner */
-.itr-hero-banner { background: linear-gradient(135deg, #091a32 0%, #173877 55%, #f97316 100%); border-radius: 20px; padding: 2.25rem; color: #ffffff; box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.35); position: relative; overflow: hidden; }
-.itr-hero-banner::after { content: ''; position: absolute; right: -40px; top: -40px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(249, 115, 22, 0.25) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
-.itr-hero-banner__title { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.5rem 0; line-height: 1.2; }
-.itr-hero-banner__subtitle { font-size: 0.95rem; opacity: 0.92; line-height: 1.5; max-width: 680px; margin: 0 0 1.5rem 0; }
+.itr-hero-banner {
+  background-color: #032b69;
+  background-image: url('/assets/images/dashboard-banner-bg.png');
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  border-radius: 16px;
+  padding: 2rem 2.25rem;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(3, 43, 105, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+.itr-hero-banner::after { display: none; }
+.itr-hero-banner__title { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.5rem 0; line-height: 1.2; color: #ffffff; }
+.itr-hero-banner__subtitle { font-size: 0.95rem; opacity: 0.92; line-height: 1.6; max-width: 680px; margin: 0; color: rgba(241, 245, 249, 0.92); }
 .itr-hero-banner__actions { display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap; }
 .itr-hero-btn-accent { background: #ea580c; color: #ffffff; font-weight: 700; font-size: 0.9rem; padding: 0.65rem 1.3rem; border-radius: 9999px; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4); }
 .itr-hero-btn-accent:hover { background: #f97316; transform: translateY(-2px); }
@@ -42,18 +54,6 @@
 .itr-service-card__start-btn { background: transparent; border: none; color: #f97316; font-size: 0.875rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.65rem; border-radius: 8px; transition: all 0.2s ease; }
 .itr-service-card:hover .itr-service-card__start-btn { color: #ea580c; background: #fff7ed; transform: translateX(3px); }
 
-/* 4. TDS Refund Estimator */
-.itr-estimator-section { background: #ffffff; border-radius: 18px; border: 1px solid #e2e8f0; padding: 1.75rem; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); display: flex; flex-direction: column; gap: 1.25rem; }
-.itr-estimator-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
-.itr-estimator-title { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0; }
-.itr-estimator-subtitle { font-size: 0.875rem; color: #64748b; margin: 0; }
-.itr-estimator-cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-@media (max-width: 768px) { .itr-estimator-cards-row { grid-template-columns: 1fr; } }
-.itr-estimator-box { background: #f8fafc; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; }
-.itr-estimator-box__label { font-size: 0.8rem; font-weight: 600; color: #64748b; }
-.itr-estimator-box__value { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin: 0; }
-.itr-estimator-box__value--refund { color: #059669; }
-
 /* Responsive Adjustments for Mobile View */
 @media (max-width: 640px) {
   .itr-hero-banner { padding: 1.5rem 1.25rem; border-radius: 16px; }
@@ -61,6 +61,4 @@
   .itr-hero-banner__subtitle { font-size: 0.875rem; margin-bottom: 1.25rem; }
   .itr-hero-banner__actions { flex-direction: column; align-items: stretch; }
   .itr-hero-btn-accent { width: 100%; text-align: center; }
-  .itr-estimator-header { flex-direction: column; align-items: stretch; }
-  .itr-estimator-header .itr-hero-btn-accent { width: 100%; text-align: center; }
 }

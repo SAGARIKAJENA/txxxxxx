@@ -1,45 +1,169 @@
 .reg-card {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0;
+  background: #ffffff;
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(0, 8, 25, 0.42), 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: clamp(1.75rem, 2.5vh, 2.35rem) clamp(1.75rem, 2.5vw, 2.65rem);
   width: 100%;
-  max-width: clamp(580px, 46vw, 840px);
+  max-width: 760px;
   box-sizing: border-box;
   margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  transition: all 250ms ease;
+  border: 1px solid rgba(255, 255, 255, 0.85);
 }
 
 .reg-card__accent-line {
-  display: none;
+  display: block;
+  width: 44px;
+  height: 3.5px;
+  background: linear-gradient(90deg, #ff6a00 0%, #ff8c33 100%);
+  border-radius: 999px;
+  margin-bottom: 0.85rem;
+}
+
+.reg-card__step-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.reg-card__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: none;
+  color: #0b5ed7;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: all 150ms ease;
+  font-family: inherit;
+}
+
+.reg-card__back-btn:hover {
+  color: #f97316;
+  transform: translateX(-2px);
+}
+
+.reg-card__back-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.reg-card__step-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.65rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+  margin-bottom: 0.45rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.reg-card__step-badge--step2 {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #ea580c;
+  margin-bottom: 0;
 }
 
 .reg-card__header {
-  margin-bottom: clamp(16px, 1.8vh, 24px);
+  margin-bottom: clamp(14px, 1.6vh, 20px);
 }
 
 .reg-card__title {
-  margin: 0 0 6px 0;
-  font-size: clamp(1.5rem, 1.75vw, 2rem);
-  font-weight: 700;
-  color: #172033;
+  margin: 0 0 4px 0;
+  font-size: clamp(1.4rem, 1.65vw, 1.9rem);
+  font-weight: 800;
+  color: #0b1f44;
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
 
 .reg-card__subtitle {
   margin: 0;
-  font-size: clamp(0.84375rem, 0.9vw, 1rem);
+  font-size: clamp(0.8125rem, 0.85vw, 0.9375rem);
   color: #64748b;
   font-weight: 400;
 }
 
+.reg-card__error-banner {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.reg-card__customer-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.75rem;
+}
+
+.reg-card__step2-footer {
+  display: flex;
+  width: 100%;
+}
+
+.reg-card__submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  font-family: inherit;
+  transition: all 200ms ease;
+}
+
+.reg-card__submit-btn--active {
+  background: linear-gradient(135deg, #ff6a00 0%, #ea580c 100%);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.35);
+}
+
+.reg-card__submit-btn--active:hover {
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.45);
+}
+
+.reg-card__submit-btn--disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
 @media (max-width: 640px) {
   .reg-card {
-    padding: 0;
+    border-radius: 20px;
+    padding: 1.35rem 1.15rem;
+    box-shadow: 0 12px 36px rgba(0, 8, 25, 0.3);
   }
 
   .reg-card__title {
     font-size: 1.35rem;
+  }
+
+  .reg-card__customer-type-grid {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
   }
 }

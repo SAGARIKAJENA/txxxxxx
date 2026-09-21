@@ -16,10 +16,8 @@ import {
   type FilingBankAccount,
 } from './itrFiling.constants'
 import { ItrStepHeaderStepper } from './ItrStepHeaderStepper'
+import { calculateItrTax, formatINR } from './itrTaxCalculator'
 import './ItrStepReviewView.css'
-
-const formatINR = (val: number) =>
-  val === 0 ? '₹ 0' : `₹ ${val.toLocaleString('en-IN')}`
 
 /* ==========================================================================
    1. Review Left Column (Summary, Details & Docs)
@@ -328,35 +326,6 @@ export interface ItrStepReviewViewProps {
   isSubmitting?: boolean
 }
 
-function computeOldRegimeTax(taxableIncome: number): number {
-  if (taxableIncome <= 250000) return 0
-  let tax = 0
-  if (taxableIncome > 1000000) { tax += (taxableIncome - 1000000) * 0.3; taxableIncome = 1000000 }
-  if (taxableIncome > 500000) { tax += (taxableIncome - 500000) * 0.2; taxableIncome = 500000 }
-  if (taxableIncome > 250000) { tax += (taxableIncome - 250000) * 0.05 }
-  return Math.round(tax)
-}
-
-function computeNewRegimeTax(taxableIncome: number): number {
-  if (taxableIncome <= 400000) return 0
-  let tax = 0
-  const slabs = [
-    [400000, 800000, 0.05],
-    [800000, 1200000, 0.10],
-    [1200000, 1600000, 0.15],
-    [1600000, 2000000, 0.20],
-    [2000000, 2400000, 0.25],
-    [2400000, Infinity, 0.30],
-  ]
-  for (const [low, high, rate] of slabs) {
-    if (taxableIncome > low) {
-      tax += (Math.min(taxableIncome, high) - low) * rate
-    }
-  }
-  if (taxableIncome <= 1200000) return 0
-  return Math.round(tax)
-}
-
 export const ItrStepReviewView: React.FC<ItrStepReviewViewProps> = ({
   onBack,
   onSubmit,
@@ -380,63 +349,28 @@ export const ItrStepReviewView: React.FC<ItrStepReviewViewProps> = ({
   const authUser = useAuthStore((state) => state.user)
   const profile = getStoredTaxpayerProfile(authUser)
 
-  // ── Income Computation ───────────────────────────────────────────────────────
-  const grossSalary = parseFloat(salaryDetails.grossSalary || '0') || 0
-  const hpIncome = housePropertyDetails && selectedSources.includes('house_property')
-    ? (parseFloat(housePropertyDetails.annualRentReceived || '0') || 0) -
-      (parseFloat(housePropertyDetails.municipalTaxPaid || '0') || 0) -
-      (parseFloat(housePropertyDetails.homeLoanInterest || '0') || 0)
-    : 0
-  const bizIncome = businessDetails && selectedSources.includes('business')
-    ? parseFloat(businessDetails.declaredNetProfit || '0') || 0
-    : 0
-  const stcg = capitalGainsDetails && selectedSources.includes('capital_gains')
-    ? parseFloat(capitalGainsDetails.stcg || '0') || 0
-    : 0
-  const ltcg = capitalGainsDetails && selectedSources.includes('capital_gains')
-    ? parseFloat(capitalGainsDetails.ltcg || '0') || 0
-    : 0
-  const otherIncome = otherSourcesDetails && selectedSources.includes('other_sources')
-    ? (parseFloat(otherSourcesDetails.interestIncome || '0') || 0) +
-      (parseFloat(otherSourcesDetails.dividendIncome || '0') || 0) +
-      (parseFloat(otherSourcesDetails.otherIncome || '0') || 0)
-    : 0
-
-  const grossTotalIncome = grossSalary + Math.max(0, hpIncome) + bizIncome + stcg + ltcg + otherIncome
-
-  // ── Deductions Computation ───────────────────────────────────────────────────
-  const stdDeduction = selectedRegime === 'new' ? 75000 : 50000
-  const section80C = selectedRegime === 'old'
-    ? Math.min(
-        [deductions.epf, deductions.ppf, deductions.lic, deductions.elss,
-         deductions.childrenTuition, deductions.housingLoanPrincipal]
-          .reduce((acc, v) => acc + (parseFloat(v || '0') || 0), 0),
-        150000
-      )
-    : 0
-  const section80D = selectedRegime === 'old'
-    ? Math.min(
-        (parseFloat(deductions.selfInsurance || '0') || 0) +
-        (parseFloat(deductions.parentInsurance || '0') || 0),
-        deductions.parentsSeniorCitizen ? 75000 : 50000
-      )
-    : 0
-  const homeLoan24b = selectedRegime === 'old'
-    ? Math.min(parseFloat(deductions.homeLoanInterest24b || '0') || 0, 200000)
-    : 0
-
-  const totalChapterVIDeductions = section80C + section80D + homeLoan24b
-
-  // ── Tax Computation ──────────────────────────────────────────────────────────
-  const netTaxableIncome = Math.max(0, grossTotalIncome - stdDeduction - totalChapterVIDeductions)
-  const grossTax = selectedRegime === 'new'
-    ? computeNewRegimeTax(netTaxableIncome)
-    : computeOldRegimeTax(netTaxableIncome)
-  const cess = Math.round(grossTax * 0.04)
-  const totalTaxLiability = grossTax + cess
-  const tdsCredits = parseFloat(salaryDetails.tdsDeducted || '0') || 0
-  const netTaxPayable = Math.max(0, totalTaxLiability - tdsCredits)
-  const refundDue = Math.max(0, tdsCredits - totalTaxLiability)
+  // ── Unified Dynamic Tax Computation ───────────────────────────────────────────
+  const {
+    grossTotalIncome,
+    stdDeduction,
+    totalChapterVIDeductions,
+    netTaxableIncome,
+    grossTax,
+    cess,
+    totalTaxLiability,
+    tdsCredits,
+    netTaxPayable,
+    refundDue,
+  } = calculateItrTax({
+    selectedSources,
+    salaryDetails,
+    housePropertyDetails,
+    businessDetails,
+    capitalGainsDetails,
+    otherSourcesDetails,
+    selectedRegime,
+    deductions,
+  })
 
   const hasCapital = selectedSources.includes('capital_gains')
   const hasBusiness = selectedSources.includes('business')

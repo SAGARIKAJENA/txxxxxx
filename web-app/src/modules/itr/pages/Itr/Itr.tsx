@@ -1,8 +1,6 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import {
-  calculateTdsRefund,
   DEFAULT_ITR_STATS,
   ITR_SERVICES_LIST,
 } from '../../services/itrData'
@@ -21,10 +19,6 @@ import './Itr.css'
 
 export const Itr = () => {
   const navigate = useNavigate()
-  const [totalTdsInput, setTotalTdsInput] = useState<number>(46800)
-
-  // Dynamic functional calculation
-  const tdsCalculation = calculateTdsRefund(totalTdsInput)
 
   const viewRouteMap: Record<ItrViewKey, string> = {
     overview: routePaths.itr.root,
@@ -132,67 +126,6 @@ export const Itr = () => {
             </div>
           </div>
         ))}
-      </section>
-
-      {/* 4. TDS Refund Estimator */}
-      <section className="itr-estimator-section">
-        <div className="itr-estimator-header">
-          <div>
-            <h2 className="itr-estimator-title">TDS refund estimator</h2>
-            <p className="itr-estimator-subtitle">
-              Our fee for a refund case is 15% of the refund recovered — nothing if there is no refund.
-            </p>
-          </div>
-          <button
-            type="button"
-            className="itr-hero-btn-accent"
-            style={{ fontSize: '0.85rem', padding: '0.5rem 1.15rem' }}
-            onClick={() => navigate(routePaths.itr.tdsRefundEstimator)}
-          >
-            Open Interactive Calculator →
-          </button>
-        </div>
-
-        <div className="itr-estimator-cards-row">
-          <div className="itr-estimator-box">
-            <span className="itr-estimator-box__label">Total TDS deducted</span>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-              <p className="itr-estimator-box__value">
-                ₹{tdsCalculation.totalTdsDeducted.toLocaleString('en-IN')}
-              </p>
-              <button
-                type="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#f97316',
-                  cursor: 'pointer',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                }}
-                onClick={() =>
-                  setTotalTdsInput((prev) => (prev === 46800 ? 68000 : 46800))
-                }
-              >
-                (Toggle Demo)
-              </button>
-            </div>
-          </div>
-
-          <div className="itr-estimator-box">
-            <span className="itr-estimator-box__label">Estimated refund</span>
-            <p className="itr-estimator-box__value itr-estimator-box__value--refund">
-              ₹{tdsCalculation.estimatedRefund.toLocaleString('en-IN')}
-            </p>
-          </div>
-
-          <div className="itr-estimator-box">
-            <span className="itr-estimator-box__label">TaxEdge fee at 15%</span>
-            <p className="itr-estimator-box__value">
-              ₹{tdsCalculation.taxEdgeFee.toLocaleString('en-IN')}
-            </p>
-          </div>
-        </div>
       </section>
     </div>
   )

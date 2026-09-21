@@ -204,7 +204,7 @@ export const useGstRegistrationState = () => {
       statusTone: 'info',
       progress: 25,
       icon: '📄',
-      to: routePaths.gst.root,
+      to: `/applications/track/${result.applicationRef || `GST-${new Date().getFullYear()}-0001`}`,
     })
   }
 

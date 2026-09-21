@@ -18,11 +18,15 @@
 }
 
 .tax-comp-hero {
-  background: linear-gradient(135deg, #0b1f3c 0%, #1e40af 60%, #ea580c 100%);
+  background-color: #032b69;
+  background-image: url('/assets/images/dashboard-banner-bg.png');
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
   border-radius: 16px;
   padding: 2rem;
   color: #ffffff;
-  box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.25);
+  box-shadow: 0 6px 20px rgba(3, 43, 105, 0.2);
 }
 
 .tax-comp-hero__badge {
