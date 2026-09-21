@@ -1,12 +1,17 @@
-import type { FC, SVGProps } from 'react'
+import type { FC, SVGProps } from "react";
 
 export interface IconProps extends SVGProps<SVGSVGElement> {
-  size?: number
-  className?: string
-  strokeWidth?: number
+  size?: number;
+  className?: string;
+  strokeWidth?: number;
 }
 
-export const BarChartIcon: FC<IconProps> = ({ size = 20, className = '', strokeWidth = 2, ...props }) => (
+export const BarChartIcon: FC<IconProps> = ({
+  size = 20,
+  className = "",
+  strokeWidth = 2,
+  ...props
+}) => (
   <svg
     viewBox="0 0 24 24"
     width={size}
@@ -24,9 +29,14 @@ export const BarChartIcon: FC<IconProps> = ({ size = 20, className = '', strokeW
     <line x1="12" y1="20" x2="12" y2="4" />
     <line x1="6" y1="20" x2="6" y2="14" />
   </svg>
-)
+);
 
-export const RupeeIcon: FC<IconProps> = ({ size = 20, className = '', strokeWidth = 2, ...props }) => (
+export const RupeeIcon: FC<IconProps> = ({
+  size = 20,
+  className = "",
+  strokeWidth = 2,
+  ...props
+}) => (
   <svg
     viewBox="0 0 24 24"
     width={size}
@@ -45,9 +55,14 @@ export const RupeeIcon: FC<IconProps> = ({ size = 20, className = '', strokeWidt
     <path d="M6 13l8.5 8" />
     <path d="M6 13h3a4 4 0 0 0 0-8" />
   </svg>
-)
+);
 
-export const ClockIcon: FC<IconProps> = ({ size = 20, className = '', strokeWidth = 2, ...props }) => (
+export const ClockIcon: FC<IconProps> = ({
+  size = 20,
+  className = "",
+  strokeWidth = 2,
+  ...props
+}) => (
   <svg
     viewBox="0 0 24 24"
     width={size}
@@ -64,9 +79,14 @@ export const ClockIcon: FC<IconProps> = ({ size = 20, className = '', strokeWidt
     <circle cx="12" cy="12" r="10" />
     <polyline points="12 6 12 12 16 14" />
   </svg>
-)
+);
 
-export const FileTextIcon: FC<IconProps> = ({ size = 20, className = '', strokeWidth = 2, ...props }) => (
+export const FileTextIcon: FC<IconProps> = ({
+  size = 20,
+  className = "",
+  strokeWidth = 2,
+  ...props
+}) => (
   <svg
     viewBox="0 0 24 24"
     width={size}
@@ -86,9 +106,14 @@ export const FileTextIcon: FC<IconProps> = ({ size = 20, className = '', strokeW
     <line x1="16" y1="17" x2="8" y2="17" />
     <polyline points="10 9 9 9 8 9" />
   </svg>
-)
+);
 
-export const ShieldAlertIcon: FC<IconProps> = ({ size = 20, className = '', strokeWidth = 2, ...props }) => (
+export const ShieldAlertIcon: FC<IconProps> = ({
+  size = 20,
+  className = "",
+  strokeWidth = 2,
+  ...props
+}) => (
   <svg
     viewBox="0 0 24 24"
     width={size}
@@ -106,9 +131,14 @@ export const ShieldAlertIcon: FC<IconProps> = ({ size = 20, className = '', stro
     <line x1="12" y1="8" x2="12" y2="12" />
     <line x1="12" y1="16" x2="12.01" y2="16" />
   </svg>
-)
+);
 
-export const CalendarIcon: FC<IconProps> = ({ size = 20, className = '', strokeWidth = 2, ...props }) => (
+export const CalendarIcon: FC<IconProps> = ({
+  size = 20,
+  className = "",
+  strokeWidth = 2,
+  ...props
+}) => (
   <svg
     viewBox="0 0 24 24"
     width={size}
@@ -127,4 +157,4 @@ export const CalendarIcon: FC<IconProps> = ({ size = 20, className = '', strokeW
     <line x1="8" y1="2" x2="8" y2="6" />
     <line x1="3" y1="10" x2="21" y2="10" />
   </svg>
-)
+);

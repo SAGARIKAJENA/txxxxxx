@@ -20,4 +20,6 @@ export { CompleteProfileModal } from './CompleteProfileModal/CompleteProfileModa
 export type { CompleteProfileModalProps } from './CompleteProfileModal/CompleteProfileModal'
 export * from './StepActionBar'
 export * from './PaymentCheckout'
+export { DocumentCard } from './DocumentCard/DocumentCard'
+export type { DocumentCardProps } from './DocumentCard/DocumentCard'
 

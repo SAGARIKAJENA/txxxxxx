@@ -1,8 +1,8 @@
-export { FileItr } from './FileItr/FileItr.tsx'
-export { ItrFiling } from './ItrFiling/ItrFiling.tsx'
-export { TdsRefund } from './TdsRefund/TdsRefund.tsx'
-export { PreviousYearItr } from './PreviousYearItr/PreviousYearItr.tsx'
-export { RevisedItr } from './RevisedItr/RevisedItr.tsx'
-export { TaxNoticeAssistance } from './TaxNoticeAssistance/TaxNoticeAssistance.tsx'
-export { TdsRefundEstimator } from './TdsRefundEstimator/TdsRefundEstimator.tsx'
-export { TaxComputation } from './TaxComputation/TaxComputation.tsx'
+export { FileItr } from "./FileItr/FileItr.tsx";
+export { ItrFiling } from "./ItrFiling/ItrFiling.tsx";
+export { TdsRefund } from "./TdsRefund/TdsRefund.tsx";
+export { PreviousYearItr } from "./PreviousYearItr/PreviousYearItr.tsx";
+export { RevisedItr } from "./RevisedItr/RevisedItr.tsx";
+export { TaxNoticeAssistance } from "./TaxNoticeAssistance/TaxNoticeAssistance.tsx";
+export { TdsRefundEstimator } from "./TdsRefundEstimator/TdsRefundEstimator.tsx";
+export { TaxComputation } from "./TaxComputation/TaxComputation.tsx";
