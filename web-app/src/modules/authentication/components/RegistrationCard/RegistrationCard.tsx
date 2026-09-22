@@ -61,7 +61,7 @@ export const RegistrationCard: React.FC = () => {
               disabled={!selectedCustomerType}
               onClick={handleProceedToStep2}
             >
-              <span>Proceed to Step 2 →</span>
+              <span>Continue</span>
             </button>
           </footer>
         </>
