@@ -1,5 +1,0 @@
-export { NoticeStep1View, type Step1Props } from './NoticeStep1View'
-export { NoticeStep2View } from './NoticeStep2View'
-export { NoticeStep3View, type Step3Props } from './NoticeStep3View'
-export { NoticeStep4View, type Step4Props } from './NoticeStep4View'
-export { NoticeStep5View } from './NoticeStep5View'
