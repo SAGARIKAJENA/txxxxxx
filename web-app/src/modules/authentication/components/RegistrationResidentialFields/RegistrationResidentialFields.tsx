@@ -13,6 +13,7 @@ import { CANONICAL_INDIAN_STATES_AND_UTS } from '@shared/services'
 import './RegistrationResidentialFields.css'
 
 export interface RegistrationResidentialValues {
+  addressLine1: string
   pincode: string
   areaLocality: string
   city: string
@@ -21,6 +22,7 @@ export interface RegistrationResidentialValues {
 }
 
 export interface RegistrationResidentialErrors {
+  addressLine1?: string
   pincode?: string
   areaLocality?: string
   city?: string
@@ -90,8 +92,38 @@ export const RegistrationResidentialFields: React.FC<RegistrationResidentialFiel
         </div>
       )}
 
-      {/* Row 2: 1 Column (PIN Code) */}
+      {/* Row 2: 2 Columns (Address Line 1 + PIN Code) */}
       <div className="reg-address-section__two-col">
+        {/* Address Line 1 */}
+        <div className="reg-field">
+          <label className="reg-field__label" htmlFor="reg-addressLine1">
+            Address Line 1 <span className="reg-field__required">*</span>
+          </label>
+          <div
+            className={`reg-field__control ${
+              errors.addressLine1 ? 'reg-field__control--error' : ''
+            }`}
+          >
+            <span className="reg-field__icon">
+              <BuildingIcon />
+            </span>
+            <input
+              id="reg-addressLine1"
+              name="addressLine1"
+              type="text"
+              className="reg-field__input"
+              placeholder="House No, Building, Street"
+              value={values.addressLine1}
+              onChange={onChange}
+              onBlur={onBlur}
+              autoComplete="address-line1"
+            />
+          </div>
+          {errors.addressLine1 && (
+            <p className="reg-field__error">{errors.addressLine1}</p>
+          )}
+        </div>
+
         <div className="reg-field">
           <label className="reg-field__label" htmlFor="reg-pincode">
             PIN Code <span className="reg-field__required">*</span>

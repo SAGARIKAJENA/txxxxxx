@@ -9,6 +9,7 @@ export interface RegistrationFormState {
   pan: string
   aadhaar: string
   mobile: string
+  addressLine1: string
   areaLocality: string
   city: string
   district: string
@@ -32,6 +33,7 @@ export const INITIAL_REGISTRATION_VALUES: RegistrationFormState = {
   pan: '',
   aadhaar: '',
   mobile: '',
+  addressLine1: '',
   areaLocality: '',
   city: '',
   district: '',
@@ -179,6 +181,13 @@ export const validateField = (
       return undefined
     }
 
+    case 'addressLine1': {
+      const trimmed = String(val ?? '').trim()
+      if (!trimmed) return 'Address Line 1 is required'
+      if (trimmed.length < 3) return 'Please enter a valid address'
+      return undefined
+    }
+
     case 'areaLocality': {
       const trimmed = String(val ?? '').trim()
       if (trimmed && trimmed.length < 2) {
@@ -268,6 +277,7 @@ const MANDATORY_FIELDS: Array<keyof RegistrationFormState> = [
   'pan',
   'aadhaar',
   'mobile',
+  'addressLine1',
   'city',
   'district',
   'pincode',

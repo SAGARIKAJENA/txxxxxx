@@ -3,10 +3,11 @@
   align-items: center;
   gap: 1rem;
   width: 100%;
-  padding: 1rem 1.25rem;
+  min-height: 84px;
+  padding: 0.85rem 1.15rem;
   background: #FFFFFF;
   border: 1.5px solid #E2E8F0;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
   text-align: left;
   transition: all var(--transition-fast);
@@ -33,15 +34,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
   background: #FEF0E6;
   color: #FF7A00;
   flex-shrink: 0;
   transition: all var(--transition-fast);
 }
-.customer-type-card__icon svg { width: 20px; height: 20px; }
+.customer-type-card__icon svg { width: 18px; height: 18px; }
 .customer-type-card__icon--selected { background: #FF7A00; color: #FFFFFF; box-shadow: 0 2px 8px rgba(255, 122, 0, 0.35); }
 
 .customer-type-card__info { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
