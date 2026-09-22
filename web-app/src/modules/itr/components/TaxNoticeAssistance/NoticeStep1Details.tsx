@@ -65,11 +65,13 @@ export const NoticeStep1Details: React.FC<NoticeStep1DetailsProps> = ({
         </p>
       </div>
 
-      {/* PAN Field */}
-      <div className="notice-field">
-        <label htmlFor="notice-pan" className="notice-field__label">
-          Permanent Account Number (PAN) <span className="notice-field__required">*</span>
-        </label>
+      {/* Form Fields Grid */}
+      <div className="notice-form__grid">
+        {/* PAN Field */}
+        <div className="notice-field">
+          <label htmlFor="notice-pan" className="notice-field__label">
+            Permanent Account Number (PAN) <span className="notice-field__required">*</span>
+          </label>
         <input
           id="notice-pan"
           type="text"
@@ -200,7 +202,7 @@ export const NoticeStep1Details: React.FC<NoticeStep1DetailsProps> = ({
       </div>
 
       {/* Explanation Field */}
-      <div className="notice-field">
+      <div className="notice-field notice-field--full">
         <label htmlFor="notice-explanation" className="notice-field__label">
           Your Explanation / Background <span className="notice-field__required">*</span>
         </label>
@@ -218,7 +220,7 @@ export const NoticeStep1Details: React.FC<NoticeStep1DetailsProps> = ({
       </div>
 
       {/* Info Callout Card */}
-      <div className="notice-info-card">
+      <div className="notice-info-card notice-info-card--full">
         <div className="notice-info-card__icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="10" />
@@ -230,6 +232,7 @@ export const NoticeStep1Details: React.FC<NoticeStep1DetailsProps> = ({
           You can find the DIN, notice date, and assessment year on the top portion of your Income Tax communication.
         </p>
       </div>
+    </div>
 
       {/* Bottom Action */}
       <div className="notice-action-bar">

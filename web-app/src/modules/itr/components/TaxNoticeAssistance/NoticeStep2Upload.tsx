@@ -86,107 +86,114 @@ export const NoticeStep2Upload: React.FC<NoticeStep2UploadProps> = ({
         </p>
       </div>
 
-      {/* Upload Card */}
-      <div className="notice-upload-card">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf,.jpg,.jpeg,.png"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
+      {/* 2-Column Grid for Web View */}
+      <div className="notice-step2-grid">
+        <div className="notice-step2-col notice-step2-col--left">
+          {/* Upload Card */}
+          <div className="notice-upload-card">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
 
-        <div className="notice-upload-card__content">
-          <div className="notice-upload-card__icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-              <line x1="16" y1="13" x2="8" y2="13" />
-              <line x1="16" y1="17" x2="8" y2="17" />
-              <polyline points="10 9 9 9 8 9" />
-            </svg>
+            <div className="notice-upload-card__content">
+              <div className="notice-upload-card__icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
+              </div>
+
+              <div className="notice-upload-card__meta">
+                <span className="notice-upload-card__title">Notice Document</span>
+                <span className="notice-upload-card__subtitle">
+                  {formData.documentFileName
+                    ? `${formData.documentFileName} (${formData.documentFileSize})`
+                    : 'PDF, JPG or PNG • Up to 10 MB'}
+                </span>
+              </div>
+
+              {formData.documentFileName ? (
+                <button
+                  type="button"
+                  className="notice-upload-card__btn notice-upload-card__btn--remove"
+                  onClick={handleRemoveFile}
+                >
+                  Remove
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="notice-upload-card__btn"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Upload
+                </button>
+              )}
+            </div>
+
+            {uploadError && <span className="notice-upload-card__error">{uploadError}</span>}
           </div>
 
-          <div className="notice-upload-card__meta">
-            <span className="notice-upload-card__title">Notice Document</span>
-            <span className="notice-upload-card__subtitle">
-              {formData.documentFileName
-                ? `${formData.documentFileName} (${formData.documentFileSize})`
-                : 'PDF, JPG or PNG • Up to 10 MB'}
-            </span>
-          </div>
-
-          {formData.documentFileName ? (
-            <button
-              type="button"
-              className="notice-upload-card__btn notice-upload-card__btn--remove"
-              onClick={handleRemoveFile}
-            >
-              Remove
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="notice-upload-card__btn"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              Upload
-            </button>
-          )}
-        </div>
-
-        {uploadError && <span className="notice-upload-card__error">{uploadError}</span>}
-      </div>
-
-      {/* Summary Box (Entered Notice Information) */}
-      <div className="notice-summary-card">
-        <h3 className="notice-summary-card__title">Entered Notice Information</h3>
-
-        <div className="notice-summary-card__rows">
-          <div className="notice-summary-card__row">
-            <span className="notice-summary-card__label">PAN:</span>
-            <span className="notice-summary-card__value notice-summary-card__value--bold">
-              {formData.pan || '—'}
-            </span>
-          </div>
-
-          <div className="notice-summary-card__row">
-            <span className="notice-summary-card__label">Assessment Year:</span>
-            <span className="notice-summary-card__value">{formData.assessmentYear}</span>
-          </div>
-
-          <div className="notice-summary-card__row">
-            <span className="notice-summary-card__label">Notice Type:</span>
-            <span className="notice-summary-card__value notice-summary-card__value--wrap">
-              {formData.noticeType}
-            </span>
-          </div>
-
-          <div className="notice-summary-card__row">
-            <span className="notice-summary-card__label">Notice Date:</span>
-            <span className="notice-summary-card__value">{formatDateDisplay(formData.noticeDate)}</span>
-          </div>
-
-          <div className="notice-summary-card__row">
-            <span className="notice-summary-card__label">Response Due Date:</span>
-            <span className="notice-summary-card__value notice-summary-card__value--highlight">
-              {formatDateDisplay(formData.responseDueDate)}
-            </span>
+          {/* Confidentiality Callout Box */}
+          <div className="notice-trust-card">
+            <div className="notice-trust-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <polyline points="9 12 11 14 15 10" />
+              </svg>
+            </div>
+            <p className="notice-trust-card__text">
+              Your notice is kept strictly confidential and processed by certified tax experts under end-to-end encryption.
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Confidentiality Callout Box */}
-      <div className="notice-trust-card">
-        <div className="notice-trust-card__icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            <polyline points="9 12 11 14 15 10" />
-          </svg>
+        <div className="notice-step2-col notice-step2-col--right">
+          {/* Summary Box (Entered Notice Information) */}
+          <div className="notice-summary-card">
+            <h3 className="notice-summary-card__title">Entered Notice Information</h3>
+
+            <div className="notice-summary-card__rows">
+              <div className="notice-summary-card__row">
+                <span className="notice-summary-card__label">PAN:</span>
+                <span className="notice-summary-card__value notice-summary-card__value--bold">
+                  {formData.pan || '—'}
+                </span>
+              </div>
+
+              <div className="notice-summary-card__row">
+                <span className="notice-summary-card__label">Assessment Year:</span>
+                <span className="notice-summary-card__value">{formData.assessmentYear}</span>
+              </div>
+
+              <div className="notice-summary-card__row">
+                <span className="notice-summary-card__label">Notice Type:</span>
+                <span className="notice-summary-card__value notice-summary-card__value--wrap">
+                  {formData.noticeType}
+                </span>
+              </div>
+
+              <div className="notice-summary-card__row">
+                <span className="notice-summary-card__label">Notice Date:</span>
+                <span className="notice-summary-card__value">{formatDateDisplay(formData.noticeDate)}</span>
+              </div>
+
+              <div className="notice-summary-card__row">
+                <span className="notice-summary-card__label">Response Due Date:</span>
+                <span className="notice-summary-card__value notice-summary-card__value--highlight">
+                  {formatDateDisplay(formData.responseDueDate)}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-        <p className="notice-trust-card__text">
-          Your notice is kept strictly confidential and processed by certified tax experts under end-to-end encryption.
-        </p>
       </div>
 
       {/* Bottom Actions */}
