@@ -27,7 +27,7 @@ describe('TaxNoticeAssistance Component', () => {
     window.scrollTo = () => {}
   })
 
-  it('renders Step 1 with form fields and step indicator', () => {
+  it('renders Step 1 with form fields, step indicator, and bottom actions', () => {
     render(
       <MemoryRouter>
         <TaxNoticeAssistance />
@@ -38,7 +38,9 @@ describe('TaxNoticeAssistance Component', () => {
     expect(screen.getByText('Notice Details')).toBeDefined()
     expect(screen.getByText('STEP 1 OF 2: NOTICE DETAILS')).toBeDefined()
     expect(screen.getByText('Enter Notice Information')).toBeDefined()
-    expect(screen.getByText('Continue to Upload Notice')).toBeDefined()
+    expect(screen.getByText('Back')).toBeDefined()
+    expect(screen.getByText('Save Draft & Exit')).toBeDefined()
+    expect(screen.getByRole('button', { name: /continue/i })).toBeDefined()
   })
 
   it('validates required fields and prevents proceeding when empty', () => {
@@ -48,7 +50,7 @@ describe('TaxNoticeAssistance Component', () => {
       </MemoryRouter>
     )
 
-    const continueBtn = screen.getByText('Continue to Upload Notice')
+    const continueBtn = screen.getByRole('button', { name: /continue/i })
     fireEvent.click(continueBtn)
 
     // Should stay on Step 1
@@ -76,7 +78,7 @@ describe('TaxNoticeAssistance Component', () => {
     const explanationInput = screen.getByLabelText(/Your Explanation/i)
     fireEvent.change(explanationInput, { target: { value: 'Received 143(1) intimation discrepancy.' } })
 
-    const continueBtn = screen.getByText('Continue to Upload Notice')
+    const continueBtn = screen.getByRole('button', { name: /continue/i })
     fireEvent.click(continueBtn)
 
     // Should advance to Step 2
@@ -84,10 +86,10 @@ describe('TaxNoticeAssistance Component', () => {
     expect(screen.getByText('Upload your Income Tax notice')).toBeDefined()
     expect(screen.getByText('Entered Notice Information')).toBeDefined()
     expect(screen.getByText('CASPJ4743E')).toBeDefined()
-    expect(screen.getByText('Continue to Staff Review')).toBeDefined()
+    expect(screen.getByRole('button', { name: /continue/i })).toBeDefined()
   })
 
-  it('allows navigating back to Step 1 via Edit Details button', () => {
+  it('allows navigating back to Step 1 via Back button on Step 2', () => {
     render(
       <MemoryRouter>
         <TaxNoticeAssistance />
@@ -102,15 +104,15 @@ describe('TaxNoticeAssistance Component', () => {
     fireEvent.change(screen.getByLabelText(/Notice Reference Number/i), { target: { value: 'CPC/2526/A3/284419260' } })
     fireEvent.change(screen.getByLabelText(/Your Explanation/i), { target: { value: 'Testing explanation.' } })
 
-    fireEvent.click(screen.getByText('Continue to Upload Notice'))
+    fireEvent.click(screen.getByRole('button', { name: /continue/i }))
     expect(screen.getByText('STEP 2 OF 2: UPLOAD NOTICE')).toBeDefined()
 
-    // Click Edit Details
-    fireEvent.click(screen.getByText('Edit Details'))
+    // Click Back on Step 2
+    fireEvent.click(screen.getByTestId('step-back-btn'))
     expect(screen.getByText('STEP 1 OF 2: NOTICE DETAILS')).toBeDefined()
   })
 
-  it('submits application to userStorage on Step 2 Continue to Staff Review', async () => {
+  it('submits application to userStorage on Step 2 Continue', async () => {
     render(
       <MemoryRouter>
         <TaxNoticeAssistance />
@@ -124,10 +126,10 @@ describe('TaxNoticeAssistance Component', () => {
     fireEvent.change(screen.getByLabelText(/Notice Reference Number/i), { target: { value: 'CPC/2526/A3/284419260' } })
     fireEvent.change(screen.getByLabelText(/Your Explanation/i), { target: { value: 'Testing submission.' } })
 
-    fireEvent.click(screen.getByText('Continue to Upload Notice'))
+    fireEvent.click(screen.getByTestId('step-continue-btn'))
 
-    // Click Continue to Staff Review
-    fireEvent.click(screen.getByText('Continue to Staff Review'))
+    // Click Continue on Step 2
+    fireEvent.click(screen.getByTestId('step-continue-btn'))
 
     expect(await screen.findByText('Notice Submitted for Review')).toBeDefined()
     const apps = userStorage.getUserApplications()

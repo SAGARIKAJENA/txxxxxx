@@ -77,6 +77,11 @@ export const TaxNoticeAssistance: React.FC = () => {
     }, 2500)
   }
 
+  const handleSaveDraftAndExit = () => {
+    handleSaveDraft()
+    navigate(routePaths.itr.root)
+  }
+
   const handleBack = () => {
     if (step === 2) {
       setStep(1)
@@ -197,6 +202,8 @@ export const TaxNoticeAssistance: React.FC = () => {
           <NoticeStep1Details
             formData={formData}
             onChange={handleUpdateFormData}
+            onBack={handleBack}
+            onSaveDraftAndExit={handleSaveDraftAndExit}
             onNext={() => {
               setStep(2)
               window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -210,6 +217,7 @@ export const TaxNoticeAssistance: React.FC = () => {
               setStep(1)
               window.scrollTo({ top: 0, behavior: 'smooth' })
             }}
+            onSaveDraftAndExit={handleSaveDraftAndExit}
             onSubmit={handleSubmitStaffReview}
             isSubmitting={isSubmitting}
           />

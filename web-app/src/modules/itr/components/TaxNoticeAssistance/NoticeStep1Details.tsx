@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { StepActionBar } from '@shared/components'
 import {
   type NoticeFormData,
   ASSESSMENT_YEAR_OPTIONS,
@@ -9,12 +10,16 @@ interface NoticeStep1DetailsProps {
   formData: NoticeFormData
   onChange: (patch: Partial<NoticeFormData>) => void
   onNext: () => void
+  onBack: () => void
+  onSaveDraftAndExit: () => void
 }
 
 export const NoticeStep1Details: React.FC<NoticeStep1DetailsProps> = ({
   formData,
   onChange,
   onNext,
+  onBack,
+  onSaveDraftAndExit,
 }) => {
   const [touched, setTouched] = useState<Record<string, boolean>>({})
 
@@ -234,15 +239,38 @@ export const NoticeStep1Details: React.FC<NoticeStep1DetailsProps> = ({
       </div>
     </div>
 
-      {/* Bottom Action */}
-      <div className="notice-action-bar">
-        <button
-          type="submit"
-          className={`notice-action-bar__btn ${canProceed ? 'notice-action-bar__btn--active' : ''}`}
-        >
-          <span>Continue to Upload Notice</span>
-        </button>
-      </div>
+      {/* Step Action Bar matching requested bottom section */}
+      <StepActionBar
+        onBack={onBack}
+        backLabel="Back"
+        nextLabel="Continue"
+        nextType="submit"
+        nextDisabled={!canProceed}
+        extraActions={
+          <button
+            type="button"
+            className="step-action-bar__btn step-action-bar__btn--save-draft"
+            onClick={onSaveDraftAndExit}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            <span>Save Draft &amp; Exit</span>
+          </button>
+        }
+      />
     </form>
   )
 }
