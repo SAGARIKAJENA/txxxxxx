@@ -113,6 +113,7 @@
   margin-bottom: 1.75rem;
 }
 
+.reg-card__step1-footer,
 .reg-card__step2-footer {
   display: flex;
   width: 100%;

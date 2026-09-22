@@ -135,11 +135,7 @@ export const DashboardLayout = () => {
                     className="shell__nav-link"
                     onClick={(e) => {
                       setIsMobileNavOpen(false)
-                      if (section.title === 'Services' && !user?.isProfileComplete) {
-                        e.preventDefault()
-                        setSelectedServiceTarget(item.to)
-                        setIsProfileModalOpen(true)
-                      } else if (location.pathname === routePaths.dashboard) {
+                      if (location.pathname === routePaths.dashboard) {
                         e.preventDefault()
                         document.getElementById('quick-services')?.scrollIntoView({ behavior: 'smooth' })
                       }
@@ -154,13 +150,8 @@ export const DashboardLayout = () => {
                     to={item.to}
                     end={item.to === routePaths.dashboard}
                     className={({ isActive }) => `shell__nav-link${isActive ? ' is-active' : ''}`}
-                    onClick={(e) => {
+                    onClick={() => {
                       setIsMobileNavOpen(false)
-                      if (section.title === 'Services' && !user?.isProfileComplete) {
-                        e.preventDefault()
-                        setSelectedServiceTarget(item.to)
-                        setIsProfileModalOpen(true)
-                      }
                     }}
                   >
                     <span className="shell__nav-icon" aria-hidden="true">{item.icon}</span>

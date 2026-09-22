@@ -1,8 +1,16 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { routePaths } from '@core/config'
+import { useAuthStore } from '@store/index'
+import { CompleteProfileModal } from '@shared/components'
 import { useIncorporation } from '../../hooks/useIncorporation'
 import type { IncorporationEntityType } from '../../types/incorporation.types'
 import './Incorporation.css'
 
 export const Incorporation = () => {
+  const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const {
     services,
     processSteps,
@@ -16,6 +24,21 @@ export const Incorporation = () => {
     handleCheckName,
     clearNameCheck,
   } = useIncorporation()
+
+  const handleStartService = (serviceTitle: string) => {
+    if (!user?.isProfileComplete) {
+      setIsProfileModalOpen(true)
+    } else {
+      alert(`Initiating registration for ${serviceTitle}. A TaxEdge specialist will assist with documents.`)
+    }
+  }
+
+  const handleConfirmProfile = () => {
+    setIsProfileModalOpen(false)
+    navigate(routePaths.auth.register, {
+      state: { returnTo: routePaths.incorporation.root, mobile: user?.mobile },
+    })
+  }
 
   const filterTabs: Array<{ key: IncorporationEntityType | 'all'; label: string }> = [
     { key: 'all', label: 'All Structures' },
@@ -152,7 +175,7 @@ export const Incorporation = () => {
             <button
               type="button"
               className="inc-card__btn"
-              onClick={() => alert(`Initiating registration for ${service.title}. A TaxEdge specialist will assist with documents.`)}
+              onClick={() => handleStartService(service.title)}
             >
               Start {service.title} →
             </button>
@@ -213,6 +236,12 @@ export const Incorporation = () => {
           </tbody>
         </table>
       </section>
+
+      <CompleteProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        onCompleteProfile={handleConfirmProfile}
+      />
     </div>
   )
 }

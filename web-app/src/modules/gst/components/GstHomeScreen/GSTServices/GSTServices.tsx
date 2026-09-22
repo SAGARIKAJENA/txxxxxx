@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
+import { useAuthStore } from '@store/index'
+import { CompleteProfileModal } from '@shared/components'
 import type { GstService } from '../../../hooks/useGstDashboardData'
 import './GSTServices.css'
 
@@ -60,24 +63,43 @@ const getServiceIcon = (type: GstService['iconType']) => {
 
 export const GSTServices = ({ services }: GSTServicesProps) => {
   const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+  const [selectedTarget, setSelectedTarget] = useState('')
 
-  const handleStart = (service: GstService) => {
+  const getTargetRoute = (service: GstService): string => {
     const titleLower = service.title.toLowerCase()
     if (service.iconType === 'registration' || titleLower.includes('registration')) {
-      navigate(routePaths.gst.registration)
+      return routePaths.gst.registration
     } else if (service.iconType === 'filing' || titleLower.includes('filing')) {
-      navigate(routePaths.gst.filing)
+      return routePaths.gst.filing
     } else if (service.iconType === 'compliance' || titleLower.includes('compliance')) {
-      navigate(routePaths.gst.compliance)
+      return routePaths.gst.compliance
     } else if (service.iconType === 'amendment' || titleLower.includes('amendment')) {
-      navigate(routePaths.gst.amendment)
+      return routePaths.gst.amendment
     } else if (service.iconType === 'cancellation' || titleLower.includes('cancellation')) {
-      navigate(routePaths.gst.cancellation)
+      return routePaths.gst.cancellation
     } else if (service.iconType === 'certificate' || titleLower.includes('certificate')) {
-      navigate(routePaths.gst.certificate)
-    } else {
-      navigate(routePaths.gst.registration)
+      return routePaths.gst.certificate
     }
+    return routePaths.gst.registration
+  }
+
+  const handleStart = (service: GstService) => {
+    const target = getTargetRoute(service)
+    if (!user?.isProfileComplete) {
+      setSelectedTarget(target)
+      setIsProfileModalOpen(true)
+    } else {
+      navigate(target)
+    }
+  }
+
+  const handleConfirmProfile = () => {
+    setIsProfileModalOpen(false)
+    navigate(routePaths.auth.register, {
+      state: { returnTo: selectedTarget, mobile: user?.mobile },
+    })
   }
 
   return (
@@ -140,6 +162,12 @@ export const GSTServices = ({ services }: GSTServicesProps) => {
           </div>
         ))}
       </div>
+
+      <CompleteProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        onCompleteProfile={handleConfirmProfile}
+      />
     </div>
   )
 }

@@ -1,8 +1,6 @@
-import { useState, type MouseEvent } from 'react'
+import type { MouseEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
-import { useAuthStore } from '@store/index'
-import { CompleteProfileModal } from '@shared/components'
 import './QuickServices.css'
 
 export interface QuickServiceItem {
@@ -78,25 +76,14 @@ export interface QuickServicesProps {
 
 export const QuickServices = ({ services = QUICK_SERVICE_LIST }: QuickServicesProps) => {
   const navigate = useNavigate()
-  const user = useAuthStore((state) => state.user)
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
-  const [selectedTargetUrl, setSelectedTargetUrl] = useState<string>('')
 
   const handleServiceClick = (e: MouseEvent, targetUrl: string) => {
     e.preventDefault()
-    if (!user?.isProfileComplete) {
-      setSelectedTargetUrl(targetUrl)
-      setIsProfileModalOpen(true)
-    } else {
-      navigate(targetUrl)
+    if (targetUrl.startsWith('#')) {
+      document.getElementById('quick-services')?.scrollIntoView({ behavior: 'smooth' })
+      return
     }
-  }
-
-  const handleConfirmCompleteProfile = () => {
-    setIsProfileModalOpen(false)
-    navigate(routePaths.auth.register, {
-      state: { returnTo: selectedTargetUrl, mobile: user?.mobile },
-    })
+    navigate(targetUrl)
   }
 
   return (
@@ -131,13 +118,6 @@ export const QuickServices = ({ services = QUICK_SERVICE_LIST }: QuickServicesPr
           </a>
         ))}
       </div>
-
-      {/* Profile Completion Intercept Modal */}
-      <CompleteProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-        onCompleteProfile={handleConfirmCompleteProfile}
-      />
     </section>
   )
 }
