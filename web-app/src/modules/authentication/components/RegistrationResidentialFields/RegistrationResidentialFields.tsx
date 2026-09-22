@@ -37,6 +37,8 @@ export interface RegistrationResidentialFieldsProps {
   onUseCurrentLocation?: () => void
   pincodeStatus?: 'idle' | 'verifying' | 'valid' | 'invalid'
   availablePostOffices?: string[]
+  showPostalBanner?: boolean
+  onDismissPostalBanner?: () => void
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
   onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => void
 }

@@ -1,33 +1,52 @@
-import { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@store/index'
 import { authStorage } from '@core/auth'
 import { routePaths } from '@core/config'
 
 import { ProfileHeader } from '../../components/ProfileHeader/ProfileHeader'
-import { ProfileTabs } from '../../components/ProfileTabs/ProfileTabs'
-import type { TabItem } from '../../components/ProfileTabs/ProfileTabs'
-import { AccountTab } from '../../components/AccountTab/AccountTab'
-import { ServicesTab } from '../../components/ServicesTab/ServicesTab'
+import { ProfileSection } from '../../components/ProfileSection/ProfileSection'
+import { ProfileMenuItem } from '../../components/ProfileMenuItem/ProfileMenuItem'
+import { LogoutButton } from '../../components/LogoutButton/LogoutButton'
+import { profileSectionsConfig } from './profileConfig'
 import './Profile.css'
-
-const PROFILE_TABS: TabItem[] = [
-  { id: 'account', label: 'Account' },
-  { id: 'services', label: 'Services' },
-  { id: 'preferences', label: 'Preferences' },
-  { id: 'security', label: 'Security' },
-  { id: 'support', label: 'Support' },
-]
 
 export const Profile = () => {
   const navigate = useNavigate()
   const storeUser = useAuthStore((state) => state.user)
   const user = storeUser || authStorage.getUser()
 
-  const [activeTabId, setActiveTabId] = useState<string>('account')
   const [activeAppsCount] = useState(0)
   const [completedAppsCount] = useState(0)
   const [totalPaidAmount] = useState(0)
+  const [activeSection, setActiveSection] = useState('account')
+  const observer = useRef<IntersectionObserver | null>(null)
+
+  useEffect(() => {
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        const visibleSections = entries.filter((entry) => entry.isIntersecting)
+        if (visibleSections.length > 0) {
+          // Find the topmost visible section
+          visibleSections.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+          setActiveSection(visibleSections[0].target.id)
+        }
+      },
+      {
+        rootMargin: '-250px 0px -50% 0px', // Offset for the fixed header
+        threshold: 0.1,
+      }
+    )
+
+    profileSectionsConfig.forEach((section) => {
+      const el = document.getElementById(section.title.toLowerCase())
+      if (el && observer.current) observer.current.observe(el)
+    })
+
+    return () => {
+      if (observer.current) observer.current.disconnect()
+    }
+  }, [])
 
   const handleLogout = async () => {
     useAuthStore.getState().signOut()
@@ -38,44 +57,69 @@ export const Profile = () => {
     // Empty for now
   }
 
-  const renderTabContent = () => {
-    switch (activeTabId) {
-      case 'account':
-        return <AccountTab user={user} />
-      case 'services':
-        return <ServicesTab />
-      case 'preferences':
-      case 'security':
-      case 'support':
-        return (
-          <div className="profile-page-view__placeholder">
-            <p>This tab is under construction.</p>
-            <button className="profile-page-view__logout-btn" onClick={handleLogout}>Logout</button>
-          </div>
-        )
-      default:
-        return null
-    }
-  }
-
   return (
     <div className="profile-page-view">
-      <ProfileHeader
-        user={user}
-        activeAppsCount={activeAppsCount}
-        completedAppsCount={completedAppsCount}
-        totalPaidAmount={totalPaidAmount}
-        onEditAvatar={handleEditAvatar}
-      />
-      
-      <ProfileTabs
-        tabs={PROFILE_TABS}
-        activeTabId={activeTabId}
-        onChangeTab={setActiveTabId}
-      />
+      <div className="profile-page-view__header-wrapper">
+        <ProfileHeader
+          user={user}
+          activeAppsCount={activeAppsCount}
+          completedAppsCount={completedAppsCount}
+          totalPaidAmount={totalPaidAmount}
+          onEditAvatar={handleEditAvatar}
+        />
 
+        <div className="profile-page-view__sticky-nav">
+          <div className="profile-page-view__sticky-nav-container">
+            {profileSectionsConfig.map((section) => {
+              const id = section.title.toLowerCase()
+              return (
+                <button
+                  key={id}
+                  className={`profile-page-view__nav-btn ${activeSection === id ? 'profile-page-view__nav-btn--active' : ''}`}
+                  onClick={() => {
+                    setActiveSection(id)
+                    const el = document.getElementById(id)
+                    if (el) {
+                      const y = el.getBoundingClientRect().top + window.scrollY - 280
+                      window.scrollTo({ top: y, behavior: 'smooth' })
+                    }
+                  }}
+                >
+                  {section.title}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+      
       <div className="profile-page-view__content">
-        {renderTabContent()}
+        {profileSectionsConfig.map((section) => {
+          const id = section.title.toLowerCase()
+          return (
+          <div id={id} key={id} style={{ scrollMarginTop: '280px' }}>
+          <ProfileSection title={section.title.toUpperCase()}>
+            {section.items.map((item, index) => (
+              <React.Fragment key={item.id}>
+                <ProfileMenuItem
+                  label={item.label}
+                  to={item.to}
+                  icon={item.icon}
+                  iconBg={item.iconBg}
+                />
+                {index < section.items.length - 1 && (
+                  <div style={{ height: '1px', backgroundColor: '#f1f5f9', margin: '0 16px' }} />
+                )}
+              </React.Fragment>
+            ))}
+          </ProfileSection>
+          </div>
+          )
+        })}
+
+        <div style={{ marginTop: '16px' }}>
+          <LogoutButton onClick={handleLogout} />
+        </div>
       </div>
     </div>
   )

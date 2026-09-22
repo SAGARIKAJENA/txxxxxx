@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import type { AuthUser } from '@core/auth'
 import './ProfileHeader.css'
 
@@ -24,6 +24,32 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   totalPaidAmount = 0,
   onEditAvatar
 }) => {
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleEditClick = () => {
+    setIsDropdownOpen((prev) => !prev)
+  }
+
+  const handleUploadClick = () => {
+    setIsDropdownOpen(false)
+    fileInputRef.current?.click()
+    if (onEditAvatar) onEditAvatar()
+  }
+
+  const handleRemoveClick = () => {
+    setIsDropdownOpen(false)
+    setAvatarUrl(null)
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const url = URL.createObjectURL(file)
+      setAvatarUrl(url)
+    }
+  }
   const formatCurrency = (amount: number) => {
     return `₹${amount.toLocaleString('en-IN')}`
   }
@@ -41,11 +67,40 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <div className="profile-hero__identity">
           <div className="profile-hero__avatar-wrapper">
             <div className="profile-hero__avatar-circle">
-              <span className="profile-hero__avatar-initials">{initials}</span>
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Profile Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span className="profile-hero__avatar-initials">{initials}</span>
+              )}
             </div>
-            <button className="profile-hero__edit-btn" onClick={onEditAvatar} aria-label="Edit avatar">
+            <button className="profile-hero__edit-btn" onClick={handleEditClick} aria-label="Edit avatar">
               <EditIcon />
             </button>
+            {isDropdownOpen && (
+              <div className="profile-hero__avatar-dropdown">
+                <button className="profile-hero__avatar-dropdown-item" onClick={handleUploadClick}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  Choose from library
+                </button>
+                {avatarUrl && (
+                  <button className="profile-hero__avatar-dropdown-item profile-hero__avatar-dropdown-item--danger" onClick={handleRemoveClick}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    Remove picture
+                  </button>
+                )}
+                <button className="profile-hero__avatar-dropdown-item profile-hero__avatar-dropdown-item--cancel" onClick={() => setIsDropdownOpen(false)}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  Cancel
+                </button>
+              </div>
+            )}
+            <input 
+              type="file" 
+              accept="image/*" 
+              ref={fileInputRef} 
+              onChange={handleFileChange}
+              style={{ display: 'none' }} 
+            />
           </div>
 
           <div className="profile-hero__user-info">
@@ -58,22 +113,14 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
         </div>
 
-        {/* Right Section: Stats */}
-        <div className="profile-hero__stats">
-          <div className="profile-hero__stat-card">
-            <span className="profile-hero__stat-label">Active Apps</span>
-            <span className="profile-hero__stat-value profile-hero__stat-value--blue">{activeAppsCount}</span>
-          </div>
-          
-          <div className="profile-hero__stat-card">
-            <span className="profile-hero__stat-label">Completed</span>
-            <span className="profile-hero__stat-value profile-hero__stat-value--green">{completedAppsCount}</span>
-          </div>
-          
-          <div className="profile-hero__stat-card profile-hero__stat-card--highlight">
-            <span className="profile-hero__stat-label">Total Paid</span>
-            <span className="profile-hero__stat-value">{formatCurrency(totalPaidAmount)}</span>
-          </div>
+        {/* Right Section: Animation */}
+        <div className="profile-hero__animation-container">
+          <div className="profile-hero__pulse-ring"></div>
+          <div className="profile-hero__pulse-ring profile-hero__pulse-ring--delay-1"></div>
+          <div className="profile-hero__pulse-ring profile-hero__pulse-ring--delay-2"></div>
+          <svg className="profile-hero__floating-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+          </svg>
         </div>
 
       </div>

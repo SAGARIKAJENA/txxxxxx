@@ -24,7 +24,6 @@ export interface NominatimAddress {
   amenity?: string
   shop?: string
   place?: string
-  junction?: string
   road?: string
   pedestrian?: string
   street?: string
