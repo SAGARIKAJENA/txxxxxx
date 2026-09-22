@@ -1,23 +1,24 @@
 import React, { useRef, useState } from 'react'
 import { StepActionBar } from '@shared/components'
-import type { NoticeFormData } from './types'
+import type { NoticeFormData } from '../types'
+import './NoticeDocument.css'
 
-interface NoticeStep2UploadProps {
+export interface NoticeDocumentProps {
   formData: NoticeFormData
   onChange: (patch: Partial<NoticeFormData>) => void
   onBack: () => void
-  onSubmit: () => void
+  onNext: () => void
   onSaveDraftAndExit: () => void
-  isSubmitting: boolean
+  isSubmitting?: boolean
 }
 
-export const NoticeStep2Upload: React.FC<NoticeStep2UploadProps> = ({
+export const NoticeDocument: React.FC<NoticeDocumentProps> = ({
   formData,
   onChange,
   onBack,
-  onSubmit,
+  onNext,
   onSaveDraftAndExit,
-  isSubmitting,
+  isSubmitting = false,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
@@ -55,6 +56,17 @@ export const NoticeStep2Upload: React.FC<NoticeStep2UploadProps> = ({
     }
   }
 
+  const hasDocument = Boolean(formData.documentFileName || formData.documentFile)
+
+  const handleNextClick = () => {
+    if (!hasDocument) {
+      setUploadError('Please upload your official Income Tax notice before continuing.')
+      return
+    }
+    setUploadError(null)
+    onNext()
+  }
+
   const formatDateDisplay = (dateStr: string) => {
     if (!dateStr) return 'Not Provided'
     try {
@@ -72,15 +84,6 @@ export const NoticeStep2Upload: React.FC<NoticeStep2UploadProps> = ({
 
   return (
     <div className="notice-upload-container">
-      {/* Step Progress Bar */}
-      <div className="notice-progress">
-        <div className="notice-progress__bars">
-          <div className="notice-progress__bar notice-progress__bar--active" />
-          <div className="notice-progress__bar notice-progress__bar--active" />
-        </div>
-        <span className="notice-progress__label">STEP 2 OF 2: UPLOAD NOTICE</span>
-      </div>
-
       {/* Heading Section */}
       <div className="notice-form__intro">
         <h2 className="notice-form__heading">Upload your Income Tax notice</h2>
@@ -173,13 +176,13 @@ export const NoticeStep2Upload: React.FC<NoticeStep2UploadProps> = ({
 
               <div className="notice-summary-card__row">
                 <span className="notice-summary-card__label">Assessment Year:</span>
-                <span className="notice-summary-card__value">{formData.assessmentYear}</span>
+                <span className="notice-summary-card__value">{formData.assessmentYear || '—'}</span>
               </div>
 
               <div className="notice-summary-card__row">
                 <span className="notice-summary-card__label">Notice Type:</span>
                 <span className="notice-summary-card__value notice-summary-card__value--wrap">
-                  {formData.noticeType}
+                  {formData.noticeType || '—'}
                 </span>
               </div>
 
@@ -199,38 +202,20 @@ export const NoticeStep2Upload: React.FC<NoticeStep2UploadProps> = ({
         </div>
       </div>
 
-      {/* Step Action Bar matching requested bottom section */}
+      {/* Step Action Bar */}
       <StepActionBar
         onBack={onBack}
-        onNext={onSubmit}
+        onNext={handleNextClick}
+        onSaveDraft={onSaveDraftAndExit}
         backLabel="Back"
-        nextLabel="Continue"
+        nextLabel="Continue to Staff Review"
+        nextDisabled={!hasDocument}
         isSubmitting={isSubmitting}
-        extraActions={
-          <button
-            type="button"
-            className="step-action-bar__btn step-action-bar__btn--save-draft"
-            onClick={onSaveDraftAndExit}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-              <polyline points="17 21 17 13 7 13 7 21" />
-              <polyline points="7 3 7 8 15 8" />
-            </svg>
-            <span>Save Draft &amp; Exit</span>
-          </button>
-        }
       />
     </div>
   )
 }
+
+// Backward compatibility export
+export const NoticeStep2Upload = NoticeDocument
+export default NoticeDocument

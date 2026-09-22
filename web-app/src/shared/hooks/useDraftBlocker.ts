@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useBlocker, useNavigate, type Location } from 'react-router-dom'
+import { useState, useEffect, useCallback, useContext } from 'react'
+import { UNSAFE_DataRouterContext, useBlocker, useNavigate, type Location } from 'react-router-dom'
 import { routePaths } from '@core/config'
 
 export interface UseDraftBlockerOptions {
@@ -8,6 +8,8 @@ export interface UseDraftBlockerOptions {
   onDiscardDraft: () => void
   defaultExitRoute?: string
 }
+
+const dummyBlocker = { state: 'unblocked' as const, proceed: () => {}, reset: () => {} }
 
 export const useDraftBlocker = ({
   shouldBlock,
@@ -18,14 +20,18 @@ export const useDraftBlocker = ({
   const navigate = useNavigate()
   const [isManualOpen, setIsManualOpen] = useState<boolean>(false)
 
-  // Block route navigation if unsubmitted and navigating to another route
-  const blocker = useBlocker(
-    useCallback(
-      ({ currentLocation, nextLocation }: { currentLocation: Location; nextLocation: Location }) =>
-        shouldBlock && currentLocation.pathname !== nextLocation.pathname,
-      [shouldBlock]
-    )
-  )
+  const hasDataRouter = Boolean(useContext(UNSAFE_DataRouterContext))
+
+  // Block route navigation if in data router and unsubmitted
+  const blocker = hasDataRouter
+    ? useBlocker(
+        useCallback(
+          ({ currentLocation, nextLocation }: { currentLocation: Location; nextLocation: Location }) =>
+            shouldBlock && currentLocation.pathname !== nextLocation.pathname,
+          [shouldBlock]
+        )
+      )
+    : dummyBlocker
 
   const isModalOpen = isManualOpen || blocker.state === 'blocked'
 
