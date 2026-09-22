@@ -10,23 +10,28 @@ import { RegistrationPersonalFields } from '../RegistrationPersonalFields/Regist
 import { RegistrationIdentityFields } from '../RegistrationIdentityFields/RegistrationIdentityFields'
 import { RegistrationResidentialFields } from '../RegistrationResidentialFields/RegistrationResidentialFields'
 import { RegistrationSecurityFields } from '../RegistrationSecurityFields/RegistrationSecurityFields'
+import type { CustomerTypeId } from '@modules/customerType/types/customerType.types'
 import {
   checkIsFormValid,
   validateField,
   INITIAL_REGISTRATION_VALUES,
   formatDOB,
-} from '../../validation/registrationValidation'
-import type {
-  RegistrationFormErrors,
-  RegistrationFormState,
+  type RegistrationFormErrors,
+  type RegistrationFormState,
 } from '../../validation/registrationValidation'
 import './RegistrationForm.css'
 
 export interface RegistrationFormProps {
   onStep1Success?: () => void
+  customerType?: CustomerTypeId
+  onSuccess?: () => void
 }
 
-export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Success }) => {
+export const RegistrationForm: React.FC<RegistrationFormProps> = ({
+  onStep1Success,
+  customerType,
+  onSuccess,
+}) => {
   const navigate = useNavigate()
   const location = useLocation()
   const locationState = location.state as { returnTo?: string; mobile?: string } | null
@@ -287,14 +292,16 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
         .filter(Boolean)
         .join(', ')
 
-      const user: AuthUser = {
+      const isFinishing = Boolean(customerType || onSuccess)
+      const registeredUser: AuthUser = {
         id: `usr_${Date.now().toString(36)}`,
         fullName: values.fullName.trim(),
         email: values.email.trim(),
         mobile: cleanMobile,
         role: 'CUSTOMER',
         permissions: [],
-        isProfileComplete: false,
+        isProfileComplete: isFinishing,
+        customerType: customerType || 'individual',
         gender: values.gender,
         dob: values.dob,
         fatherSpouseName: values.fatherSpouseName.trim(),
@@ -313,25 +320,29 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
       await authFlowService.saveRegistrationStep1({
         mobile: cleanMobile,
         passcode: values.password,
-        user,
+        user: registeredUser,
       })
 
-      setUser(user)
+      if (isFinishing) {
+        await authFlowService.completeRegistration(cleanMobile, customerType || 'individual')
+      }
+
+      setUser(registeredUser)
       authService.startSession({
-        user,
+        user: registeredUser,
         tokens: {
           accessToken: authService.getAccessToken() || 'mock.access.token',
           refreshToken: authService.getRefreshToken() || 'mock.refresh.token',
         },
       })
 
-      if (onStep1Success) {
+      if (onSuccess) {
+        onSuccess()
+      } else if (onStep1Success) {
         onStep1Success()
       } else {
-        navigate(routePaths.customerType, {
-          state: { returnTo: locationState?.returnTo },
-          replace: true,
-        })
+        const destination = locationState?.returnTo || routePaths.dashboard
+        navigate(destination, { replace: true })
       }
     } catch (err) {
       setErrors((prev) => ({
@@ -428,6 +439,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onStep1Succe
         }}
         isFormValid={isFormValid}
         isSubmitting={isSubmitting}
+        submitLabel="Complete Registration"
         onChange={handleChange}
         onBlur={handleBlur}
         onToggleTerms={handleToggleTerms}

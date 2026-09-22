@@ -1,0 +1,207 @@
+/* NoticeInformation Component Styles */
+
+/* 1. Step Progress Bar */
+.notice-progress {
+  margin-bottom: 1.75rem;
+}
+
+.notice-progress__bars {
+  display: flex;
+  gap: 0.65rem;
+  height: 5px;
+  margin-bottom: 0.65rem;
+}
+
+.notice-progress__bar {
+  flex: 1;
+  height: 100%;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  transition: background-color 250ms ease;
+}
+
+.notice-progress__bar--active {
+  background: linear-gradient(90deg, #ff6a00, #ff8533);
+}
+
+.notice-progress__label {
+  display: block;
+  font-size: 0.78125rem;
+  font-weight: 800;
+  color: #ea580c;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* 2. Heading Section */
+.notice-form__intro {
+  margin-bottom: 1.75rem;
+}
+
+.notice-form__heading {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.4rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.notice-form__subheading {
+  font-size: 0.9375rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 720px;
+}
+
+/* 3. Form Container & Responsive Grid */
+.notice-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.notice-form__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .notice-form__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.35rem 1.75rem;
+  }
+
+  .notice-field--full {
+    grid-column: 1 / -1;
+  }
+
+  .notice-info-card--full {
+    grid-column: 1 / -1;
+  }
+}
+
+/* 4. Form Fields & Controls */
+.notice-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.notice-field__label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.45rem;
+  display: flex;
+  align-items: center;
+}
+
+.notice-field__required {
+  color: #dc2626;
+  margin-left: 3px;
+}
+
+.notice-field__input,
+.notice-field__select,
+.notice-field__textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.825rem 1rem;
+  font-size: 0.9375rem;
+  color: #0f172a;
+  font-family: inherit;
+  transition: all 180ms ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.notice-field__input::placeholder,
+.notice-field__textarea::placeholder {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.notice-field__input:focus,
+.notice-field__select:focus,
+.notice-field__textarea:focus {
+  border-color: #ff6a00;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.12);
+}
+
+.notice-field__input--error,
+.notice-field__select--error,
+.notice-field__textarea--error {
+  border-color: #ef4444;
+  background: #fffafa;
+}
+
+.notice-field__error {
+  font-size: 0.75rem;
+  color: #dc2626;
+  margin-top: 0.35rem;
+  font-weight: 600;
+}
+
+.notice-field__help-text {
+  font-size: 0.78125rem;
+  color: #64748b;
+  margin-top: 0.35rem;
+  line-height: 1.35;
+}
+
+.notice-field__select-wrapper,
+.notice-field__date-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notice-field__select {
+  appearance: none;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+.notice-field__select-icon {
+  position: absolute;
+  right: 1rem;
+  width: 18px;
+  height: 18px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.notice-field__textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* 5. Info Banner */
+.notice-info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.95rem 1.15rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+}
+
+.notice-info-card__icon {
+  width: 20px;
+  height: 20px;
+  color: #2563eb;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.notice-info-card__text {
+  font-size: 0.84375rem;
+  color: #1e40af;
+  line-height: 1.45;
+  margin: 0;
+}

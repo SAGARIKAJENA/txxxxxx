@@ -2,14 +2,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: 16px 20px;
   background: transparent;
   border: none;
   border-bottom: 1px solid #f3f4f6;
   width: 100%;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .profile-menu-item:last-child {
@@ -18,33 +18,48 @@
 
 .profile-menu-item:hover,
 .profile-menu-item:active {
-  background-color: #f9fafb;
+  background-color: #f8fafc;
 }
 
 .profile-menu-item__left {
   display: flex;
   align-items: center;
   gap: 16px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-menu-item:hover .profile-menu-item__left {
+  transform: translateX(6px);
 }
 
 .profile-menu-item__icon-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
   flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-menu-item:hover .profile-menu-item__icon-wrapper {
+  transform: scale(1.08);
 }
 
 .profile-menu-item__label {
   font-size: 15px;
   font-weight: 600;
-  color: #1f2937;
+  color: #1e293b;
 }
 
 .profile-menu-item__right {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-menu-item:hover .profile-menu-item__right {
+  transform: translateX(4px);
 }

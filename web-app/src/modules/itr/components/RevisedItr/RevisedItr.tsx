@@ -7,7 +7,7 @@ import { MissedIncomeStep3, MissedIncomeStep4, MissedIncomeStep5 } from './Misse
 import { WrongDeductionStep3, WrongDeductionStep4, WrongDeductionStep5 } from './WrongDeduction'
 import { IncorrectBankStep3, IncorrectBankStep4, IncorrectBankStep5 } from './IncorrectBankDetails'
 import { OtherCorrectionStep3, OtherCorrectionStep4, OtherCorrectionStep5 } from './Other'
-import { StepActionBar, PaymentCheckout } from '@shared/components'
+import { StepActionBar, PaymentCheckout, DraftConfirmModal } from '@shared/components'
 import './RevisedItr.css'
 
 export const RevisedItr: React.FC = () => {
@@ -46,6 +46,11 @@ export const RevisedItr: React.FC = () => {
     handlePaymentSuccess,
     handleDownloadReceipt,
     goToStep,
+    isModalOpen,
+    openModal,
+    handleSaveAndExit,
+    handleDiscardAndExit,
+    handleKeepEditing,
   } = useRevisedItr()
 
   const originalAmounts = {
@@ -218,6 +223,7 @@ export const RevisedItr: React.FC = () => {
             <StepActionBar
               onBack={handleBack}
               onNext={handleContinue}
+              onSaveDraft={openModal}
               backLabel={step === 1 ? 'Cancel' : 'Back'}
               nextLabel={step === 5 ? 'Proceed to Payment →' : 'Continue'}
               isSubmitting={isLoading}
@@ -225,6 +231,14 @@ export const RevisedItr: React.FC = () => {
           </>
         )}
       </div>
+
+      <DraftConfirmModal
+        isOpen={isModalOpen}
+        serviceTitle="Revised ITR Filing"
+        onSaveAndExit={handleSaveAndExit}
+        onDiscardAndExit={handleDiscardAndExit}
+        onKeepEditing={handleKeepEditing}
+      />
     </div>
   )
 }

@@ -37,6 +37,8 @@ export interface RegistrationResidentialFieldsProps {
   onUseCurrentLocation?: () => void
   pincodeStatus?: 'idle' | 'verifying' | 'valid' | 'invalid'
   availablePostOffices?: string[]
+  showPostalBanner?: boolean
+  onDismissPostalBanner?: () => void
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
   onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => void
 }
@@ -49,8 +51,6 @@ export const RegistrationResidentialFields: React.FC<RegistrationResidentialFiel
   onClearLocationError,
   onUseCurrentLocation,
   pincodeStatus = 'idle',
-  showPostalBanner: _showPostalBanner = false,
-  onDismissPostalBanner: _onDismissPostalBanner,
   availablePostOffices = [],
   onChange,
   onBlur,

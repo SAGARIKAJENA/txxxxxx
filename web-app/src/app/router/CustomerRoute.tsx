@@ -18,19 +18,36 @@ export const CustomerRoute = () => {
 
   if (isStaffRole(user.role)) return <Navigate to={routePaths.staff.dashboard} replace />
 
-  // Incomplete registration redirect for services
-  const isDashboardOrProfile =
+  // Incomplete registration: allow browsing service hubs and account pages
+  const isAllowedBrowsePath =
     location.pathname === routePaths.dashboard ||
+    location.pathname === routePaths.gst.root ||
+    location.pathname === routePaths.itr.root ||
+    location.pathname === routePaths.incorporation.root ||
+    location.pathname === routePaths.business.root ||
+    location.pathname === routePaths.loans ||
+    location.pathname === routePaths.insurance ||
+    location.pathname === routePaths.applications ||
+    location.pathname === routePaths.documents ||
+    location.pathname === routePaths.payments ||
+    location.pathname === routePaths.notifications ||
+    location.pathname === routePaths.support ||
+    location.pathname === routePaths.profile ||
     location.pathname === routePaths.auth.register ||
     location.pathname === routePaths.registration ||
     location.pathname === routePaths.auth.createProfile ||
-    location.pathname === routePaths.customerType ||
-    location.pathname === routePaths.profile
+    location.pathname === routePaths.customerType
 
-  if (!user.isProfileComplete && !isDashboardOrProfile) {
+  if (!user.isProfileComplete && !isAllowedBrowsePath) {
+    const fallbackHub = location.pathname.startsWith('/gst')
+      ? routePaths.gst.root
+      : location.pathname.startsWith('/itr')
+      ? routePaths.itr.root
+      : routePaths.dashboard
+
     return (
       <Navigate
-        to={routePaths.dashboard}
+        to={fallbackHub}
         state={{ returnTo: location.pathname, openProfileModal: true }}
         replace
       />

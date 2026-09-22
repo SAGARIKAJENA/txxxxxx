@@ -3,7 +3,7 @@ import { localStore } from '../storage/localStorage'
 
 import type { AuthTokens, AuthUser, RegisteredUserRecord } from './authTypes'
 
-const SCHEMA_VERSION = 'v9_clean_fresh_slate'
+const SCHEMA_VERSION = 'v10_clean_cleared_storage'
 try {
   if (localStore.get<string>('taxedge.auth_schema') !== SCHEMA_VERSION) {
     localStore.remove(STORAGE_KEYS.registeredUsers)
