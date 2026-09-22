@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
+import { useAuthStore } from '@store/index'
+import { CompleteProfileModal } from '@shared/components'
 import {
   DEFAULT_ITR_STATS,
   ITR_SERVICES_LIST,
@@ -19,6 +22,9 @@ import './Itr.css'
 
 export const Itr = () => {
   const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+  const [selectedTarget, setSelectedTarget] = useState('')
 
   const viewRouteMap: Record<ItrViewKey, string> = {
     overview: routePaths.itr.root,
@@ -35,7 +41,19 @@ export const Itr = () => {
 
   const handleNavigateView = (viewKey: ItrViewKey) => {
     const targetRoute = viewRouteMap[viewKey] || routePaths.itr.root
-    navigate(targetRoute)
+    if (!user?.isProfileComplete && targetRoute !== routePaths.itr.root) {
+      setSelectedTarget(targetRoute)
+      setIsProfileModalOpen(true)
+    } else {
+      navigate(targetRoute)
+    }
+  }
+
+  const handleConfirmProfile = () => {
+    setIsProfileModalOpen(false)
+    navigate(routePaths.auth.register, {
+      state: { returnTo: selectedTarget, mobile: user?.mobile },
+    })
   }
 
   const getServiceIcon = (iconType: string) => {
@@ -127,6 +145,12 @@ export const Itr = () => {
           </div>
         ))}
       </section>
+
+      <CompleteProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        onCompleteProfile={handleConfirmProfile}
+      />
     </div>
   )
 }

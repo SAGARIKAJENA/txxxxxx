@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { userStorage } from '@core/storage/userStorage'
+import { useDraftBlocker } from '@shared/hooks'
+import { DraftConfirmModal } from '@shared/components'
+import { useAppStore } from '@store/index'
 import {
   GSTFilingPeriod,
   GSTFilingDocuments,
@@ -30,6 +33,8 @@ const DEFAULT_FILING_DATA: FilingPeriodData = {
 export const GSTFiling = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const pushToast = useAppStore((state) => state.pushToast)
+  const [existingDraft] = useState(() => userStorage.getDraft('gst-filing'))
 
   const [filingRef] = useState(
     () => `GST-FIL-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`
@@ -41,10 +46,18 @@ export const GSTFiling = () => {
     if (location.pathname === routePaths.gst.filePayment) return 4
     if (location.pathname === routePaths.gst.fileSuccess) return 5
     if (location.pathname === routePaths.gst.fileReceipt) return 6
+    if (existingDraft && existingDraft.currentStep >= 1 && existingDraft.currentStep <= 4) {
+      return existingDraft.currentStep as 1 | 2 | 3 | 4
+    }
     return 1
   })
 
-  const [filingData, setFilingData] = useState<FilingPeriodData>(DEFAULT_FILING_DATA)
+  const [filingData, setFilingData] = useState<FilingPeriodData>(() => {
+    if (existingDraft?.formData?.filingData) {
+      return existingDraft.formData.filingData as FilingPeriodData
+    }
+    return DEFAULT_FILING_DATA
+  })
 
   const [paymentResult, setPaymentResult] = useState<PaymentResult>(() => ({
     transactionId: `TXN${Date.now()}`,
@@ -58,8 +71,18 @@ export const GSTFiling = () => {
     applicationRef: filingRef,
     amount: 2950,
   }))
-  const [uploadedFiles, setUploadedFiles] = useState<Record<string, UploadedFileInfo>>({})
-  const [notApplicableDocs, setNotApplicableDocs] = useState<Record<string, boolean>>({})
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, UploadedFileInfo>>(() => {
+    if (existingDraft?.formData?.uploadedFiles) {
+      return existingDraft.formData.uploadedFiles as Record<string, UploadedFileInfo>
+    }
+    return {}
+  })
+  const [notApplicableDocs, setNotApplicableDocs] = useState<Record<string, boolean>>(() => {
+    if (existingDraft?.formData?.notApplicableDocs) {
+      return existingDraft.formData.notApplicableDocs as Record<string, boolean>
+    }
+    return {}
+  })
 
   const handleFileUpload = (id: string, file: File) => {
     const mb = file.size / (1024 * 1024)
@@ -99,6 +122,60 @@ export const GSTFiling = () => {
     }))
   }
 
+
+  const saveCurrentDraft = useCallback(() => {
+    if (currentStep >= 5) return
+    const now = new Date()
+    const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })
+    const stepLabels: Record<number, string> = {
+      1: 'Period Selection',
+      2: 'Upload Documents',
+      3: 'Review & Figures',
+      4: 'Payment',
+    }
+    userStorage.saveDraft({
+      serviceId: 'gst-filing',
+      serviceTitle: 'GST Filing',
+      currentStep,
+      totalSteps: 4,
+      stepLabel: stepLabels[currentStep] || 'Return Filing',
+      formData: {
+        filingData,
+        uploadedFiles,
+        notApplicableDocs,
+      },
+      savedAt: timeStr,
+      savedTimestamp: Date.now(),
+      resumeRoute: routePaths.gst.filing,
+    })
+  }, [currentStep, filingData, uploadedFiles, notApplicableDocs])
+
+  // Automatically keep draft updated
+  useEffect(() => {
+    if (currentStep >= 1 && currentStep <= 4) {
+      saveCurrentDraft()
+    }
+  }, [currentStep, filingData, uploadedFiles, notApplicableDocs, saveCurrentDraft])
+
+  const shouldBlock = currentStep >= 1 && currentStep <= 4
+  const {
+    isModalOpen,
+    openModal,
+    handleSaveAndExit,
+    handleDiscardAndExit,
+    handleKeepEditing,
+  } = useDraftBlocker({
+    shouldBlock,
+    onSaveDraft: () => {
+      saveCurrentDraft()
+      pushToast('GST Filing draft saved', 'success')
+    },
+    onDiscardDraft: () => {
+      userStorage.deleteDraft('gst-filing')
+      pushToast('Draft discarded', 'info')
+    },
+    defaultExitRoute: routePaths.gst.root,
+  })
 
   useEffect(() => {
     if (location.pathname === routePaths.gst.fileUpload) setCurrentStep(2)
@@ -148,6 +225,7 @@ export const GSTFiling = () => {
   const handleStep4Success = (res: PaymentResult) => {
     setPaymentResult(res)
     const finalRef = res.applicationRef || filingRef
+    userStorage.deleteDraft('gst-filing')
     userStorage.saveUserApplication({
       id: `app-gst-filing-${Date.now()}`,
       code: finalRef,
@@ -172,7 +250,7 @@ export const GSTFiling = () => {
           initialData={filingData}
           onStepClick={handleStepClick}
           onContinue={handleStep1Continue}
-          onCancel={() => navigate(routePaths.gst.root)}
+          onCancel={openModal}
         />
       )}
 
@@ -268,6 +346,14 @@ export const GSTFiling = () => {
           }}
         />
       )}
+
+      <DraftConfirmModal
+        isOpen={isModalOpen}
+        serviceTitle="GST Filing"
+        onSaveAndExit={handleSaveAndExit}
+        onDiscardAndExit={handleDiscardAndExit}
+        onKeepEditing={handleKeepEditing}
+      />
     </div>
   )
 }

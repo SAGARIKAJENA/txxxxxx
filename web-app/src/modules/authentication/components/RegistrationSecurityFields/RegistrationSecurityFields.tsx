@@ -19,6 +19,7 @@ export interface RegistrationSecurityFieldsProps {
   errors: RegistrationSecurityErrors
   isFormValid: boolean
   isSubmitting: boolean
+  submitLabel?: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
   onToggleTerms: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -29,6 +30,7 @@ export const RegistrationSecurityFields: React.FC<RegistrationSecurityFieldsProp
   errors,
   isFormValid,
   isSubmitting,
+  submitLabel = 'Complete Registration',
   onChange,
   onBlur,
   onToggleTerms,
@@ -161,7 +163,7 @@ export const RegistrationSecurityFields: React.FC<RegistrationSecurityFieldsProp
             : 'reg-security-fields__btn--inactive'
         }`}
       >
-        {isSubmitting ? 'Processing...' : 'Continue'}
+        {isSubmitting ? 'Processing...' : submitLabel}
       </button>
     </div>
   )

@@ -1,6 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
+import { userStorage } from '@core/storage/userStorage'
+import { useDraftBlocker } from '@shared/hooks'
+import { useAppStore } from '@store/index'
 import type {
   OriginalReturnDetails,
   RevisionReasonKey,
@@ -28,43 +31,74 @@ import { revisedItrService } from '../services/revisedItrService'
 
 export const useRevisedItr = () => {
   const navigate = useNavigate()
+  const pushToast = useAppStore((state) => state.pushToast)
+  const [existingDraft] = useState(() => userStorage.getDraft('revised-itr'))
 
   // Navigation / Step State
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1)
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(() => {
+    if (existingDraft && existingDraft.currentStep >= 1 && existingDraft.currentStep <= 5) {
+      return existingDraft.currentStep as 1 | 2 | 3 | 4 | 5
+    }
+    return 1
+  })
   const [showPayment, setShowPayment] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [applicationId, setApplicationId] = useState('ITR-2026-50983')
 
   // Step 1 State
-  const [ackNumber, setAckNumber] = useState('')
-  const [selectedAy, setSelectedAy] = useState('')
+  const [ackNumber, setAckNumber] = useState<string>(
+    () => (existingDraft?.formData?.ackNumber as string) || ''
+  )
+  const [selectedAy, setSelectedAy] = useState<string>(
+    () => (existingDraft?.formData?.selectedAy as string) || ''
+  )
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isReturnFound, setIsReturnFound] = useState(false)
-  const [returnDetails, setReturnDetails] = useState<OriginalReturnDetails | null>(null)
+  const [isReturnFound, setIsReturnFound] = useState<boolean>(
+    () => Boolean(existingDraft?.formData?.isReturnFound)
+  )
+  const [returnDetails, setReturnDetails] = useState<OriginalReturnDetails | null>(
+    () => (existingDraft?.formData?.returnDetails as OriginalReturnDetails) || null
+  )
 
   // Step 2 State
-  const [selectedReason, setSelectedReason] = useState<RevisionReasonKey | null>(null)
-  const [otherReasonText, setOtherReasonText] = useState('')
+  const [selectedReason, setSelectedReason] = useState<RevisionReasonKey | null>(
+    () => (existingDraft?.formData?.selectedReason as RevisionReasonKey) || null
+  )
+  const [otherReasonText, setOtherReasonText] = useState<string>(
+    () => (existingDraft?.formData?.otherReasonText as string) || ''
+  )
 
   // Step 3 State
-  const [incomeCorrections, setIncomeCorrections] = useState<IncomeCorrectionState>({
-    salaryIncome: '',
-    otherIncome: '',
-    taxableIncome: '',
-  })
-  const [deductionCorrections, setDeductionCorrections] = useState<DeductionCorrectionState>({
-    section80c: '',
-    section80d: '',
-    homeLoanInterest: '',
-    taxableIncome: '',
-  })
-  const [bankCorrections, setBankCorrections] = useState<BankCorrectionState>({
-    accountNumber: '',
-    ifsc: '',
-  })
+  const [incomeCorrections, setIncomeCorrections] = useState<IncomeCorrectionState>(
+    () =>
+      (existingDraft?.formData?.incomeCorrections as IncomeCorrectionState) || {
+        salaryIncome: '',
+        otherIncome: '',
+        taxableIncome: '',
+      }
+  )
+  const [deductionCorrections, setDeductionCorrections] = useState<DeductionCorrectionState>(
+    () =>
+      (existingDraft?.formData?.deductionCorrections as DeductionCorrectionState) || {
+        section80c: '',
+        section80d: '',
+        homeLoanInterest: '',
+        taxableIncome: '',
+      }
+  )
+  const [bankCorrections, setBankCorrections] = useState<BankCorrectionState>(
+    () =>
+      (existingDraft?.formData?.bankCorrections as BankCorrectionState) || {
+        accountNumber: '',
+        ifsc: '',
+      }
+  )
 
   // Step 4 State (Uploaded Documents)
-  const [uploadedDocuments, setUploadedDocuments] = useState<Partial<Record<DocumentTypeId, UploadedDocument>>>({})
+  const [uploadedDocuments, setUploadedDocuments] = useState<Partial<Record<DocumentTypeId, UploadedDocument>>>(
+    () =>
+      (existingDraft?.formData?.uploadedDocuments as Partial<Record<DocumentTypeId, UploadedDocument>>) || {}
+  )
 
   // Shared UI / Async State
   const [isLoading, setIsLoading] = useState(false)
@@ -198,6 +232,80 @@ export const useRevisedItr = () => {
     })
   }, [])
 
+  const saveCurrentDraft = useCallback(() => {
+    if (isSubmitted) return
+    const timeStr = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })
+    const stepLabels: Record<number, string> = {
+      1: 'Original Return',
+      2: 'Reason for Revision',
+      3: 'Correction Details',
+      4: 'Supporting Documents',
+      5: 'Review Revision',
+    }
+    userStorage.saveDraft({
+      serviceId: 'revised-itr',
+      serviceTitle: 'Revised ITR Filing',
+      currentStep: step,
+      totalSteps: 5,
+      stepLabel: stepLabels[step] || 'Revision Details',
+      formData: {
+        ackNumber,
+        selectedAy,
+        isReturnFound,
+        returnDetails,
+        selectedReason,
+        otherReasonText,
+        incomeCorrections,
+        deductionCorrections,
+        bankCorrections,
+        uploadedDocuments,
+      },
+      savedAt: timeStr,
+      savedTimestamp: Date.now(),
+      resumeRoute: routePaths.itr.revisedItr,
+    })
+  }, [
+    isSubmitted,
+    step,
+    ackNumber,
+    selectedAy,
+    isReturnFound,
+    returnDetails,
+    selectedReason,
+    otherReasonText,
+    incomeCorrections,
+    deductionCorrections,
+    bankCorrections,
+    uploadedDocuments,
+  ])
+
+  // Automatically keep draft updated
+  useEffect(() => {
+    if (!isSubmitted && (step > 1 || Boolean(ackNumber) || isReturnFound)) {
+      saveCurrentDraft()
+    }
+  }, [step, ackNumber, isReturnFound, isSubmitted, saveCurrentDraft])
+
+  const shouldBlock = !isSubmitted && (step > 1 || Boolean(ackNumber) || isReturnFound)
+  const {
+    isModalOpen,
+    openModal,
+    handleSaveAndExit,
+    handleDiscardAndExit,
+    handleKeepEditing,
+  } = useDraftBlocker({
+    shouldBlock,
+    onSaveDraft: () => {
+      saveCurrentDraft()
+      pushToast('Revised ITR draft saved', 'success')
+    },
+    onDiscardDraft: () => {
+      userStorage.deleteDraft('revised-itr')
+      pushToast('Draft discarded', 'info')
+    },
+    defaultExitRoute: routePaths.itr.root,
+  })
+
   // Navigation handlers  // Back / Cancel action
   const handleBack = useCallback(() => {
     if (isSubmitted) {
@@ -216,28 +324,41 @@ export const useRevisedItr = () => {
       return
     }
 
-    if (step === 1 && isReturnFound) {
-      setIsReturnFound(false)
+    if (step === 1) {
+      if (isReturnFound || Boolean(ackNumber)) {
+        openModal()
+        return
+      }
+      navigate(routePaths.itr.root)
       return
     }
+  }, [step, isReturnFound, ackNumber, showPayment, isSubmitted, openModal, navigate])
 
-    if (window.history.length > 1) {
-      navigate(-1)
-    } else {
-      navigate(routePaths.itr.root)
-    }
-  }, [step, isReturnFound, showPayment, isSubmitted, navigate])
+  const handlePaymentSuccess = useCallback(
+    (result?: { paymentId?: string }) => {
+      setShowPayment(false)
+      setIsSubmitted(true)
+      const finalAppId = result?.paymentId
+        ? 'ITR-2026-' + result.paymentId.replace(/[^0-9]/g, '').slice(-5).padStart(5, '50983')
+        : 'ITR-2026-50983'
+      setApplicationId(finalAppId)
 
-  const handlePaymentSuccess = useCallback((result?: { paymentId?: string }) => {
-    setShowPayment(false)
-    setIsSubmitted(true)
-    if (result?.paymentId) {
-      setApplicationId('ITR-2026-' + result.paymentId.replace(/[^0-9]/g, '').slice(-5).padStart(5, '50983'))
-    } else {
-      setApplicationId('ITR-2026-50983')
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [])
+      userStorage.deleteDraft('revised-itr')
+      userStorage.saveUserApplication({
+        id: `app-rev-itr-${Date.now()}`,
+        code: finalAppId,
+        title: 'Revised ITR Filing',
+        meta: `${returnDetails?.personalInfo?.fullName || 'Taxpayer'} · ${selectedAy || 'AY 2025-26'}`,
+        statusLabel: 'Under Verification',
+        statusTone: 'info',
+        progress: 30,
+        icon: '📄',
+        to: `/applications/track/${finalAppId}`,
+      })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+    [returnDetails, selectedAy]
+  )
 
   const handleDownloadReceipt = useCallback(() => {
     const docCount = Object.keys(uploadedDocuments).length
@@ -450,5 +571,10 @@ export const useRevisedItr = () => {
     handlePaymentSuccess,
     handleDownloadReceipt,
     goToStep,
+    isModalOpen,
+    openModal,
+    handleSaveAndExit,
+    handleDiscardAndExit,
+    handleKeepEditing,
   }
 }

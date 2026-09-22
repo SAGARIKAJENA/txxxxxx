@@ -1,4 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { routePaths } from '@core/config'
+import { useAuthStore } from '@store/index'
+import { CompleteProfileModal } from '@shared/components'
 import { useBusiness } from '../../hooks/useBusiness'
 import type {
   BusinessCategory,
@@ -9,6 +13,9 @@ import type {
 import './Business.css'
 
 export const BusinessPage: React.FC = () => {
+  const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const {
     selectedCategory,
     setSelectedCategory,
@@ -20,6 +27,21 @@ export const BusinessPage: React.FC = () => {
     complianceCalendar,
     handleApply,
   } = useBusiness()
+
+  const onApplyClick = (serviceId: string) => {
+    if (!user?.isProfileComplete) {
+      setIsProfileModalOpen(true)
+    } else {
+      handleApply(serviceId)
+    }
+  }
+
+  const handleConfirmProfile = () => {
+    setIsProfileModalOpen(false)
+    navigate(routePaths.auth.register, {
+      state: { returnTo: routePaths.business.root, mobile: user?.mobile },
+    })
+  }
 
   const categories: { id: BusinessCategory; label: string }[] = [
     { id: 'all', label: 'All Services' },
@@ -139,7 +161,7 @@ export const BusinessPage: React.FC = () => {
               </div>
               <button
                 className="biz-service-card__btn-apply"
-                onClick={() => handleApply(service.id)}
+                onClick={() => onApplyClick(service.id)}
               >
                 Apply Now
               </button>
@@ -215,6 +237,12 @@ export const BusinessPage: React.FC = () => {
           </table>
         </div>
       </section>
+
+      <CompleteProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        onCompleteProfile={handleConfirmProfile}
+      />
     </div>
   )
 }

@@ -29,14 +29,11 @@ describe('registrationValidation', () => {
   }
 
   describe('Address field validations', () => {
-    it('validates addressLine1 according to placeholder requirement', () => {
-      expect(validateField('addressLine1', { ...sampleValidForm, addressLine1: '' })).toBe(
-        'Address Line 1 is required'
+    it('validates areaLocality requirement', () => {
+      expect(validateField('areaLocality', { ...sampleValidForm, areaLocality: 'a' })).toBe(
+        'Please enter a valid area / locality'
       )
-      expect(validateField('addressLine1', { ...sampleValidForm, addressLine1: 'ab' })).toBe(
-        'Please enter a valid house / building, street'
-      )
-      expect(validateField('addressLine1', sampleValidForm)).toBeUndefined()
+      expect(validateField('areaLocality', sampleValidForm)).toBeUndefined()
     })
 
     it('validates pincode 6-digit numeric rule', () => {

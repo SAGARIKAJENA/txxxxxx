@@ -51,8 +51,6 @@ export const RegistrationResidentialFields: React.FC<RegistrationResidentialFiel
   onClearLocationError,
   onUseCurrentLocation,
   pincodeStatus = 'idle',
-  showPostalBanner: _showPostalBanner = false,
-  onDismissPostalBanner: _onDismissPostalBanner,
   availablePostOffices = [],
   onChange,
   onBlur,
