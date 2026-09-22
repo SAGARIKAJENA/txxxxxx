@@ -18,12 +18,9 @@ export const RegistrationCard: React.FC = () => {
 
   return (
     <div className="reg-card">
-      <div className="reg-card__accent-line" aria-hidden="true" />
-
       {step === 1 ? (
         <>
           <header className="reg-card__header">
-            <div className="reg-card__step-badge">Step 1 of 2</div>
             <h2 className="reg-card__title">What describes you best?</h2>
             <p className="reg-card__subtitle">
               Select your customer or entity type. Your tax checklists and filing forms will adapt automatically.
@@ -81,12 +78,10 @@ export const RegistrationCard: React.FC = () => {
               </svg>
               <span>Back to Step 1</span>
             </button>
-            <span className="reg-card__step-badge reg-card__step-badge--step2">Step 2 of 2</span>
           </div>
 
           <header className="reg-card__header">
             <h2 className="reg-card__title">Create Account</h2>
-            <p className="reg-card__subtitle">Fill in your personal details to complete registration.</p>
           </header>
 
           <RegistrationForm customerType={selectedCustomerType || 'individual'} />
