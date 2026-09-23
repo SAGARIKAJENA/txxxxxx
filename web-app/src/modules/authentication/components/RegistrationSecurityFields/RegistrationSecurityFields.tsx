@@ -135,17 +135,19 @@ export const RegistrationSecurityFields: React.FC<RegistrationSecurityFieldsProp
         <span className="reg-security-fields__terms-text">
           By creating an account, I agree to the{' '}
           <a
-            href="#terms"
+            href="/terms"
+            target="_blank"
+            rel="noopener noreferrer"
             className="reg-security-fields__terms-link"
-            onClick={(e) => e.preventDefault()}
           >
             Terms of Service
           </a>{' '}
           and{' '}
           <a
-            href="#privacy"
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
             className="reg-security-fields__terms-link"
-            onClick={(e) => e.preventDefault()}
           >
             Privacy Policy
           </a>

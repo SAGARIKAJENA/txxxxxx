@@ -109,8 +109,12 @@ export const validateField = (
 
   switch (name) {
     case 'fullName': {
-      const trimmed = String(val ?? '').trim()
+      const rawVal = String(val ?? '')
+      const trimmed = rawVal.trim().replace(/\s+/g, ' ')
+      
       if (!trimmed) return 'Full Name is required'
+      if (rawVal !== trimmed) return 'Full Name should not contain unnecessary spaces'
+      
       if (!/^[a-zA-Z\s.'-]+$/.test(trimmed)) {
         return 'Full Name should only contain letters'
       }
@@ -121,7 +125,7 @@ export const validateField = (
     case 'email': {
       const trimmed = String(val ?? '').trim()
       if (!trimmed) return 'Email is required'
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(trimmed)) {
         return 'Please enter a valid email address'
       }
       return undefined

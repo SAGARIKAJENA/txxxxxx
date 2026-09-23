@@ -32,8 +32,8 @@ export const profileSectionsConfig: ProfileSectionData[] = [
   {
     title: 'Account',
     items: [
-      { id: 'personal', label: 'Personal Information', to: routePaths.profile, icon: <IconUser />, iconBg: '#f3e8ff' }, // purple bg
-      { id: 'kyc', label: 'KYC Details', to: routePaths.profile, icon: <IconCard />, iconBg: '#e0f2fe' }, // blue bg
+      { id: 'personal', label: 'Personal Information', to: routePaths.profilePersonal, icon: <IconUser />, iconBg: '#f3e8ff' }, // purple bg
+      { id: 'kyc', label: 'KYC Details', to: routePaths.profileKyc, icon: <IconCard />, iconBg: '#e0f2fe' }, // blue bg
       { id: 'gst', label: 'GST Details', to: routePaths.profile, icon: <IconDoc color="#6366f1" />, iconBg: '#e0e7ff' }, // indigo bg
       { id: 'itr', label: 'ITR History', to: routePaths.profile, icon: <IconDoc color="#f97316" />, iconBg: '#ffedd5' }, // orange bg
       { id: 'loan', label: 'Loan History', to: routePaths.profile, icon: <IconBuilding />, iconBg: '#f1f5f9' }, // grey bg
