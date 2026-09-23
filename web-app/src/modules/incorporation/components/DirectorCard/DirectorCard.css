@@ -1,0 +1,296 @@
+/* Director Card Component Styles */
+.director-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s ease;
+}
+
+.director-card__header {
+  padding: 1.25rem 1.75rem;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.director-card__header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.director-card__number-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0b2546;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.director-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.director-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.director-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.director-card__name {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.director-card__btn-collapse,
+.director-card__btn-edit {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.15s ease;
+}
+
+.director-card__btn-collapse:hover,
+.director-card__btn-edit:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0b2546;
+}
+
+/* Collapsed Summary View */
+.director-card__collapsed-summary {
+  padding: 1.25rem 1.75rem 1.5rem 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  gap: 2rem;
+}
+
+.director-card__summary-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.director-card__summary-col--right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.director-card__summary-item {
+  font-size: 0.9rem;
+  color: #334155;
+  line-height: 1.4;
+}
+
+.director-card__summary-label {
+  font-weight: 600;
+  color: #64748b;
+  margin-right: 0.35rem;
+}
+
+.director-card__summary-val {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Expanded Card Body */
+.director-card__body {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.director-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.director-section__title {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.director-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.director-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.director-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.director-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.director-required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.director-input {
+  width: 100%;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  color: #0f172a;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.director-input:focus {
+  outline: none;
+  border-color: #f25a22;
+  box-shadow: 0 0 0 3px rgba(242, 90, 34, 0.15);
+}
+
+select.director-input {
+  cursor: pointer;
+}
+
+.director-chips {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.director-chip {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  padding: 0.55rem 1.75rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.director-chip:hover {
+  background: #f8fafc;
+}
+
+.director-chip--active {
+  background: #0b2546;
+  border-color: #0b2546;
+  color: #ffffff;
+}
+
+.director-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  margin-top: 0.25rem;
+}
+
+.director-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #0b2546;
+  cursor: pointer;
+}
+
+.director-share-box {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.director-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.director-btn-cancel {
+  background: #ffffff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0.65rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.director-btn-cancel:hover { background: #f8fafc; }
+
+.director-btn-save {
+  background: #0b2546;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.85rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+}
+.director-btn-save:hover { background: #143560; }
+
+@media (max-width: 768px) {
+  .director-grid-2, .director-grid-4 { grid-template-columns: 1fr; }
+}

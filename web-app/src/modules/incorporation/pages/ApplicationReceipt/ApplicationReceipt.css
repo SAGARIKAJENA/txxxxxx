@@ -1,0 +1,180 @@
+/* TaxEdge Application & Payment Receipt Styles */
+.app-receipt-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 3.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  box-sizing: border-box;
+}
+
+/* Header */
+.app-receipt-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.app-receipt-header__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+.app-receipt-header__subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Receipt Card */
+.app-receipt-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+}
+
+.app-receipt-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.app-receipt-card__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.app-receipt-card__company {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0b2546;
+  letter-spacing: -0.01em;
+}
+.app-receipt-card__sub {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 500;
+}
+.app-receipt-badge {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f25a22;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 0.15rem;
+}
+
+.app-receipt-divider {
+  height: 2px;
+  background: #0b2546;
+  margin: 0.15rem 0 0.35rem 0;
+}
+
+/* Card Body */
+.app-receipt-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.app-receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+.app-receipt-row__label {
+  font-size: 0.92rem;
+  color: #64748b;
+  font-weight: 500;
+}
+.app-receipt-row__val {
+  font-size: 0.95rem;
+  color: #0f172a;
+  text-align: right;
+}
+.app-receipt-row__val--bold {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.app-receipt-spacer {
+  height: 0.35rem;
+}
+
+.app-receipt-row--total {
+  padding-top: 0.25rem;
+}
+.app-receipt-row__label--total {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.app-receipt-row__val--total {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0b2546;
+}
+
+.app-receipt-status-badge {
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.25rem 0.85rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* Bottom Action Buttons */
+.app-receipt-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  gap: 1rem;
+}
+.app-receipt-btn-back {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.app-receipt-btn-back:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.app-receipt-btn-download {
+  background: #0b2546;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 2.25rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 14px rgba(11, 37, 70, 0.22);
+  transition: all 0.2s ease;
+}
+.app-receipt-btn-download:hover {
+  background: #143560;
+  transform: translateY(-1px);
+}
