@@ -32,13 +32,18 @@ export const GSTBusinessGeneralSection: React.FC<GSTBusinessGeneralSectionProps>
   onClearError,
 }) => {
   const handleLegalNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const cleaned = e.target.value.replace(/[^a-zA-Z\s]/g, '')
+    let cleaned = e.target.value.replace(/[^a-zA-Z\s]/g, '')
+    cleaned = cleaned.replace(/\s{2,}/g, ' ')
+    if (cleaned.startsWith(' ')) cleaned = cleaned.trimStart()
     onChange('legalName', cleaned)
     onClearError?.('legalName')
   }
 
   const handleTradeNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange('tradeName', e.target.value)
+    let cleaned = e.target.value
+    cleaned = cleaned.replace(/\s{2,}/g, ' ')
+    if (cleaned.startsWith(' ')) cleaned = cleaned.trimStart()
+    onChange('tradeName', cleaned)
     onClearError?.('tradeName')
   }
 
@@ -87,6 +92,7 @@ export const GSTBusinessGeneralSection: React.FC<GSTBusinessGeneralSectionProps>
             placeholder="Exactly as on the PAN card"
             value={data.legalName}
             onChange={handleLegalNameChange}
+            onBlur={() => onChange('legalName', data.legalName.trim())}
           />
           {errors.legalName && <span className="gst-field-error">{errors.legalName}</span>}
         </div>
@@ -102,6 +108,7 @@ export const GSTBusinessGeneralSection: React.FC<GSTBusinessGeneralSectionProps>
             placeholder="Enter your business / trade name"
             value={data.tradeName}
             onChange={handleTradeNameChange}
+            onBlur={() => onChange('tradeName', data.tradeName.trim())}
           />
           {errors.tradeName && <span className="gst-field-error">{errors.tradeName}</span>}
         </div>

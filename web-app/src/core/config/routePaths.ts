@@ -60,6 +60,8 @@ export const routePaths = {
   services: '/services',
   allServices: '/all-services',
   profile: '/profile',
+  profilePersonal: '/profile/personal',
+  profileKyc: '/profile/kyc',
   support: '/support',
   notifications: '/notifications',
   staff: {
