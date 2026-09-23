@@ -1,0 +1,292 @@
+/* Company Registration Web View Styles */
+.company-reg-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 3rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Page Header */
+.company-reg-header {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+}
+
+.company-reg-header__left {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.company-reg-header__icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #fff4ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #fed7aa;
+}
+
+.company-reg-header__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.company-reg-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.company-reg-header__title {
+  margin: 0;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.company-reg-header__badge {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #ffedd5;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.company-reg-header__desc {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+/* Tabs Navigation */
+.company-reg-tabs-bar {
+  display: flex;
+  border-bottom: 2px solid #e2e8f0;
+  gap: 2rem;
+  padding: 0 0.5rem;
+}
+
+.company-reg-tab {
+  background: transparent;
+  border: none;
+  padding: 0.9rem 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.company-reg-tab:hover {
+  color: #0b2546;
+}
+
+.company-reg-tab--active {
+  color: #0b2546;
+  font-weight: 700;
+}
+
+.company-reg-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #0b2546;
+  border-radius: 3px 3px 0 0;
+}
+
+/* Tab Content Card */
+.company-reg-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2.25rem 2.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  min-height: 280px;
+}
+
+.company-reg-card__title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.company-reg-card__subtitle {
+  margin: 0 0 1.75rem 0;
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.company-reg-card__body {
+  margin: 0.5rem 0 1.75rem 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #334155;
+  max-width: 100%;
+}
+
+/* Highlights Grid inside Overview */
+.company-reg-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+}
+
+.company-reg-highlight-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.company-reg-highlight-box__icon {
+  font-size: 1.35rem;
+}
+
+.company-reg-highlight-box__title {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.company-reg-highlight-box__desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* 2-Column Grid for Documents and Benefits */
+.company-reg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1rem;
+}
+
+.company-reg-grid-item {
+  background: #f8fafc;
+  border: 1px solid #eef2f6;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.company-reg-grid-item:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.company-reg-grid-item__icon--check {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background-color: #0c2d57;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.company-reg-grid-item__icon--sparkle {
+  width: 24px;
+  height: 24px;
+  color: #ea580c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.company-reg-grid-item__text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.45;
+}
+
+/* Bottom CTA Banner */
+.company-reg-bottom-cta {
+  background: linear-gradient(135deg, #0b2546 0%, #0f3a6d 100%);
+  border-radius: 16px;
+  padding: 1.75rem 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  color: #ffffff;
+}
+
+.company-reg-bottom-cta__title {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.company-reg-bottom-cta__desc {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #cbd5e1;
+}
+
+.company-reg-bottom-cta__btn {
+  background: #f25a22;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1.75rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(242, 90, 34, 0.35);
+  transition: all 0.2s ease;
+}
+
+.company-reg-bottom-cta__btn:hover {
+  background: #e04b15;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .company-reg-page { padding: 1rem 0.75rem 2rem 0.75rem; }
+  .company-reg-header { padding: 1.25rem; }
+  .company-reg-card { padding: 1.5rem 1.25rem; }
+  .company-reg-grid { grid-template-columns: 1fr; }
+  .company-reg-bottom-cta { padding: 1.25rem; }
+  .company-reg-bottom-cta__btn { width: 100%; }
+}

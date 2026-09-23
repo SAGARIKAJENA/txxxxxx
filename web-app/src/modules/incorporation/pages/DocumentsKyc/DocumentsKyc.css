@@ -1,0 +1,129 @@
+/* Documents & KYC Checklist Page Styles */
+.docs-kyc-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 3.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  box-sizing: border-box;
+}
+
+/* Step Bar */
+.docs-kyc-stepbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.docs-kyc-stepbar__badge {
+  background: #0b2546;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.docs-kyc-stepbar__text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+.docs-kyc-stepbar__line {
+  flex: 1;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+}
+.docs-kyc-stepbar__line-fill {
+  width: 54.54%;
+  height: 100%;
+  background: #f25a22;
+  border-radius: 9999px;
+}
+
+/* Header */
+.docs-kyc-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.docs-kyc-header__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+.docs-kyc-header__subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Section Group */
+.docs-kyc-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.docs-kyc-section__title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0b2546;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.docs-kyc-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Footer Navigation */
+.docs-kyc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  gap: 1rem;
+}
+.docs-kyc-btn-back {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.docs-kyc-btn-back:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.docs-kyc-btn-continue {
+  background: #f25a22;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 2.25rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(242, 90, 34, 0.28);
+  transition: all 0.2s ease;
+}
+.docs-kyc-btn-continue:hover {
+  background: #e04b15;
+  transform: translateY(-1px);
+}

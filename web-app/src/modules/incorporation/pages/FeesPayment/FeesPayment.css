@@ -1,0 +1,251 @@
+/* Fees & Payment Breakdown Styles */
+.fees-pay-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 3.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  box-sizing: border-box;
+}
+
+/* Step Bar */
+.fees-pay-stepbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.fees-pay-stepbar__badge {
+  background: #0b2546;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.fees-pay-stepbar__text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+.fees-pay-stepbar__line {
+  flex: 1;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+}
+.fees-pay-stepbar__line-fill {
+  width: 81.81%;
+  height: 100%;
+  background: #f25a22;
+  border-radius: 9999px;
+}
+
+/* Header */
+.fees-pay-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.fees-pay-header__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+.fees-pay-header__subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Breakdown Card */
+.fees-breakdown-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.fees-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+.fees-breakdown-row__label {
+  color: #475569;
+  font-weight: 500;
+}
+.fees-breakdown-row__value {
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.fees-breakdown-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0.25rem 0;
+}
+
+.fees-breakdown-row--total {
+  padding-top: 0.25rem;
+}
+.fees-breakdown-row--total .fees-breakdown-row__label {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0b2546;
+}
+.fees-breakdown-row--total .fees-breakdown-row__value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0b2546;
+}
+
+/* Note */
+.fees-note {
+  margin: -0.5rem 0 0 0;
+  font-size: 0.84rem;
+  color: #64748b;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+/* Payment Methods */
+.fees-payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.fees-payment-methods__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.fees-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.fees-method-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.15rem 1.35rem;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.fees-method-item:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+.fees-method-item--selected {
+  background: #f0f7ff;
+  border-color: #93c5fd;
+}
+
+.fees-method-item__left {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.fees-method-item__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0b2546;
+}
+.fees-method-item--selected .fees-method-item__icon {
+  background: #bfdbfe;
+  color: #1e3a8a;
+}
+.fees-method-item__name {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Radio circle */
+.fees-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.fees-method-item--selected .fees-radio {
+  border-color: #0b2546;
+}
+.fees-radio__inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0b2546;
+}
+
+/* Footer Navigation */
+.fees-pay-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  gap: 1rem;
+}
+.fees-pay-btn-back {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.fees-pay-btn-back:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.fees-pay-btn-submit {
+  background: #f25a22;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 2.25rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(242, 90, 34, 0.28);
+  transition: all 0.2s ease;
+}
+.fees-pay-btn-submit:hover {
+  background: #e04b15;
+  transform: translateY(-1px);
+}
