@@ -15,6 +15,7 @@ export interface DocumentCardProps {
   file?: File
   icon?: React.ReactNode
   accept?: string
+  uploadLabel?: string
   onUpload?: (id: string, file: File) => void
   onRemove?: (id: string) => void
   onView?: (doc: { id: string; title: string; fileName?: string; file?: File }) => void
@@ -39,6 +40,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
   file,
   icon,
   accept = '.pdf,.jpg,.jpeg,.png,.docx,.xlsx,.doc,.xls,.csv,.zip',
+  uploadLabel = 'Upload',
   onUpload,
   onRemove,
   onView,
@@ -170,7 +172,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
                 <polyline points="9 14 12 11 15 14" />
                 <line x1="12" y1="11" x2="12" y2="17" />
               </svg>
-              <span>Upload File</span>
+              <span>{uploadLabel}</span>
             </button>
             {onToggleNotApplicable && !isRequired && (
               <button

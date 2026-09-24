@@ -1,0 +1,40 @@
+.loan-doc-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.loan-doc-section__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.loan-doc-section__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #083b75;
+}
+
+.loan-doc-section__badge {
+  font-size: 0.725rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.loan-doc-section__badge--required {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.loan-doc-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}

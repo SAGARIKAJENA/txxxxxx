@@ -1,0 +1,51 @@
+.home-loan-bank {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.home-loan-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.home-loan-itr-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.home-loan-itr-btn {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.home-loan-itr-btn:hover {
+  border-color: #ff7a00;
+  color: #ff7a00;
+  background-color: #fff7ed;
+}
+
+.home-loan-itr-btn--active {
+  border-color: #ff7a00;
+  background-color: #fff7ed;
+  color: #ff7a00;
+  box-shadow: 0 2px 8px rgba(255, 122, 0, 0.15);
+}
+
+@media (max-width: 640px) {
+  .home-loan-grid-2,
+  .home-loan-itr-status-grid {
+    grid-template-columns: 1fr;
+  }
+}
