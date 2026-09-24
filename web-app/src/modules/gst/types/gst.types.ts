@@ -112,3 +112,12 @@ export interface GstCertificateRecord extends Timestamped {
   status: ApplicationStatus
   downloadUrl?: string
 }
+
+export interface PaymentResult {
+  transactionId: string
+  receiptNumber: string
+  method: string
+  dateText: string
+  applicationRef: string
+  amount: number
+}

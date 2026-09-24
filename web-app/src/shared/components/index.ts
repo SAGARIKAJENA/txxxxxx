@@ -22,4 +22,9 @@ export * from './StepActionBar'
 export * from './PaymentCheckout'
 export { DocumentCard } from './DocumentCard/DocumentCard'
 export type { DocumentCardProps } from './DocumentCard/DocumentCard'
+export { DocumentSection } from './DocumentCard/DocumentSection'
+export type { DocumentSectionProps } from './DocumentCard/DocumentSection'
+export { DocumentTracker } from './DocumentCard/DocumentTracker'
+export type { DocumentTrackerProps } from './DocumentCard/DocumentTracker'
+
 

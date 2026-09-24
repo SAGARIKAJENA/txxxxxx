@@ -9,6 +9,7 @@ export interface RegistrationFormState {
   pan: string
   aadhaar: string
   mobile: string
+  addressLine1: string
   areaLocality: string
   city: string
   district: string
@@ -32,6 +33,7 @@ export const INITIAL_REGISTRATION_VALUES: RegistrationFormState = {
   pan: '',
   aadhaar: '',
   mobile: '',
+  addressLine1: '',
   areaLocality: '',
   city: '',
   district: '',
@@ -107,8 +109,12 @@ export const validateField = (
 
   switch (name) {
     case 'fullName': {
-      const trimmed = String(val ?? '').trim()
+      const rawVal = String(val ?? '')
+      const trimmed = rawVal.trim().replace(/\s+/g, ' ')
+      
       if (!trimmed) return 'Full Name is required'
+      if (rawVal !== trimmed) return 'Full Name should not contain unnecessary spaces'
+      
       if (!/^[a-zA-Z\s.'-]+$/.test(trimmed)) {
         return 'Full Name should only contain letters'
       }
@@ -119,7 +125,7 @@ export const validateField = (
     case 'email': {
       const trimmed = String(val ?? '').trim()
       if (!trimmed) return 'Email is required'
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(trimmed)) {
         return 'Please enter a valid email address'
       }
       return undefined
@@ -176,6 +182,13 @@ export const validateField = (
       if (!/^[1-9][0-9]{5}$/.test(str)) {
         return 'Enter a valid 6-digit Indian PIN code'
       }
+      return undefined
+    }
+
+    case 'addressLine1': {
+      const trimmed = String(val ?? '').trim()
+      if (!trimmed) return 'Address Line 1 is required'
+      if (trimmed.length < 3) return 'Please enter a valid address'
       return undefined
     }
 
@@ -268,6 +281,7 @@ const MANDATORY_FIELDS: Array<keyof RegistrationFormState> = [
   'pan',
   'aadhaar',
   'mobile',
+  'addressLine1',
   'city',
   'district',
   'pincode',

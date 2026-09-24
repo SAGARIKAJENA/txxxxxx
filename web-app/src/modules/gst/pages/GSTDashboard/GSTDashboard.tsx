@@ -3,7 +3,7 @@ import {
   GSTStats,
   GSTServices,
   GSTApplicationList,
-} from '../../components/GstHomeScreen'
+} from './components'
 import { useGstDashboardData } from '../../hooks/useGstDashboardData'
 import './GSTDashboard.css'
 

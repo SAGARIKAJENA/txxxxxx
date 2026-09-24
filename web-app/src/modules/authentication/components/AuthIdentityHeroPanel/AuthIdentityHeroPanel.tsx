@@ -34,12 +34,9 @@ export const AuthIdentityHeroPanel: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Tagline & Main Headline */}
+      {/* 2. Main Headline */}
       <div className="identity-hero__intro">
-        <div className="identity-hero__tagline-row">
-          <div className="identity-hero__accent-bar" aria-hidden="true" />
-          <span className="identity-hero__tagline-text">SIMPLE • SECURE • COMPLIANT</span>
-        </div>
+
 
         <h1 className="identity-hero__headline">
           Your Identity
@@ -105,67 +102,8 @@ export const AuthIdentityHeroPanel: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Three Feature Trust Cards */}
-      <div className="identity-hero__features-row">
-        <div className="identity-hero__feature-card">
-          <div className="identity-hero__feature-icon-circle">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <ellipse cx="12" cy="5" rx="9" ry="3" />
-              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-            </svg>
-          </div>
-          <div className="identity-hero__feature-text">
-            <span className="identity-hero__feature-title">
-              Encrypted Document
-              <br />
-              Storage
-            </span>
-            <span className="identity-hero__feature-sub">Your data stays safe</span>
-          </div>
-        </div>
 
-        <div className="identity-hero__feature-card">
-          <div className="identity-hero__feature-icon-circle">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-          </div>
-          <div className="identity-hero__feature-text">
-            <span className="identity-hero__feature-title">
-              Role-based Staff
-              <br />
-              Access
-            </span>
-            <span className="identity-hero__feature-sub">Controlled & secure</span>
-          </div>
-        </div>
-
-        <div className="identity-hero__feature-card">
-          <div className="identity-hero__feature-icon-circle">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-              <line x1="16" y1="13" x2="8" y2="13" />
-              <line x1="16" y1="17" x2="8" y2="17" />
-              <polyline points="10 9 9 9 8 9" />
-            </svg>
-          </div>
-          <div className="identity-hero__feature-text">
-            <span className="identity-hero__feature-title">
-              Complete Activity
-              <br />
-              Tracking
-            </span>
-            <span className="identity-hero__feature-sub">Full transparency</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 5. Bottom Row: Protection Promise & Cursive Motto */}
+      {/* 5. Bottom Row: Protection Promise */}
       <div className="identity-hero__bottom-row">
         <div className="identity-hero__protection">
           <div className="identity-hero__shield-icon">
@@ -178,17 +116,6 @@ export const AuthIdentityHeroPanel: React.FC = () => {
             <span className="identity-hero__protection-title">Your financial information stays protected.</span>
             <span className="identity-hero__protection-sub">Secure. Private. Built for compliance.</span>
           </div>
-        </div>
-
-        <div className="identity-hero__cursive-motto">
-          <span className="identity-hero__cursive-text">
-            Simplifying Taxes for a
-            <br />
-            Brighter Tomorrow.
-          </span>
-          <svg className="identity-hero__cursive-swoosh" viewBox="0 0 110 10" fill="none">
-            <path d="M2 3C35 9 85 9 108 2" stroke="#FF6A00" strokeWidth="2.5" strokeLinecap="round" />
-          </svg>
         </div>
       </div>
 

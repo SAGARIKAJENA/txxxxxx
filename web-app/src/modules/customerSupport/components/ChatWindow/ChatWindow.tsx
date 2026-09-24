@@ -37,74 +37,40 @@ export const ChatWindow = ({
     )
   }
 
-  const { executive, messages, applicationRef, dateLabel } = conversation
+  const { messages } = conversation
 
   return (
     <div className="cs-window">
-      {/* Header with Executive Details & Status */}
-      <header className="cs-window__header">
-        <div className="cs-window__header-left">
-          <div
-            className="cs-window__avatar"
-            style={{ backgroundColor: executive.avatarColor || '#059669' }}
-          >
-            {executive.avatarInitials}
+      {/* Mobile-Style Header */}
+      <header className="cs-window__mobile-header">
+        <div className="cs-window__mobile-header-left">
+          <div className="cs-window__header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+              <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+            </svg>
           </div>
-          <div className="cs-window__executive-info">
-            <div className="cs-window__name-row">
-              <h2 className="cs-window__executive-name">{executive.name}</h2>
-              <span
-                className={`cs-window__status-pill cs-window__status-pill--${executive.status.toLowerCase()}`}
-              >
-                ● {executive.status}
-              </span>
-            </div>
-            <div className="cs-window__role-row">
-              <span>{executive.role}</span>
-              <span className="cs-window__dot-sep">·</span>
-              <span className="cs-window__dept">{executive.department}</span>
-              {executive.responseTime && (
-                <>
-                  <span className="cs-window__dot-sep">·</span>
-                  <span className="cs-window__resp-time">⚡ {executive.responseTime}</span>
-                </>
-              )}
-            </div>
+
+          <div className="cs-window__header-text">
+            <h2 className="cs-window__header-title">TaxEdge Support</h2>
+            <p className="cs-window__header-subtitle">Online · replies in a few minutes</p>
           </div>
         </div>
 
-        <div className="cs-window__header-right">
-          {executive.phone && (
-            <a
-              href={`tel:${executive.phone.replace(/\s/g, '')}`}
-              className="cs-window__quick-btn"
-              title={`Call ${executive.name}`}
-            >
-              📞
-            </a>
-          )}
-          {executive.email && (
-            <a
-              href={`mailto:${executive.email}`}
-              className="cs-window__quick-btn"
-              title={`Email ${executive.name}`}
-            >
-              ✉️
-            </a>
-          )}
-          <span className="cs-window__app-badge" title="Active Application Reference">
-            {applicationRef}
-          </span>
+        <div className="cs-window__mobile-header-right">
+          <span className="cs-window__status-dot"></span>
         </div>
       </header>
 
       {/* Messages Thread */}
       <div className="cs-window__body">
-        {dateLabel && (
-          <div className="cs-window__date-divider">
-            <span className="cs-window__date-pill">{dateLabel}</span>
-          </div>
-        )}
+        {/* Security Banner inside chat */}
+        <div className="cs-window__security-banner">
+          <svg viewBox="0 0 24 24" fill="currentColor" className="cs-window__security-icon">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+          </svg>
+          <span>This chat is encrypted and monitored for service quality.</span>
+        </div>
 
         <div className="cs-window__messages-list">
           {messages.map((msg) => (
@@ -122,7 +88,7 @@ export const ChatWindow = ({
         <ChatMessageInput
           onSendMessage={onSendMessage}
           disabled={isSending}
-          placeholder="Ask a question or upload notice/documents..."
+          placeholder="Type your message..."
         />
       </footer>
     </div>

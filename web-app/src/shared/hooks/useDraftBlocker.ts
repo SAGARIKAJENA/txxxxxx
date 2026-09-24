@@ -7,6 +7,7 @@ export interface UseDraftBlockerOptions {
   onSaveDraft: () => void
   onDiscardDraft: () => void
   defaultExitRoute?: string
+  isNavigationAllowed?: (nextLocation: Location) => boolean
 }
 
 const dummyBlocker = { state: 'unblocked' as const, proceed: () => {}, reset: () => {} }
@@ -16,6 +17,7 @@ export const useDraftBlocker = ({
   onSaveDraft,
   onDiscardDraft,
   defaultExitRoute = routePaths.dashboard,
+  isNavigationAllowed,
 }: UseDraftBlockerOptions) => {
   const navigate = useNavigate()
   const [isManualOpen, setIsManualOpen] = useState<boolean>(false)
@@ -26,9 +28,13 @@ export const useDraftBlocker = ({
   const blocker = hasDataRouter
     ? useBlocker(
         useCallback(
-          ({ currentLocation, nextLocation }: { currentLocation: Location; nextLocation: Location }) =>
-            shouldBlock && currentLocation.pathname !== nextLocation.pathname,
-          [shouldBlock]
+          ({ currentLocation, nextLocation }: { currentLocation: Location; nextLocation: Location }) => {
+            if (!shouldBlock) return false
+            if (currentLocation.pathname === nextLocation.pathname) return false
+            if (isNavigationAllowed && isNavigationAllowed(nextLocation)) return false
+            return true
+          },
+          [shouldBlock, isNavigationAllowed]
         )
       )
     : dummyBlocker

@@ -5,130 +5,46 @@ export interface DocumentCardProps {
   id: string
   title: string
   subtitle?: string
+  desc?: string
   isRequired?: boolean
   iconBg?: string
   iconColor?: string
   isUploaded?: boolean
   fileName?: string
+  fileSize?: string
   file?: File
   icon?: React.ReactNode
   accept?: string
   onUpload?: (id: string, file: File) => void
   onRemove?: (id: string) => void
   onView?: (doc: { id: string; title: string; fileName?: string; file?: File }) => void
+  onReplace?: (id: string) => void
+  isNotApplicable?: boolean
+  onToggleNotApplicable?: (id: string) => void
   children?: React.ReactNode
   className?: string
 }
 
-/* Common Document Action Icons */
-const CloudUploadIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="17"
-    height="17"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <polyline points="16 16 12 12 8 16" />
-    <line x1="12" y1="12" x2="12" y2="21" />
-    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-  </svg>
-)
-
-const CheckCircleIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="14"
-    height="14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-    <polyline points="22 4 12 14.01 9 11.01" />
-  </svg>
-)
-
-const ViewEyeIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="14"
-    height="14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-)
-
-const ReplaceRotateIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="14"
-    height="14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <polyline points="23 4 23 10 17 10" />
-    <polyline points="1 20 1 14 7 14" />
-    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-  </svg>
-)
-
-const DeleteTrashIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="14"
-    height="14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <polyline points="3 6 5 6 21 6" />
-    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-    <line x1="10" y1="11" x2="10" y2="17" />
-    <line x1="14" y1="11" x2="14" y2="17" />
-  </svg>
-)
-
-/**
- * Shared, reusable DocumentCard component
- * Standardized across GST, ITR, TDS and other TaxEdge modules
- */
 export const DocumentCard: React.FC<DocumentCardProps> = ({
   id,
   title,
   subtitle,
+  desc,
   isRequired = false,
-  iconBg = '#e0f2fe',
-  iconColor = '#0284c7',
+  iconBg = '#eff6ff',
+  iconColor = '#2563eb',
   isUploaded = false,
   fileName,
+  fileSize,
   file,
   icon,
-  accept = '.pdf,.png,.jpg,.jpeg,.doc,.docx',
+  accept = '.pdf,.jpg,.jpeg,.png,.docx,.xlsx,.doc,.xls,.csv,.zip',
   onUpload,
   onRemove,
   onView,
+  onReplace,
+  isNotApplicable = false,
+  onToggleNotApplicable,
   children,
   className = '',
 }) => {
@@ -137,6 +53,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       onUpload?.(id, e.target.files[0])
+      e.target.value = ''
     }
   }
 
@@ -151,114 +68,199 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
     }
   }
 
+  const handleReplaceClick = () => {
+    if (onReplace) {
+      onReplace(id)
+    } else {
+      fileInputRef.current?.click()
+    }
+  }
+
+  const effectiveSubtitle = subtitle || desc
+
   return (
-    <article className={`taxedge-doc-card ${className}`} data-testid={`doc-card-${id}`}>
+    <div
+      className={`supporting-doc-item ${isUploaded ? 'supporting-doc-item--uploaded' : ''} ${className}`}
+      data-testid={`doc-card-${id}`}
+    >
       <input
-        type="file"
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        type="file"
         accept={accept}
+        style={{ display: 'none' }}
         onChange={handleFileChange}
       />
 
-      <div className="taxedge-doc-card__body">
-        {/* Left icon and details */}
-        <div className="taxedge-doc-card__left">
+      {/* Main Card Content */}
+      <div className="supporting-doc-item__main">
+        <div className="supporting-doc-item__left">
           <div
-            className="taxedge-doc-card__icon"
+            className="supporting-doc-item__icon-box"
             style={{ backgroundColor: iconBg, color: iconColor }}
             aria-hidden="true"
           >
             {icon || (
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-                <circle cx="8.5" cy="10" r="2.5" />
-                <line x1="14" y1="9" x2="18" y2="9" />
-                <line x1="14" y1="13" x2="17" y2="13" />
-                <line x1="6" y1="16" x2="18" y2="16" />
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
               </svg>
             )}
           </div>
 
-          <div className="taxedge-doc-card__details">
-            <h4 className="taxedge-doc-card__title">
-              {title} {isRequired && <span className="taxedge-doc-card__asterisk">*</span>}
-            </h4>
-
-            {children ? (
-              children
-            ) : !isUploaded ? (
-              <p className="taxedge-doc-card__desc">
-                {subtitle || (isRequired ? 'Required document' : 'Optional document')}
-              </p>
-            ) : (
-              <p className="taxedge-doc-card__filename">{fileName}</p>
+          <div className="supporting-doc-item__meta">
+            <span className="supporting-doc-item__title">
+              {title} {isRequired && <span className="supporting-doc-item__required">*</span>}
+            </span>
+            {effectiveSubtitle && (
+              <span className="supporting-doc-item__subtitle">{effectiveSubtitle}</span>
             )}
+            {isUploaded && (
+              <span className="supporting-doc-item__filename">
+                {fileName || file?.name || 'Document uploaded'} {fileSize ? `(${fileSize})` : ''}
+              </span>
+            )}
+            {children}
           </div>
         </div>
 
-        {/* Right action / status */}
-        <div className="taxedge-doc-card__right">
-          {!isUploaded ? (
-            <div className="taxedge-doc-upload-btn-group">
+        {/* Right side status / button */}
+        {isUploaded ? (
+          <div className="supporting-doc-item__uploaded-badge">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>Uploaded</span>
+          </div>
+        ) : isNotApplicable ? (
+          <div className="supporting-doc-item__na-wrap">
+            <span className="supporting-doc-item__na-badge">Not Applicable</span>
+            {onToggleNotApplicable && (
               <button
                 type="button"
-                className="taxedge-doc-btn-upload-file"
-                onClick={() => fileInputRef.current?.click()}
-                data-testid={`upload-btn-${id}`}
+                className="supporting-doc-item__na-undo"
+                onClick={() => onToggleNotApplicable(id)}
               >
-                <CloudUploadIcon />
-                Upload File
+                Change
               </button>
-            </div>
-          ) : (
-            <span className="taxedge-doc-status-badge taxedge-doc-status-badge--uploaded">
-              <CheckCircleIcon />
-              Uploaded
-            </span>
-          )}
-        </div>
+            )}
+          </div>
+        ) : (
+          <div className="supporting-doc-item__btn-group">
+            <button
+              type="button"
+              className="supporting-doc-item__upload-btn"
+              onClick={() => fileInputRef.current?.click()}
+              aria-label={`Upload ${title}`}
+              data-testid={`upload-btn-${id}`}
+            >
+              <svg
+                className="supporting-doc-item__cloud-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+                <polyline points="9 14 12 11 15 14" />
+                <line x1="12" y1="11" x2="12" y2="17" />
+              </svg>
+              <span>Upload File</span>
+            </button>
+            {onToggleNotApplicable && !isRequired && (
+              <button
+                type="button"
+                className="supporting-doc-item__na-btn"
+                onClick={() => onToggleNotApplicable(id)}
+              >
+                Not Applicable
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Footer action bar: shown when document is uploaded */}
+      {/* Uploaded Actions Footer Bar: View Document | Replace | Trash */}
       {isUploaded && (
-        <footer className="taxedge-doc-card__footer">
-          <button
-            type="button"
-            className="taxedge-doc-card__action-btn taxedge-doc-card__action-btn--view"
-            onClick={handleView}
-            data-testid={`view-doc-${id}`}
-          >
-            <ViewEyeIcon />
-            View Document
-          </button>
+        <>
+          <div className="supporting-doc-item__divider" />
+          <div className="supporting-doc-item__bottom-bar">
+            <button
+              type="button"
+              className="supporting-doc-item__action-link supporting-doc-item__action-link--view"
+              onClick={handleView}
+              data-testid={`view-doc-${id}`}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span>View Document</span>
+            </button>
 
-          <span className="taxedge-doc-card__divider" aria-hidden="true" />
+            <span className="supporting-doc-item__divider-vertical" aria-hidden="true" />
 
-          <button
-            type="button"
-            className="taxedge-doc-card__action-btn"
-            onClick={() => fileInputRef.current?.click()}
-            data-testid={`replace-doc-${id}`}
-          >
-            <ReplaceRotateIcon />
-            Replace
-          </button>
+            <button
+              type="button"
+              className="supporting-doc-item__action-link supporting-doc-item__action-link--replace"
+              onClick={handleReplaceClick}
+              data-testid={`replace-doc-${id}`}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
+              <span>Replace</span>
+            </button>
 
-          <span className="taxedge-doc-card__divider" aria-hidden="true" />
+            <span className="supporting-doc-item__divider-vertical" aria-hidden="true" />
 
-          <button
-            type="button"
-            className="taxedge-doc-card__action-btn taxedge-doc-card__action-btn--delete"
-            onClick={() => onRemove?.(id)}
-            title={`Delete ${title}`}
-            aria-label={`Delete ${title}`}
-            data-testid={`delete-doc-${id}`}
-          >
-            <DeleteTrashIcon />
-          </button>
-        </footer>
+            <button
+              type="button"
+              className="supporting-doc-item__trash-btn"
+              onClick={() => onRemove?.(id)}
+              title="Delete document"
+              aria-label="Delete document"
+              data-testid={`delete-doc-${id}`}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+              </svg>
+            </button>
+          </div>
+        </>
       )}
-    </article>
+    </div>
   )
 }
+
+export default DocumentCard

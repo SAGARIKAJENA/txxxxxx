@@ -1,40 +1,17 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { userStorage } from '@core/storage/userStorage'
-import { useDraftBlocker } from '@shared/hooks'
-import { useAppStore } from '@store/index'
-import type {
-  OriginalReturnDetails,
-  RevisionReasonKey,
-  IncomeCorrectionState,
-  DeductionCorrectionState,
-  BankCorrectionState,
-  DocumentTypeId,
-  UploadedDocument,
-  RevisedItrValidationErrors,
-} from '../types/revisedItr.types'
-import {
-  validateAckNumber,
-  validateAssessmentYear,
-  validateRevisionReason,
-  validateIncomeCorrections,
-  validateDeductionCorrections,
-  validateBankCorrections,
-  validateRequiredDocuments,
-  formatFileSize,
-  sanitizeAckNumberInput,
-  sanitizeNumericAmount,
-  isNumericKeyAllowed,
-} from '../validation/revisedItrValidation'
 import { revisedItrService } from '../services/revisedItrService'
+import { downloadRevisedItrReceipt } from './revisedItrReceipt'
+import { validateRevisedItrStep } from './revisedItrStepValidation'
+import { useRevisedItrState, type RevisedItrDraftData } from './useRevisedItrState'
+import { useRevisedItrDraft } from './useRevisedItrDraft'
 
 export const useRevisedItr = () => {
   const navigate = useNavigate()
-  const pushToast = useAppStore((state) => state.pushToast)
   const [existingDraft] = useState(() => userStorage.getDraft('revised-itr'))
 
-  // Navigation / Step State
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(() => {
     if (existingDraft && existingDraft.currentStep >= 1 && existingDraft.currentStep <= 5) {
       return existingDraft.currentStep as 1 | 2 | 3 | 4 | 5
@@ -45,294 +22,56 @@ export const useRevisedItr = () => {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [applicationId, setApplicationId] = useState('ITR-2026-50983')
 
-  // Step 1 State
-  const [ackNumber, setAckNumber] = useState<string>(
-    () => (existingDraft?.formData?.ackNumber as string) || ''
-  )
-  const [selectedAy, setSelectedAy] = useState<string>(
-    () => (existingDraft?.formData?.selectedAy as string) || ''
-  )
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isReturnFound, setIsReturnFound] = useState<boolean>(
-    () => Boolean(existingDraft?.formData?.isReturnFound)
-  )
-  const [returnDetails, setReturnDetails] = useState<OriginalReturnDetails | null>(
-    () => (existingDraft?.formData?.returnDetails as OriginalReturnDetails) || null
-  )
+  const state = useRevisedItrState(existingDraft as { formData?: RevisedItrDraftData } | null)
 
-  // Step 2 State
-  const [selectedReason, setSelectedReason] = useState<RevisionReasonKey | null>(
-    () => (existingDraft?.formData?.selectedReason as RevisionReasonKey) || null
-  )
-  const [otherReasonText, setOtherReasonText] = useState<string>(
-    () => (existingDraft?.formData?.otherReasonText as string) || ''
-  )
+  const draftData: RevisedItrDraftData = {
+    ackNumber: state.ackNumber,
+    selectedAy: state.selectedAy,
+    isReturnFound: state.isReturnFound,
+    returnDetails: state.returnDetails || undefined,
+    selectedReason: state.selectedReason || undefined,
+    otherReasonText: state.otherReasonText,
+    incomeCorrections: state.incomeCorrections,
+    deductionCorrections: state.deductionCorrections,
+    bankCorrections: state.bankCorrections,
+    uploadedDocuments: state.uploadedDocuments,
+  }
 
-  // Step 3 State
-  const [incomeCorrections, setIncomeCorrections] = useState<IncomeCorrectionState>(
-    () =>
-      (existingDraft?.formData?.incomeCorrections as IncomeCorrectionState) || {
-        salaryIncome: '',
-        otherIncome: '',
-        taxableIncome: '',
-      }
-  )
-  const [deductionCorrections, setDeductionCorrections] = useState<DeductionCorrectionState>(
-    () =>
-      (existingDraft?.formData?.deductionCorrections as DeductionCorrectionState) || {
-        section80c: '',
-        section80d: '',
-        homeLoanInterest: '',
-        taxableIncome: '',
-      }
-  )
-  const [bankCorrections, setBankCorrections] = useState<BankCorrectionState>(
-    () =>
-      (existingDraft?.formData?.bankCorrections as BankCorrectionState) || {
-        accountNumber: '',
-        ifsc: '',
-      }
-  )
-
-  // Step 4 State (Uploaded Documents)
-  const [uploadedDocuments, setUploadedDocuments] = useState<Partial<Record<DocumentTypeId, UploadedDocument>>>(
-    () =>
-      (existingDraft?.formData?.uploadedDocuments as Partial<Record<DocumentTypeId, UploadedDocument>>) || {}
-  )
-
-  // Shared UI / Async State
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState<RevisedItrValidationErrors>({})
-
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
-  // Handle click outside for dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  // Input & Keydown handlers
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!isNumericKeyAllowed(e.key, e.ctrlKey || e.metaKey)) {
-      e.preventDefault()
-    }
-  }, [])
-
-  const handleAckChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const cleanVal = sanitizeAckNumberInput(e.target.value)
-    setAckNumber(cleanVal)
-    setErrors((prev) => ({ ...prev, ackError: null }))
-    setIsReturnFound(false)
-  }, [])
-
-  const handleSelectAy = useCallback((ay: string) => {
-    setSelectedAy(ay)
-    setIsDropdownOpen(false)
-    setErrors((prev) => ({ ...prev, ayError: null }))
-    setIsReturnFound(false)
-  }, [])
-
-  const handleToggleDropdown = useCallback(() => {
-    setIsDropdownOpen((prev) => !prev)
-  }, [])
-
-  const handleCloseDropdown = useCallback(() => {
-    setIsDropdownOpen(false)
-  }, [])
-
-  // Step 2 reason selection
-  const handleSelectReason = useCallback((reason: RevisionReasonKey) => {
-    setSelectedReason(reason)
-    setErrors((prev) => ({ ...prev, reasonError: null }))
-    if (reason !== 'other') {
-      setErrors((prev) => ({ ...prev, otherReasonError: null }))
-    }
-  }, [])
-
-  const handleOtherReasonChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setOtherReasonText(e.target.value)
-    setErrors((prev) => ({ ...prev, otherReasonError: null }))
-  }, [])
-
-  // Step 3 income correction handler
-  const handleIncomeChange = useCallback((field: keyof IncomeCorrectionState, val: string) => {
-    const cleanNumeric = sanitizeNumericAmount(val)
-    setIncomeCorrections((prev) => ({
-      ...prev,
-      [field]: cleanNumeric,
-    }))
-
-    if (field === 'salaryIncome') {
-      setErrors((prev) => ({ ...prev, salaryIncomeError: null }))
-    } else if (field === 'taxableIncome') {
-      setErrors((prev) => ({ ...prev, taxableIncomeError: null }))
-    }
-  }, [])
-
-  // Step 3 deduction correction handler (for wrong_deduction)
-  const handleDeductionChange = useCallback((field: keyof DeductionCorrectionState, val: string) => {
-    const cleanNumeric = sanitizeNumericAmount(val)
-    setDeductionCorrections((prev) => ({
-      ...prev,
-      [field]: cleanNumeric,
-    }))
-
-    if (field === 'taxableIncome') {
-      setErrors((prev) => ({ ...prev, taxableIncomeError: null }))
-    }
-  }, [])
-
-  // Step 3 bank correction handler (for incorrect_bank)
-  const handleBankChange = useCallback((field: keyof BankCorrectionState, val: string) => {
-    let cleanVal = val
-    if (field === 'accountNumber') {
-      cleanVal = val.replace(/\D/g, '').slice(0, 20)
-    } else if (field === 'ifsc') {
-      cleanVal = val.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 11)
-    }
-    setBankCorrections((prev) => ({
-      ...prev,
-      [field]: cleanVal,
-    }))
-
-    if (field === 'accountNumber') {
-      setErrors((prev) => ({ ...prev, bankAccountError: null }))
-    } else if (field === 'ifsc') {
-      setErrors((prev) => ({ ...prev, ifscError: null }))
-    }
-  }, [])
-
-  // Step 4 document upload handlers
-  const handleFileUpload = useCallback((docId: DocumentTypeId, file: File) => {
-    const newDoc: UploadedDocument = {
-      id: docId,
-      fileName: file.name,
-      fileSize: formatFileSize(file.size),
-      uploadedAt: new Date().toLocaleTimeString(),
-      file,
-    }
-    setUploadedDocuments((prev) => ({
-      ...prev,
-      [docId]: newDoc,
-    }))
-    setErrors((prev) => ({ ...prev, documentsError: null }))
-  }, [])
-
-  const handleFileRemove = useCallback((docId: DocumentTypeId) => {
-    setUploadedDocuments((prev) => {
-      const copy = { ...prev }
-      delete copy[docId]
-      return copy
-    })
-  }, [])
-
-  const saveCurrentDraft = useCallback(() => {
-    if (isSubmitted) return
-    const timeStr = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })
-    const stepLabels: Record<number, string> = {
-      1: 'Original Return',
-      2: 'Reason for Revision',
-      3: 'Correction Details',
-      4: 'Supporting Documents',
-      5: 'Review Revision',
-    }
-    userStorage.saveDraft({
-      serviceId: 'revised-itr',
-      serviceTitle: 'Revised ITR Filing',
-      currentStep: step,
-      totalSteps: 5,
-      stepLabel: stepLabels[step] || 'Revision Details',
-      formData: {
-        ackNumber,
-        selectedAy,
-        isReturnFound,
-        returnDetails,
-        selectedReason,
-        otherReasonText,
-        incomeCorrections,
-        deductionCorrections,
-        bankCorrections,
-        uploadedDocuments,
-      },
-      savedAt: timeStr,
-      savedTimestamp: Date.now(),
-      resumeRoute: routePaths.itr.revisedItr,
-    })
-  }, [
-    isSubmitted,
-    step,
-    ackNumber,
-    selectedAy,
-    isReturnFound,
-    returnDetails,
-    selectedReason,
-    otherReasonText,
-    incomeCorrections,
-    deductionCorrections,
-    bankCorrections,
-    uploadedDocuments,
-  ])
-
-  // Automatically keep draft updated
-  useEffect(() => {
-    if (!isSubmitted && (step > 1 || Boolean(ackNumber) || isReturnFound)) {
-      saveCurrentDraft()
-    }
-  }, [step, ackNumber, isReturnFound, isSubmitted, saveCurrentDraft])
-
-  const shouldBlock = !isSubmitted && (step > 1 || Boolean(ackNumber) || isReturnFound)
   const {
     isModalOpen,
     openModal,
     handleSaveAndExit,
     handleDiscardAndExit,
     handleKeepEditing,
-  } = useDraftBlocker({
-    shouldBlock,
-    onSaveDraft: () => {
-      saveCurrentDraft()
-      pushToast('Revised ITR draft saved', 'success')
-    },
-    onDiscardDraft: () => {
-      userStorage.deleteDraft('revised-itr')
-      pushToast('Draft discarded', 'info')
-    },
-    defaultExitRoute: routePaths.itr.root,
+  } = useRevisedItrDraft({
+    step,
+    isSubmitted,
+    draftData,
   })
 
-  // Navigation handlers  // Back / Cancel action
   const handleBack = useCallback(() => {
     if (isSubmitted) {
       navigate(routePaths.itr.root)
       return
     }
-
     if (showPayment) {
       setShowPayment(false)
       return
     }
-
     if (step > 1) {
       setStep((prev) => (prev - 1) as 1 | 2 | 3 | 4 | 5)
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
-
     if (step === 1) {
-      if (isReturnFound || Boolean(ackNumber)) {
+      if (state.isReturnFound || Boolean(state.ackNumber)) {
         openModal()
         return
       }
       navigate(routePaths.itr.root)
       return
     }
-  }, [step, isReturnFound, ackNumber, showPayment, isSubmitted, openModal, navigate])
+  }, [step, state.isReturnFound, state.ackNumber, showPayment, isSubmitted, openModal, navigate])
 
   const handlePaymentSuccess = useCallback(
     (result?: { paymentId?: string }) => {
@@ -348,7 +87,7 @@ export const useRevisedItr = () => {
         id: `app-rev-itr-${Date.now()}`,
         code: finalAppId,
         title: 'Revised ITR Filing',
-        meta: `${returnDetails?.personalInfo?.fullName || 'Taxpayer'} · ${selectedAy || 'AY 2025-26'}`,
+        meta: `${state.returnDetails?.personalInfo?.fullName || 'Taxpayer'} · ${state.selectedAy || 'AY 2025-26'}`,
         statusLabel: 'Under Verification',
         statusTone: 'info',
         progress: 30,
@@ -357,48 +96,17 @@ export const useRevisedItr = () => {
       })
       window.scrollTo({ top: 0, behavior: 'smooth' })
     },
-    [returnDetails, selectedAy]
+    [state.returnDetails, state.selectedAy]
   )
 
   const handleDownloadReceipt = useCallback(() => {
-    const docCount = Object.keys(uploadedDocuments).length
-    const content = [
-      '==================================================',
-      '           TAXEDGE REVISED ITR RECEIPT             ',
-      '==================================================',
-      '',
-      `Application ID   : ${applicationId}`,
-      `Original Ack No  : ${ackNumber || '987656789876789'}`,
-      `Assessment Year  : ${selectedAy || 'AY 2025-26'}`,
-      `Return Form      : Revised ITR (ITR-1)`,
-      `Income Sources   : Revised Return Filing`,
-      `Tax Regime       : New Tax Regime`,
-      `Documents        : ${docCount} of 6 received`,
-      `Refund Bank      : HDFC Bank ···· 1234`,
-      `Filing Fee Paid  : ₹999 (Inclusive of 18% GST)`,
-      `Submitted At     : ${new Date().toLocaleString('en-IN')}`,
-      '',
-      '--------------------------------------------------',
-      'CURRENT STAGE: Stage 3 of 6 (CA Verification)',
-      'Certified CA verifying original filing and revised declaration.',
-      'SLA: 4-Hour CA Review with Notice Protection',
-      '--------------------------------------------------',
-      '',
-      'Thank you for filing with TaxEdge.',
-      'Support: support@taxedge.in | 1800-TAX-EDGE',
-      '==================================================',
-    ].join('\n')
-
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `TaxEdge_Revised_ITR_${applicationId}.txt`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }, [applicationId, ackNumber, selectedAy, uploadedDocuments])
+    downloadRevisedItrReceipt({
+      applicationId,
+      ackNumber: state.ackNumber,
+      selectedAy: state.selectedAy,
+      uploadedDocuments: state.uploadedDocuments,
+    })
+  }, [applicationId, state.ackNumber, state.selectedAy, state.uploadedDocuments])
 
   const goToStep = useCallback((targetStep: 1 | 2 | 3 | 4 | 5) => {
     setStep(targetStep)
@@ -406,132 +114,68 @@ export const useRevisedItr = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
-  // Continue action
   const handleContinue = useCallback(async () => {
+    const result = validateRevisedItrStep({
+      step,
+      ackNumber: state.ackNumber,
+      selectedAy: state.selectedAy,
+      selectedReason: state.selectedReason,
+      otherReasonText: state.otherReasonText,
+      incomeCorrections: state.incomeCorrections,
+      deductionCorrections: state.deductionCorrections,
+      bankCorrections: state.bankCorrections,
+      uploadedDocuments: state.uploadedDocuments,
+    })
+
+    if (!result.isValid) {
+      state.setErrors(result.errors)
+      return
+    }
+
+    state.setErrors({})
+
     if (step === 1) {
-      const ackErr = validateAckNumber(ackNumber)
-      const ayErr = validateAssessmentYear(selectedAy)
-
-      if (ackErr || ayErr) {
-        setErrors({ ackError: ackErr, ayError: ayErr })
-        return
-      }
-
-      setErrors({})
-
-      if (!isReturnFound) {
-        setIsLoading(true)
+      if (!state.isReturnFound) {
+        state.setIsLoading(true)
         try {
           const details = await revisedItrService.findOriginalReturn({
-            ackNumber,
-            assessmentYear: selectedAy,
+            ackNumber: state.ackNumber,
+            assessmentYear: state.selectedAy,
           })
-          setReturnDetails(details)
-          setIsReturnFound(true)
+          state.setReturnDetails(details)
+          state.setIsReturnFound(true)
         } finally {
-          setIsLoading(false)
+          state.setIsLoading(false)
         }
         return
       }
-
-      // If return already found, proceed to Step 2
       setStep(2)
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
     if (step === 2) {
-      const validation = validateRevisionReason(selectedReason, otherReasonText)
-      if (validation.reasonError || validation.otherReasonError) {
-        setErrors({
-          reasonError: validation.reasonError,
-          otherReasonError: validation.otherReasonError,
-        })
-        return
-      }
-
-      setErrors({})
-      // Proceed to Step 3
       setStep(3)
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
     if (step === 3) {
-      if (selectedReason === 'wrong_deduction') {
-        const deductionValidation = validateDeductionCorrections(deductionCorrections)
-        if (deductionValidation.taxableIncomeError) {
-          setErrors({
-            taxableIncomeError: deductionValidation.taxableIncomeError,
-          })
-          return
-        }
-      } else if (selectedReason === 'incorrect_bank') {
-        const bankValidation = validateBankCorrections(bankCorrections)
-        if (bankValidation.bankAccountError || bankValidation.ifscError) {
-          setErrors({
-            bankAccountError: bankValidation.bankAccountError,
-            ifscError: bankValidation.ifscError,
-          })
-          return
-        }
-      } else if (selectedReason === 'other') {
-        const incomeValidation = validateIncomeCorrections(incomeCorrections)
-        let bankErrors: { bankAccountError?: string | null; ifscError?: string | null } = {}
-        if (bankCorrections.accountNumber.trim() || bankCorrections.ifsc.trim()) {
-          bankErrors = validateBankCorrections(bankCorrections)
-        }
-        if (
-          incomeValidation.salaryIncomeError ||
-          incomeValidation.taxableIncomeError ||
-          bankErrors.bankAccountError ||
-          bankErrors.ifscError
-        ) {
-          setErrors({
-            salaryIncomeError: incomeValidation.salaryIncomeError,
-            taxableIncomeError: incomeValidation.taxableIncomeError,
-            bankAccountError: bankErrors.bankAccountError,
-            ifscError: bankErrors.ifscError,
-          })
-          return
-        }
-      } else {
-        const incomeValidation = validateIncomeCorrections(incomeCorrections)
-        if (incomeValidation.salaryIncomeError || incomeValidation.taxableIncomeError) {
-          setErrors({
-            salaryIncomeError: incomeValidation.salaryIncomeError,
-            taxableIncomeError: incomeValidation.taxableIncomeError,
-          })
-          return
-        }
-      }
-
-      setErrors({})
-      // Proceed to Step 4
       setStep(4)
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
     if (step === 4) {
-      const docsError = validateRequiredDocuments(uploadedDocuments, selectedReason)
-      if (docsError) {
-        setErrors({ documentsError: docsError })
-        return
-      }
-
-      setErrors({})
-      // Proceed to Step 5: Review Revised ITR
       setStep(5)
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
     if (step === 5) {
-      // Proceed to Payment
       setShowPayment(true)
     }
-  }, [step, ackNumber, selectedAy, isReturnFound, selectedReason, otherReasonText, incomeCorrections, deductionCorrections, bankCorrections, uploadedDocuments])
+  }, [step, state])
 
   return {
     step,
@@ -540,32 +184,7 @@ export const useRevisedItr = () => {
     isSubmitted,
     setIsSubmitted,
     applicationId,
-    ackNumber,
-    selectedAy,
-    isDropdownOpen,
-    isReturnFound,
-    returnDetails,
-    selectedReason,
-    otherReasonText,
-    incomeCorrections,
-    deductionCorrections,
-    bankCorrections,
-    uploadedDocuments,
-    isLoading,
-    errors,
-    dropdownRef,
-    handleKeyDown,
-    handleAckChange,
-    handleSelectAy,
-    handleToggleDropdown,
-    handleCloseDropdown,
-    handleSelectReason,
-    handleOtherReasonChange,
-    handleIncomeChange,
-    handleDeductionChange,
-    handleBankChange,
-    handleFileUpload,
-    handleFileRemove,
+    ...state,
     handleBack,
     handleContinue,
     handlePaymentSuccess,

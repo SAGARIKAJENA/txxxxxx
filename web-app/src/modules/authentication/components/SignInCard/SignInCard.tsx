@@ -31,6 +31,8 @@ export const SignInCard: React.FC<SignInCardProps> = ({
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const [isResetFlow, setIsResetFlow] = useState(false)
+
   const selectedCountry = COUNTRY_CODES[countryIndex] ?? COUNTRY_CODES[0]
   const cleanMobile = mobile.replace(/\D/g, '').trim()
 
@@ -54,6 +56,7 @@ export const SignInCard: React.FC<SignInCardProps> = ({
 
     setError(null)
     setIsSubmitting(true)
+    setIsResetFlow(false)
 
     try {
       await authFlowService.sendOtp(cleanMobile)
@@ -77,7 +80,12 @@ export const SignInCard: React.FC<SignInCardProps> = ({
       // Check if user is an existing registered user who already created a passcode
       const isExistingUser = authFlowService.isRegistered(cleanMobile)
       if (isExistingUser) {
-        // For existing users: OTP is verified, now prompt for passcode on the same card
+        if (isResetFlow) {
+          // If they forgot their passcode, we redirect to registration to set a new one
+          navigate(routePaths.registration, { state: { resetPasscode: true, mobile: cleanMobile } })
+          return
+        }
+        // For existing users normal login: OTP is verified, now prompt for passcode on the same card
         setAuthMode('passcode')
         return
       }
@@ -125,6 +133,7 @@ export const SignInCard: React.FC<SignInCardProps> = ({
   const handleForgotPasscode = async () => {
     setError(null)
     setIsSubmitting(true)
+    setIsResetFlow(true)
     try {
       await authFlowService.sendOtp(cleanMobile)
       setAuthMode('otp')

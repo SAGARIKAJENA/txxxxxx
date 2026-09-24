@@ -261,10 +261,11 @@
 .identity-hero__bottom-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   z-index: 2;
-  margin-top: clamp(0.5rem, 1.5vh, 1.5rem);
+  margin-top: auto;
+  margin-bottom: clamp(3rem, 6vh, 4.5rem);
   padding-top: clamp(0.4rem, 1.2vh, 1.25rem);
 }
 

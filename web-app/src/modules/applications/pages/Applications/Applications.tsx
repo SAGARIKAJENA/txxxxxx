@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Loader } from '@shared/components'
 import { useApplications } from '../../hooks/useApplications'
 import type {
@@ -15,7 +16,22 @@ export const Applications: React.FC = () => {
   const { data, isLoading } = useApplications()
   const allApplications = useMemo(() => data ?? [], [data])
 
-  const [activeCategory, setActiveCategory] = useState<ApplicationCategory>('All')
+  const [searchParams] = useSearchParams()
+  const categoryParam = searchParams.get('category')
+  const [activeCategory, setActiveCategory] = useState<ApplicationCategory>(() => {
+    if (categoryParam && ['All', 'GST', 'ITR', 'Loans', 'Business', 'Insurance'].includes(categoryParam)) {
+      return categoryParam as ApplicationCategory
+    }
+    return 'All'
+  })
+
+  useEffect(() => {
+    const cat = searchParams.get('category')
+    if (cat && ['All', 'GST', 'ITR', 'Loans', 'Business', 'Insurance'].includes(cat)) {
+      setActiveCategory(cat as ApplicationCategory)
+    }
+  }, [searchParams])
+
   const [activeOverviewFilter, setActiveOverviewFilter] = useState<ApplicationOverviewFilter>('ALL')
   const [searchQuery, setSearchQuery] = useState('')
 

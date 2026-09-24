@@ -48,6 +48,18 @@ export const routePaths = {
   insurance: '/insurance',
   incorporation: {
     root: '/incorporation',
+    selectType: '/incorporation/select-type',
+    companyDetails: '/incorporation/company-details',
+    registeredOffice: '/incorporation/registered-office',
+    promoterDetails: '/incorporation/promoter-details',
+    capitalDetails: '/incorporation/capital-details',
+    documentsKyc: '/incorporation/documents-kyc',
+    linkedRegistrations: '/incorporation/linked-registrations',
+    reviewApplication: '/incorporation/review-application',
+    feesPayment: '/incorporation/fees-payment',
+    submissionSuccess: '/incorporation/submission-success',
+    applicationTracking: '/incorporation/application-tracking',
+    receipt: '/incorporation/receipt',
   },
   business: {
     root: '/business',
@@ -60,6 +72,8 @@ export const routePaths = {
   services: '/services',
   allServices: '/all-services',
   profile: '/profile',
+  profilePersonal: '/profile/personal',
+  profileKyc: '/profile/kyc',
   support: '/support',
   notifications: '/notifications',
   staff: {

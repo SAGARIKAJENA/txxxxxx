@@ -1,79 +1,15 @@
-.cs-view {
+.cs-mobile-view {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-2) 0 var(--space-8) 0;
-}
-
-.cs-view__breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: 0.88rem;
-  color: var(--color-text-muted, #64748b);
-}
-
-.cs-view__breadcrumb-parent {
-  color: var(--color-text-muted, #64748b);
-  font-weight: var(--font-weight-normal, 400);
-}
-
-.cs-view__breadcrumb-arrow {
-  width: 14px;
-  height: 14px;
-  stroke: var(--grey-400, #94a3b8);
-}
-
-.cs-view__breadcrumb-current {
-  color: var(--color-text, #172033);
-  font-weight: var(--font-weight-semibold, 600);
-}
-
-.cs-view__header {
-  margin-bottom: var(--space-2);
-}
-
-.cs-view__title {
-  margin: 0 0 0.35rem 0;
-  font-size: 1.85rem;
-  font-weight: var(--font-weight-bold, 700);
-  color: var(--color-text, #172033);
-  letter-spacing: -0.5px;
-}
-
-.cs-view__subtitle {
+  width: 100%;
+  max-width: 100%; /* Fill the entire width */
   margin: 0;
-  font-size: 0.95rem;
-  color: var(--color-text-muted, #64748b);
-  line-height: 1.45;
+  height: calc(100vh - 80px); /* 80px for top navbar */
+  padding: 0; /* Remove padding to eliminate empty space */
 }
 
-.cs-view__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 1.5rem;
-  align-items: start;
-}
-
-.cs-view__chat-col {
-  min-width: 0;
-}
-
-.cs-view__sidebar-col {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  min-width: 0;
-}
-
-@media (max-width: 960px) {
-  .cs-view__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .cs-view__sidebar-col {
-    order: 2;
+@media (max-width: 768px) {
+  .cs-mobile-view {
+    height: calc(100vh - 60px);
   }
 }

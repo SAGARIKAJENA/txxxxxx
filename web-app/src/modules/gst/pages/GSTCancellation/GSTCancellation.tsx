@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { useAppStore } from '@store/index'
-import { GSTCancellationCard, type CancellationFormData } from '../../components/cancellation/GSTCancellationCard/GSTCancellationCard'
+import { GSTCancellationCard, type CancellationFormData } from './GSTCancellationCard'
 import './GSTCancellation.css'
 
 export const GSTCancellation: React.FC = () => {

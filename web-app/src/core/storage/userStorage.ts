@@ -1,4 +1,5 @@
 import { localStore } from './localStorage'
+import { authStorage } from '@core/auth'
 import type { RecentApplication, UpcomingDeadlineItem } from '@modules/dashboard/types/dashboard.types'
 
 const USER_APPLICATIONS_KEY = 'taxedge.userApplications'
@@ -15,6 +16,7 @@ export interface ApplicationDraft {
   savedAt: string
   savedTimestamp: number
   resumeRoute: string
+  userId?: string
 }
 
 export const userStorage = {
@@ -83,7 +85,10 @@ export const userStorage = {
 
   /* Drafts Management */
   getAllDrafts(): ApplicationDraft[] {
-    return localStore.get<ApplicationDraft[]>(APPLICATION_DRAFTS_KEY) || []
+    const all = localStore.get<ApplicationDraft[]>(APPLICATION_DRAFTS_KEY) || []
+    const user = authStorage.getUser()
+    if (!user) return []
+    return all.filter((d) => d.userId === user.id || !d.userId)
   },
 
   getActiveDraft(): ApplicationDraft | null {
@@ -101,23 +106,34 @@ export const userStorage = {
   },
 
   saveDraft(draft: ApplicationDraft): void {
-    const drafts = this.getAllDrafts()
-    const index = drafts.findIndex((d) => d.serviceId === draft.serviceId)
+    const all = localStore.get<ApplicationDraft[]>(APPLICATION_DRAFTS_KEY) || []
+    const user = authStorage.getUser()
+    if (!user) return
+    const draftWithUser = { ...draft, userId: user.id }
+    
+    const index = all.findIndex((d) => d.serviceId === draft.serviceId && (d.userId === user.id || !d.userId))
     if (index >= 0) {
-      drafts[index] = draft
+      all[index] = draftWithUser
     } else {
-      drafts.unshift(draft)
+      all.unshift(draftWithUser)
     }
-    localStore.set(APPLICATION_DRAFTS_KEY, drafts)
+    localStore.set(APPLICATION_DRAFTS_KEY, all)
   },
 
   deleteDraft(serviceId: string): void {
-    const drafts = this.getAllDrafts().filter((d) => d.serviceId !== serviceId)
-    localStore.set(APPLICATION_DRAFTS_KEY, drafts)
+    const all = localStore.get<ApplicationDraft[]>(APPLICATION_DRAFTS_KEY) || []
+    const user = authStorage.getUser()
+    if (!user) return
+    const filtered = all.filter((d) => !(d.serviceId === serviceId && (d.userId === user.id || !d.userId)))
+    localStore.set(APPLICATION_DRAFTS_KEY, filtered)
   },
 
   clearAllDrafts(): void {
-    localStore.remove(APPLICATION_DRAFTS_KEY)
+    const all = localStore.get<ApplicationDraft[]>(APPLICATION_DRAFTS_KEY) || []
+    const user = authStorage.getUser()
+    if (!user) return
+    const filtered = all.filter((d) => d.userId !== user.id && d.userId !== undefined)
+    localStore.set(APPLICATION_DRAFTS_KEY, filtered)
   },
 
   /* Deadlines Management */
@@ -139,5 +155,23 @@ export const userStorage = {
   clearUserDeadlines(): void {
     localStore.remove(USER_DEADLINES_KEY)
   },
+
+  /**
+   * Resets all user-entered data, drafts, applications, and deadlines across all modules.
+   * Calling this returns the application to a brand-new user state.
+   */
+  clearAllUserData(): void {
+    this.clearUserApplications()
+    this.clearAllDrafts()
+    this.clearUserDeadlines()
+    localStore.remove(USER_APPLICATIONS_KEY)
+    localStore.remove(APPLICATION_DRAFTS_KEY)
+    localStore.remove(USER_DEADLINES_KEY)
+  },
 }
+
+if (typeof window !== 'undefined') {
+  ;(window as unknown as Record<string, unknown>).__taxedge_clear_user_data__ = () => userStorage.clearAllUserData()
+}
+
 

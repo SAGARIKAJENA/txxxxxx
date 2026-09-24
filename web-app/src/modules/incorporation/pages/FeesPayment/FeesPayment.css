@@ -1,0 +1,430 @@
+/* Fees & Payment Breakdown Styles */
+.fees-pay-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 3.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  box-sizing: border-box;
+}
+
+/* Step Bar */
+.fees-pay-stepbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.fees-pay-stepbar__badge {
+  background: #0b2546;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.fees-pay-stepbar__text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+.fees-pay-stepbar__line {
+  flex: 1;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+}
+.fees-pay-stepbar__line-fill {
+  width: 81.81%;
+  height: 100%;
+  background: #f25a22;
+  border-radius: 9999px;
+}
+
+/* Header */
+.fees-pay-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.fees-pay-header__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+.fees-pay-header__subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Breakdown Card */
+.fees-breakdown-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.fees-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+.fees-breakdown-row__label {
+  color: #475569;
+  font-weight: 500;
+}
+.fees-breakdown-row__value {
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.fees-breakdown-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0.25rem 0;
+}
+
+.fees-breakdown-row--total {
+  padding-top: 0.25rem;
+}
+.fees-breakdown-row--total .fees-breakdown-row__label {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0b2546;
+}
+.fees-breakdown-row--total .fees-breakdown-row__value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0b2546;
+}
+
+/* Note */
+.fees-note {
+  margin: -0.5rem 0 0 0;
+  font-size: 0.84rem;
+  color: #64748b;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+/* Payment Methods */
+.fees-payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.fees-payment-methods__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.fees-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.fees-methods-list--error {
+  outline: 1.5px dashed #ef4444;
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.fees-field-error {
+  font-size: 0.76rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  line-height: 1.25;
+  display: block;
+}
+
+.fees-method-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.15rem 1.35rem;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.fees-method-item:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+.fees-method-item--selected {
+  background: #f0f7ff;
+  border-color: #93c5fd;
+}
+
+.fees-method-item__left {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.fees-method-item__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0b2546;
+}
+.fees-method-item--selected .fees-method-item__icon {
+  background: #bfdbfe;
+  color: #1e3a8a;
+}
+.fees-method-item__name {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Radio circle */
+.fees-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.fees-method-item--selected .fees-radio {
+  border-color: #0b2546;
+}
+.fees-radio__inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0b2546;
+}
+
+/* Footer Navigation */
+.fees-pay-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  gap: 1rem;
+}
+.fees-pay-btn-back {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.fees-pay-btn-back:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.fees-pay-btn-submit {
+  background: #f25a22;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 2.25rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(242, 90, 34, 0.28);
+  transition: all 0.2s ease;
+}
+.fees-pay-btn-submit:hover {
+  background: #e04b15;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Application Submitted Popup Modal
+   ========================================================================== */
+.fees-submit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 37, 70, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  animation: feesModalFadeIn 0.22s ease-out;
+}
+
+@keyframes feesModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fees-submit-modal-card {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 580px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 20px 48px rgba(11, 37, 70, 0.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  box-sizing: border-box;
+  animation: feesModalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes feesModalSlideUp {
+  from {
+    transform: translateY(24px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.fees-submit-modal-icon-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #e6f9f0;
+  color: #10b981;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+}
+
+.fees-submit-modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fees-submit-modal-title {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.fees-submit-modal-subtitle {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.fees-submit-modal-summary {
+  width: 100%;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.15rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.fees-submit-modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  gap: 1rem;
+}
+
+.fees-submit-modal-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.fees-submit-modal-val {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: right;
+}
+
+.fees-submit-modal-id {
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: #0b2546;
+  background: #e2e8f0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+}
+
+.fees-submit-modal-status {
+  background: #e6f9f0;
+  color: #059669;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.fees-submit-modal-actions {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.fees-submit-modal-btn-primary {
+  width: 100%;
+  background: #f25a22;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(242, 90, 34, 0.28);
+  transition: all 0.2s ease;
+}
+
+.fees-submit-modal-btn-primary:hover {
+  background: #e04b15;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(242, 90, 34, 0.35);
+}

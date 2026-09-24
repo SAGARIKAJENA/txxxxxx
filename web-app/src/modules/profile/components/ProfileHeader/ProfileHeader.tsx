@@ -19,9 +19,6 @@ const EditIcon = () => (
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   user,
-  activeAppsCount = 0,
-  completedAppsCount = 0,
-  totalPaidAmount = 0,
   onEditAvatar
 }) => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -50,9 +47,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       setAvatarUrl(url)
     }
   }
-  const formatCurrency = (amount: number) => {
-    return `₹${amount.toLocaleString('en-IN')}`
-  }
+
 
   const customerId = user?.id?.replace('usr_', 'CI').toUpperCase() || 'CI000000'
   const customerType = user?.customerType?.toUpperCase() || 'INDIVIDUAL'

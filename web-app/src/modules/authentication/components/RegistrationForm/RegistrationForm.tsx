@@ -192,6 +192,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         setValues((current) => ({
           ...current,
+          addressLine1: res.addressLine1 || current.addressLine1,
           areaLocality: areaCandidate || current.areaLocality,
           city: res.city || current.city,
           district: res.district || current.district,
@@ -200,6 +201,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         }))
         setErrors((prevErr) => ({
           ...prevErr,
+          addressLine1: undefined,
           city: undefined,
           district: undefined,
           state: undefined,
@@ -284,6 +286,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       const cleanMobile = values.mobile.replace(/\D/g, '')
 
       const formattedAddress = [
+        values.addressLine1.trim(),
         values.areaLocality.trim(),
         values.city.trim(),
         values.district.trim(),
@@ -307,7 +310,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         fatherSpouseName: values.fatherSpouseName.trim(),
         pan: values.pan.trim(),
         aadhaar: values.aadhaar.trim(),
-        addressLine1: '',
+        addressLine1: values.addressLine1.trim(),
         addressLine2: '',
         areaLocality: values.areaLocality.trim(),
         city: values.city.trim(),
@@ -403,6 +406,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
       <RegistrationResidentialFields
         values={{
+          addressLine1: values.addressLine1,
           pincode: values.pincode,
           areaLocality: values.areaLocality,
           city: values.city,
@@ -410,6 +414,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           state: values.state,
         }}
         errors={{
+          addressLine1: touched.addressLine1 ? errors.addressLine1 : undefined,
           pincode: touched.pincode ? errors.pincode : undefined,
           areaLocality: touched.areaLocality ? errors.areaLocality : undefined,
           city: touched.city ? errors.city : undefined,

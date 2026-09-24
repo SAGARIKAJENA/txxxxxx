@@ -15,7 +15,15 @@ import './CustomerDashboard.css'
 export const CustomerDashboard = () => {
   const user = useAuthStore((state) => state.user)
   const { data, isLoading, error } = useDashboardSummary()
-  const [activeDraft] = useState<ApplicationDraft | null>(() => userStorage.getActiveDraft())
+  const [drafts, setDrafts] = useState<ApplicationDraft[]>(() => {
+    const all = userStorage.getAllDrafts()
+    return [...all].sort((a, b) => (b.savedTimestamp || 0) - (a.savedTimestamp || 0))
+  })
+
+  const handleDiscardDraft = (serviceId: string) => {
+    userStorage.deleteDraft(serviceId)
+    setDrafts((prev) => prev.filter((d) => d.serviceId !== serviceId))
+  }
 
   if (isLoading) return <Loader fullPage label="Loading your dashboard" />
   if (error || !data) {
@@ -37,9 +45,17 @@ export const CustomerDashboard = () => {
         paymentDue={data.brief?.paymentDue}
       />
 
-      {/* 4. Incomplete Application Draft (Reference Image 1) */}
-      {activeDraft && (
-        <IncompleteApplicationBanner draft={activeDraft} />
+      {/* 4. Incomplete Application Drafts (Supports Multiple Drafts matching Mobile View) */}
+      {drafts.length > 0 && (
+        <div className="incomplete-banners-list">
+          {drafts.map((draft) => (
+            <IncompleteApplicationBanner
+              key={draft.serviceId}
+              draft={draft}
+              onDiscard={handleDiscardDraft}
+            />
+          ))}
+        </div>
       )}
 
       {/* 5. Overview Grid (Upcoming Deadlines & Applications) */}

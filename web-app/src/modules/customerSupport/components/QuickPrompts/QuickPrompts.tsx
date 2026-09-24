@@ -8,7 +8,6 @@ interface QuickPromptsProps {
 export const QuickPrompts = ({ onSelectPrompt }: QuickPromptsProps) => {
   return (
     <div className="cs-quick-prompts">
-      <span className="cs-quick-prompts__label">Suggested questions:</span>
       <div className="cs-quick-prompts__list">
         {QUICK_SUPPORT_TOPICS.map((topic, i) => (
           <button

@@ -4,7 +4,7 @@ import { userStorage } from '@core/storage/userStorage'
 import { formatCurrency } from '@shared/utils'
 
 import { dashboardApi } from '../api/dashboardApi'
-import type { DashboardSummary, QuickService } from '../types/dashboard.types'
+import type { DashboardSummary, QuickService, RecentApplication } from '../types/dashboard.types'
 
 export const quickServices: QuickService[] = [
   {
@@ -57,6 +57,29 @@ export const quickServices: QuickService[] = [
 const buildUserDashboardSummary = (): DashboardSummary => {
   const user = authStorage.getUser()
   const applications = userStorage.getUserApplications()
+  const drafts = userStorage.getAllDrafts()
+
+  const draftApps: RecentApplication[] = drafts.map((d) => {
+    const prefix = d.serviceId
+      .replace(/^gst-/, 'GST-')
+      .replace(/^itr-/, 'ITR-')
+      .toUpperCase()
+    const code = `DRAFT-${prefix}-${String(d.savedTimestamp || Date.now()).slice(-4)}`
+
+    return {
+      id: `draft-${d.serviceId}`,
+      code,
+      title: d.serviceTitle,
+      meta: d.savedAt || `Step ${d.currentStep} of ${d.totalSteps}`,
+      statusLabel: 'Draft',
+      statusTone: 'info',
+      progress: Math.round((d.currentStep / d.totalSteps) * 100),
+      icon: d.serviceId.includes('gst') ? '📄' : d.serviceId.includes('itr') ? '📊' : '🏢',
+      to: d.resumeRoute,
+    }
+  })
+
+  const combinedRecentApps = [...draftApps, ...applications]
   const activeApps = applications.filter((a) => a.statusLabel !== 'Completed')
   const completedApps = applications.filter((a) => a.statusLabel === 'Completed')
 
@@ -116,7 +139,7 @@ const buildUserDashboardSummary = (): DashboardSummary => {
         icon: '✓',
       },
     ],
-    recentApplications: applications,
+    recentApplications: combinedRecentApps,
     pendingTasks: [],
     upcomingDeadlinesList: userStorage.getUserDeadlines(),
     recentActivity: [],
