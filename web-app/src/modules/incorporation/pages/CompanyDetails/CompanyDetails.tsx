@@ -4,6 +4,8 @@ import { routePaths } from '@core/config'
 import { defaultCompanyDetails } from '../../data/companyRegistrationData'
 import type { CompanyDetailsFormData, CompanyEntityType } from '../../types/incorporation.types'
 import { filterDigits, isValidNicCode } from '../../utils/validation'
+import { StepActionBar } from '@shared/components'
+import { saveIncorporationDraft } from '../../utils/incorporationDraft'
 import './CompanyDetails.css'
 
 export const CompanyDetails: React.FC = () => {
@@ -11,7 +13,7 @@ export const CompanyDetails: React.FC = () => {
   const location = useLocation()
   const locationState = location.state as { companyType?: CompanyEntityType } | null
   const selectedCompanyType = locationState?.companyType || 'pvt_ltd'
-  const [error, setError] = useState<string>('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const getSuffix = (type: CompanyEntityType) => {
     if (type === 'public_ltd') return 'Legal Suffix: Limited'
@@ -40,7 +42,7 @@ export const CompanyDetails: React.FC = () => {
   const showNicCode = selectedCompanyType === 'opc' || selectedCompanyType === 'section_8'
 
   const handleInputChange = (field: keyof CompanyDetailsFormData, value: string) => {
-    setError('')
+    setErrors((prev) => ({ ...prev, [field]: '' }))
     if (field === 'nicCode') {
       setFormData((prev) => ({ ...prev, nicCode: filterDigits(value, 5) }))
       return
@@ -57,7 +59,7 @@ export const CompanyDetails: React.FC = () => {
       <label className="company-details-label">
         {label}<span className="company-details-required"> *</span>
       </label>
-      <div className="company-details-chips">
+      <div className={`company-details-chips ${errors[field] ? 'company-chips--error' : ''}`}>
         {options.map((opt) => (
           <button
             key={opt}
@@ -69,21 +71,31 @@ export const CompanyDetails: React.FC = () => {
           </button>
         ))}
       </div>
+      {errors[field] && <span className="company-field-error">{errors[field]}</span>}
     </div>
   )
 
   const handleContinue = () => {
-    if (!formData.classOfCompany) { setError('Please select Class of Company.'); return }
-    if (!formData.categoryOfCompany) { setError('Please select Category of Company.'); return }
-    if (!formData.subCategoryOfCompany) { setError('Please select Sub-Category of Company.'); return }
-    if (!formData.primaryBusinessActivity.trim()) { setError('Please enter Primary Business Activity.'); return }
-    if (showNicCode && (!formData.nicCode || !isValidNicCode(formData.nicCode))) {
-      setError('Please enter a valid 5-digit numeric NIC code.')
+    const newErrors: Record<string, string> = {}
+    if (!formData.classOfCompany) newErrors.classOfCompany = 'Please select class of company'
+    if (!formData.categoryOfCompany) newErrors.categoryOfCompany = 'Please select category of company'
+    if (!formData.subCategoryOfCompany) newErrors.subCategoryOfCompany = 'Please select sub-category of company'
+    if (!formData.primaryBusinessActivity.trim()) newErrors.primaryBusinessActivity = 'Primary business activity is required'
+    if (showNicCode) {
+      if (!formData.nicCode.trim()) {
+        newErrors.nicCode = 'NIC 5-digit code is required'
+      } else if (!isValidNicCode(formData.nicCode)) {
+        newErrors.nicCode = 'Please enter a valid 5-digit numeric NIC code'
+      }
+    }
+    if (!formData.firstPreferredName.trim()) newErrors.firstPreferredName = 'First preferred name is required'
+    if (!formData.secondPreferredName.trim()) newErrors.secondPreferredName = 'Second preferred name is required'
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
       return
     }
-    if (!formData.firstPreferredName.trim()) { setError('Please enter First Preferred Name.'); return }
-    if (!formData.secondPreferredName.trim()) { setError('Please enter Second Preferred Name.'); return }
-    setError('')
+    setErrors({})
     navigate(routePaths.incorporation.registeredOffice, {
       state: { companyType: selectedCompanyType, companyDetails: formData },
     })
@@ -138,11 +150,12 @@ export const CompanyDetails: React.FC = () => {
           </label>
           <input
             type="text"
-            className="company-details-input"
+            className={`company-details-input ${errors.primaryBusinessActivity ? 'company-input--error' : ''}`}
             placeholder="e.g. Information Technology & Software Consultancy"
             value={formData.primaryBusinessActivity}
             onChange={(e) => handleInputChange('primaryBusinessActivity', e.target.value)}
           />
+          {errors.primaryBusinessActivity && <span className="company-field-error">{errors.primaryBusinessActivity}</span>}
           <p className="company-details-helper">Used for Main Objects in MoA Memorandum of Association.</p>
         </div>
 
@@ -153,11 +166,12 @@ export const CompanyDetails: React.FC = () => {
             </label>
             <input
               type="text"
-              className="company-details-input"
+              className={`company-details-input ${errors.nicCode ? 'company-input--error' : ''}`}
               placeholder="e.g. 62011"
               value={formData.nicCode}
               onChange={(e) => handleInputChange('nicCode', e.target.value)}
             />
+            {errors.nicCode && <span className="company-field-error">{errors.nicCode}</span>}
             <p className="company-details-helper">National Industrial Classification code (e.g. 62011 for software development).</p>
           </div>
         )}
@@ -189,11 +203,12 @@ export const CompanyDetails: React.FC = () => {
           </label>
           <input
             type="text"
-            className="company-details-input"
+            className={`company-details-input ${errors.firstPreferredName ? 'company-input--error' : ''}`}
             placeholder="e.g. TaxEdge Innovations"
             value={formData.firstPreferredName}
             onChange={(e) => handleInputChange('firstPreferredName', e.target.value)}
           />
+          {errors.firstPreferredName && <span className="company-field-error">{errors.firstPreferredName}</span>}
         </div>
 
         <div className="company-details-group">
@@ -202,11 +217,12 @@ export const CompanyDetails: React.FC = () => {
           </label>
           <input
             type="text"
-            className="company-details-input"
+            className={`company-details-input ${errors.secondPreferredName ? 'company-input--error' : ''}`}
             placeholder="e.g. TaxEdge Technologies"
             value={formData.secondPreferredName}
             onChange={(e) => handleInputChange('secondPreferredName', e.target.value)}
           />
+          {errors.secondPreferredName && <span className="company-field-error">{errors.secondPreferredName}</span>}
         </div>
 
         {/* Mandatory Suffix */}
@@ -231,29 +247,17 @@ export const CompanyDetails: React.FC = () => {
         </div>
       </section>
 
-      {error && (
-        <div style={{ color: '#dc2626', background: '#fef2f2', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #fecaca', fontSize: '0.88rem', fontWeight: 600 }}>
-          {error}
-        </div>
-      )}
-
       {/* Footer Navigation */}
-      <footer className="company-details-footer">
-        <button
-          type="button"
-          className="company-details-btn-back"
-          onClick={() => navigate(routePaths.incorporation.selectType, { state: { companyType: selectedCompanyType } })}
-        >
-          &larr; Back
-        </button>
-        <button
-          type="button"
-          className="company-details-btn-continue"
-          onClick={handleContinue}
-        >
-          Continue &rarr;
-        </button>
-      </footer>
+      <StepActionBar
+        onBack={() => navigate(routePaths.incorporation.selectType, { state: { companyType: selectedCompanyType } })}
+        onNext={handleContinue}
+        onSaveDraft={() => {
+          saveIncorporationDraft(2, 'Company Details', routePaths.incorporation.companyDetails, { formData, selectedCompanyType })
+          navigate(routePaths.dashboard)
+        }}
+        nextDisabled={!Boolean(formData.primaryBusinessActivity?.trim() && formData.firstPreferredName?.trim())}
+        nextLabel="Continue"
+      />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import './SubmissionSuccess.css'
@@ -7,6 +7,11 @@ export const SubmissionSuccess: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const state = (location.state || {}) as Record<string, any>
+
+  useEffect(() => {
+    // Forward directly to Step 10: Application Tracking
+    navigate(routePaths.incorporation.applicationTracking, { replace: true, state })
+  }, [navigate, state])
 
   const companyType = state.companyType || 'pvt_ltd'
   const entityTypeMap: Record<string, string> = {
@@ -27,15 +32,6 @@ export const SubmissionSuccess: React.FC = () => {
 
   return (
     <div className="submit-success-page">
-      {/* Top Progress Tracker */}
-      <div className="submit-success-stepbar">
-        <span className="submit-success-stepbar__badge">Step 10 of 11</span>
-        <span className="submit-success-stepbar__text">Application Submitted</span>
-        <div className="submit-success-stepbar__line">
-          <div className="submit-success-stepbar__line-fill" />
-        </div>
-      </div>
-
       <div className="submit-success-content">
         {/* Green Checkmark Circle */}
         <div className="submit-success-icon-wrap">

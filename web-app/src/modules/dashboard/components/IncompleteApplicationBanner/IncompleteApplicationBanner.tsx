@@ -5,6 +5,7 @@ import './IncompleteApplicationBanner.css'
 export interface IncompleteApplicationBannerProps {
   draft: ApplicationDraft
   onResume?: () => void
+  onDiscard?: (serviceId: string) => void
 }
 
 const ClockIcon = () => (
@@ -21,11 +22,33 @@ const ArrowRightIcon = () => (
   </svg>
 )
 
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="incomplete-banner__discard-svg">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+)
+
 export const IncompleteApplicationBanner = ({
   draft,
   onResume,
+  onDiscard,
 }: IncompleteApplicationBannerProps) => {
   const navigate = useNavigate()
+
+  const isFiling =
+    (draft as { variant?: string }).variant === 'filing' ||
+    draft.serviceId.toLowerCase().includes('filing') ||
+    draft.serviceTitle.toLowerCase().includes('filing') ||
+    draft.serviceId.toLowerCase().includes('return')
+
+  const variantClass = isFiling ? 'incomplete-banner--filing' : 'incomplete-banner--application'
+  const badgeText = (draft as { badgeLabel?: string }).badgeLabel || (isFiling ? 'INCOMPLETE FILING' : 'INCOMPLETE APPLICATION')
+  const ctaText = (draft as { ctaLabel?: string }).ctaLabel || (isFiling ? 'Resume Filing' : 'Resume Application')
+  const defaultSubtitle = isFiling
+    ? `Step ${draft.currentStep} of ${draft.totalSteps} \u00b7 Continue your return filing`
+    : `Step ${draft.currentStep} of ${draft.totalSteps} \u00b7 Pick up right where you left off`
+  const subtitle = draft.stepLabel || defaultSubtitle
 
   const handleResume = () => {
     if (onResume) {
@@ -35,23 +58,55 @@ export const IncompleteApplicationBanner = ({
     }
   }
 
+  const handleDiscardClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (onDiscard) {
+      onDiscard(draft.serviceId)
+    }
+  }
+
   return (
-    <section className="incomplete-banner" onClick={handleResume} aria-label="Incomplete Application Resume Banner">
-      {/* Top Row: Badge & Saved Time */}
+    <section
+      className={`incomplete-banner ${variantClass}`}
+      onClick={handleResume}
+      aria-label={`${badgeText}: ${draft.serviceTitle}`}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleResume()
+        }
+      }}
+    >
+      {/* Top Row: Badge, Saved Time & Discard Action */}
       <div className="incomplete-banner__top">
         <div className="incomplete-banner__badge">
           <ClockIcon />
-          <span>INCOMPLETE APPLICATION</span>
+          <span>{badgeText}</span>
         </div>
-        <span className="incomplete-banner__time">Saved {draft.savedAt}</span>
+        <div className="incomplete-banner__top-right">
+          <span className="incomplete-banner__time">
+            {draft.savedAt ? (draft.savedAt.startsWith('Saved') ? draft.savedAt : `Saved ${draft.savedAt}`) : 'Saved as Draft'}
+          </span>
+          {onDiscard && (
+            <button
+              type="button"
+              className="incomplete-banner__discard-btn"
+              onClick={handleDiscardClick}
+              title="Discard this draft"
+              aria-label="Discard this draft"
+            >
+              <CloseIcon />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Middle: Title & Step info */}
       <div className="incomplete-banner__content">
         <h3 className="incomplete-banner__title">{draft.serviceTitle}</h3>
-        <p className="incomplete-banner__step-text">
-          Step {draft.currentStep} of {draft.totalSteps} &middot; Pick up right where you left off
-        </p>
+        <p className="incomplete-banner__step-text">{subtitle}</p>
       </div>
 
       {/* Divider */}
@@ -59,7 +114,7 @@ export const IncompleteApplicationBanner = ({
 
       {/* Bottom: Resume CTA */}
       <div className="incomplete-banner__bottom">
-        <span className="incomplete-banner__cta-text">Resume Application</span>
+        <span className="incomplete-banner__cta-text">{ctaText}</span>
         <div className="incomplete-banner__circle-btn" aria-hidden="true">
           <ArrowRightIcon />
         </div>

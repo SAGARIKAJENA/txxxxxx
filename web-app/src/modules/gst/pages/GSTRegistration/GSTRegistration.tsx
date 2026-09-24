@@ -1,14 +1,13 @@
 import { routePaths } from '@core/config'
 import { DraftConfirmModal } from '@shared/components'
 import {
-  GSTRegistrationStepper,
   GSTStepBusiness,
   GSTStepDocuments,
   GSTStepReview,
   GSTStepPayment,
   GSTPaymentSuccess,
-  GSTSidebar,
-} from '../../components/registration'
+} from './steps'
+import { GSTRegistrationStepper } from '../../components'
 import { useGstRegistrationState } from './useGstRegistrationState'
 import './GSTRegistration.css'
 
@@ -86,7 +85,7 @@ export const GSTRegistration = () => {
 
       {/* Steps 1 to 4 */}
       {currentStep <= 4 && (
-        <div className={`gst-reg-content-grid ${currentStep >= 2 ? 'gst-reg-content-grid--full-width' : ''}`}>
+        <div className="gst-reg-content-grid gst-reg-content-grid--full-width">
           <main className="gst-reg-main-content">
             {currentStep === 1 && (
               <GSTStepBusiness
@@ -94,6 +93,7 @@ export const GSTRegistration = () => {
                 onChange={handleBusinessChange}
                 onNext={handleStep1Next}
                 onCancel={handleCancel}
+                onSaveDraft={handleSaveAndExit}
               />
             )}
 
@@ -103,6 +103,7 @@ export const GSTRegistration = () => {
                 onDocumentsChange={setDocuments}
                 onBack={handleStep2Back}
                 onNext={handleStep2Next}
+                onSaveDraft={handleSaveAndExit}
               />
             )}
 
@@ -113,6 +114,7 @@ export const GSTRegistration = () => {
                 onEdit={() => goToStep(1)}
                 onBack={handleStep3Back}
                 onProceed={handleStep3Proceed}
+                onSaveDraft={handleSaveAndExit}
               />
             )}
 
@@ -127,12 +129,6 @@ export const GSTRegistration = () => {
               />
             )}
           </main>
-
-          {currentStep === 1 && (
-            <aside className="gst-reg-sidebar">
-              <GSTSidebar step={currentStep} />
-            </aside>
-          )}
         </div>
       )}
 
@@ -143,6 +139,7 @@ export const GSTRegistration = () => {
           businessName={businessData.tradeName || businessData.legalName || 'Your Business'}
           onBackToDashboard={() => navigate(routePaths.dashboard)}
           onTrackApplications={() => navigate(routePaths.applications)}
+          onContactSupport={() => navigate(routePaths.support)}
         />
       )}
 

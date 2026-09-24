@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
-import { DocumentCard } from '@shared/components'
+import { DocumentCard, DocumentTracker, StepActionBar } from '@shared/components'
+import { saveIncorporationDraft } from '../../utils/incorporationDraft'
 import './DocumentsKyc.css'
 
 interface KycDocumentItem {
@@ -17,8 +18,7 @@ export const DocumentsKyc: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const companyType = location.state?.companyType || 'pvt_ltd'
-  const isOpc = companyType === 'opc'
-  const [error, setError] = useState<string>('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const [promoterDocs, setPromoterDocs] = useState<KycDocumentItem[]>([
     {
@@ -90,7 +90,7 @@ export const DocumentsKyc: React.FC = () => {
     id: string,
     file: File
   ) => {
-    setError('')
+    setErrors((prev) => ({ ...prev, [id]: '' }))
     const updateFn = (prev: KycDocumentItem[]) =>
       prev.map((doc) =>
         doc.id === id ? { ...doc, isUploaded: true, fileName: file.name } : doc
@@ -105,7 +105,6 @@ export const DocumentsKyc: React.FC = () => {
     section: 'promoter' | 'office' | 'statutory',
     id: string
   ) => {
-    setError('')
     const updateFn = (prev: KycDocumentItem[]) =>
       prev.map((doc) =>
         doc.id === id ? { ...doc, isUploaded: false, fileName: undefined } : doc
@@ -117,17 +116,23 @@ export const DocumentsKyc: React.FC = () => {
   }
 
   const handleContinue = () => {
-    const missingPromoter = promoterDocs.filter((d) => d.isRequired && !d.isUploaded).map((d) => d.title)
-    const missingOffice = officeDocs.filter((d) => d.isRequired && !d.isUploaded).map((d) => d.title)
-    const missingStatutory = statutoryDocs.filter((d) => d.isRequired && !d.isUploaded).map((d) => d.title)
-    const missing = [...missingPromoter, ...missingOffice, ...missingStatutory]
+    const newErrors: Record<string, string> = {}
+    promoterDocs.forEach((d) => {
+      if (d.isRequired && !d.isUploaded) newErrors[d.id] = `${d.title} is required`
+    })
+    officeDocs.forEach((d) => {
+      if (d.isRequired && !d.isUploaded) newErrors[d.id] = `${d.title} is required`
+    })
+    statutoryDocs.forEach((d) => {
+      if (d.isRequired && !d.isUploaded) newErrors[d.id] = `${d.title} is required`
+    })
 
-    if (missing.length > 0) {
-      setError(`Please upload all mandatory documents before proceeding: ${missing.join(', ')}.`)
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
       return
     }
 
-    setError('')
+    setErrors({})
     const sanitizedDocuments = {
       promoterDocs: promoterDocs.map((d) => ({ id: d.id, title: d.title, isUploaded: d.isUploaded, fileName: d.fileName })),
       officeDocs: officeDocs.map((d) => ({ id: d.id, title: d.title, isUploaded: d.isUploaded, fileName: d.fileName })),
@@ -152,17 +157,20 @@ export const DocumentsKyc: React.FC = () => {
       <h2 className="docs-kyc-section__title">{title}</h2>
       <div className="docs-kyc-section__list">
         {docs.map((doc) => (
-          <DocumentCard
-            key={doc.id}
-            id={doc.id}
-            title={doc.title}
-            subtitle={doc.subtitle}
-            isRequired={doc.isRequired}
-            isUploaded={doc.isUploaded}
-            fileName={doc.fileName}
-            onUpload={(_, file) => handleUpload(section, doc.id, file)}
-            onRemove={() => handleRemove(section, doc.id)}
-          />
+          <div key={doc.id} className="doc-item-wrapper">
+            <DocumentCard
+              id={doc.id}
+              title={doc.title}
+              subtitle={doc.subtitle}
+              isRequired={doc.isRequired}
+              isUploaded={doc.isUploaded}
+              fileName={doc.fileName}
+              className={errors[doc.id] ? 'doc-card--error' : ''}
+              onUpload={(_, file) => handleUpload(section, doc.id, file)}
+              onRemove={() => handleRemove(section, doc.id)}
+            />
+            {errors[doc.id] && <span className="docs-field-error">{errors[doc.id]}</span>}
+          </div>
         ))}
       </div>
     </section>
@@ -186,50 +194,26 @@ export const DocumentsKyc: React.FC = () => {
         </p>
       </div>
 
+      <DocumentTracker
+        uploadedCount={[...promoterDocs, ...officeDocs, ...statutoryDocs].filter((d) => d.isUploaded).length}
+        totalCount={[...promoterDocs, ...officeDocs, ...statutoryDocs].length}
+      />
+
       {renderDocSection('PROMOTER / DIRECTOR KYC', 'promoter', promoterDocs)}
       {renderDocSection('REGISTERED OFFICE', 'office', officeDocs)}
       {renderDocSection('STATUTORY DOCUMENTS', 'statutory', statutoryDocs)}
 
-      {/* Error Alert */}
-      {error && (
-        <div style={{
-          background: '#fef2f2',
-          border: '1px solid #f87171',
-          color: '#991b1b',
-          padding: '0.75rem 1rem',
-          borderRadius: '8px',
-          margin: '1rem 0',
-          fontSize: '0.875rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-        }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>{error}</span>
-        </div>
-      )}
-
       {/* Footer Navigation */}
-      <footer className="docs-kyc-footer">
-        <button
-          type="button"
-          className="docs-kyc-btn-back"
-          onClick={() => navigate(routePaths.incorporation.capitalDetails, { state: location.state })}
-        >
-          &larr; Back
-        </button>
-        <button
-          type="button"
-          className="docs-kyc-btn-continue"
-          onClick={handleContinue}
-        >
-          Continue &rarr;
-        </button>
-      </footer>
+      <StepActionBar
+        onBack={() => navigate(routePaths.incorporation.capitalDetails, { state: location.state })}
+        onNext={handleContinue}
+        onSaveDraft={() => {
+          saveIncorporationDraft(6, 'Documents & KYC Checklist', routePaths.incorporation.documentsKyc, { promoterDocs, officeDocs, statutoryDocs })
+          navigate(routePaths.dashboard)
+        }}
+        nextDisabled={!(promoterDocs.filter((d) => d.isRequired).every((d) => d.isUploaded) && officeDocs.filter((d) => d.isRequired).every((d) => d.isUploaded))}
+        nextLabel="Continue"
+      />
     </div>
   )
 }

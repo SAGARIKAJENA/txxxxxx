@@ -110,6 +110,20 @@
   border-color: #0b2546;
 }
 
+.linked-reg-item--error {
+  border-color: #ef4444 !important;
+  background-color: #fffafb !important;
+}
+
+.linked-reg-field-error {
+  font-size: 0.76rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  line-height: 1.25;
+  display: block;
+}
+
 .linked-reg-item__content {
   display: flex;
   flex-direction: column;

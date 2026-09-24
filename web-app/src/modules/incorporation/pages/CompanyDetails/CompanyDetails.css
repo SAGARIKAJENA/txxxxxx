@@ -134,6 +134,29 @@
   box-shadow: 0 0 0 3px rgba(242, 90, 34, 0.15);
 }
 
+.company-input--error {
+  border-color: #ef4444 !important;
+  background-color: #fffafb;
+}
+
+.company-input--error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.company-chips--error .company-details-chip {
+  border-color: #fca5a5;
+  background-color: #fffafb;
+}
+
+.company-field-error {
+  font-size: 0.76rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  line-height: 1.25;
+  display: block;
+}
+
 .company-details-helper {
   margin: 0;
   font-size: 0.8rem;

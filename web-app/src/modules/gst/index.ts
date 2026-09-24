@@ -6,10 +6,12 @@ export {
   GSTAmendmentHeader,
   GSTAmendmentForm,
   GSTAmendmentSubmitted,
+} from './pages/GSTAmendment'
+export {
   GSTCertificateHeader,
   GSTCertificateForm,
   GSTCertificateSubmitted,
-} from './components'
+} from './pages/GSTCertificate'
 export { useGstApplication } from './hooks/useGstApplication'
 export { useGstReturns } from './hooks/useGstReturns'
 export { gstService } from './services/gstService'

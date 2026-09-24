@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
+import { userStorage } from '@core/storage/userStorage'
 import './FeesPayment.css'
 
 export const FeesPayment: React.FC = () => {
@@ -9,35 +10,71 @@ export const FeesPayment: React.FC = () => {
   const state = (location.state || {}) as Record<string, any>
 
   const [selectedMethod, setSelectedMethod] = useState<'upi' | 'card' | 'netbanking' | null>(null)
-  const [error, setError] = useState<string>('')
+  const [paymentError, setPaymentError] = useState<string>('')
+  const [showSubmittedModal, setShowSubmittedModal] = useState<boolean>(false)
+  const [submittedPayload, setSubmittedPayload] = useState<Record<string, any>>(state)
 
   const professionalFee = 4999
   const gst = 900
   const mcaCharges = 1500
   const totalAmount = professionalFee + gst + mcaCharges
 
+  const companyType = state.companyType || 'pvt_ltd'
+  const entityTypeMap: Record<string, string> = {
+    opc: 'One Person Company (OPC)',
+    pvt_ltd: 'Private Limited',
+    section_8: 'Section 8 (NGO)',
+    public_ltd: 'Public Limited',
+  }
+  const entityStructure = entityTypeMap[companyType] || 'Private Limited'
+  const defaultName = companyType === 'opc' ? 'TaxEdge Tech (OPC) Private Limited' : 'TaxEdge Tech Private Limited'
+  const companyName = state.companyDetails?.firstPreferredName || defaultName
+
   const handlePayAndSubmit = () => {
     if (!selectedMethod) {
-      setError('Please select a payment method before proceeding.')
+      setPaymentError('Please select a payment method before proceeding.')
       return
     }
 
     const applicationId = state.applicationId || 'INC-2026-89421'
     const transactionId = state.transactionId || 'TXN-96771922'
-    navigate(routePaths.incorporation.submissionSuccess, {
-      state: {
-        ...state,
-        paymentMethod: selectedMethod,
-        paymentCompleted: true,
-        applicationId,
-        transactionId,
-        paidAmount: totalAmount,
-      },
+    const applicationDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+
+    const finalState = {
+      ...state,
+      paymentMethod: selectedMethod,
+      paymentCompleted: true,
+      applicationId,
+      transactionId,
+      paidAmount: totalAmount,
+      applicationDate,
+    }
+
+    userStorage.deleteDraft('incorporation')
+    userStorage.saveUserApplication({
+      id: applicationId,
+      code: applicationId,
+      title: `${companyName} Incorporation`,
+      meta: 'Under Verification',
+      statusLabel: 'Verification',
+      statusTone: 'warning',
+      progress: 90,
+      icon: '🏢',
+      to: routePaths.incorporation.applicationTracking,
+    })
+
+    setSubmittedPayload(finalState)
+    setShowSubmittedModal(true)
+  }
+
+  const handleContinueToTracking = () => {
+    navigate(routePaths.incorporation.applicationTracking, {
+      state: submittedPayload,
     })
   }
 
   const handleSelectMethod = (method: 'upi' | 'card' | 'netbanking') => {
-    setError('')
+    setPaymentError('')
     setSelectedMethod(method)
   }
 
@@ -127,7 +164,7 @@ export const FeesPayment: React.FC = () => {
       {/* Select Payment Method */}
       <section className="fees-payment-methods">
         <h2 className="fees-payment-methods__title">Select Payment Method</h2>
-        <div className="fees-methods-list">
+        <div className={`fees-methods-list ${paymentError ? 'fees-methods-list--error' : ''}`}>
           {paymentMethods.map((m) => (
             <div
               key={m.id}
@@ -153,30 +190,8 @@ export const FeesPayment: React.FC = () => {
             </div>
           ))}
         </div>
+        {paymentError && <span className="fees-field-error">{paymentError}</span>}
       </section>
-
-      {/* Error Alert */}
-      {error && (
-        <div style={{
-          background: '#fef2f2',
-          border: '1px solid #f87171',
-          color: '#991b1b',
-          padding: '0.75rem 1rem',
-          borderRadius: '8px',
-          margin: '1rem 0',
-          fontSize: '0.875rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-        }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>{error}</span>
-        </div>
-      )}
 
       {/* Footer Actions */}
       <footer className="fees-pay-footer">
@@ -195,6 +210,70 @@ export const FeesPayment: React.FC = () => {
           {`Pay ₹${totalAmount.toLocaleString('en-IN')} & Submit`}
         </button>
       </footer>
+
+      {/* Application Submitted Success Popup Modal */}
+      {showSubmittedModal && (
+        <div className="fees-submit-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="fees-modal-title">
+          <div className="fees-submit-modal-card">
+            {/* Green Checkmark Circle */}
+            <div className="fees-submit-modal-icon-wrap" aria-hidden="true">
+              <svg
+                width="44"
+                height="44"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+
+            <div className="fees-submit-modal-header">
+              <h2 id="fees-modal-title" className="fees-submit-modal-title">Application Submitted Successfully!</h2>
+              <p className="fees-submit-modal-subtitle">
+                Your company incorporation file has been received and assigned to a TaxEdge compliance officer.
+              </p>
+            </div>
+
+            {/* Status Summary Card */}
+            <section className="fees-submit-modal-summary" aria-label="Submission Summary">
+              <div className="fees-submit-modal-row">
+                <span className="fees-submit-modal-label">Application ID</span>
+                <span className="fees-submit-modal-val fees-submit-modal-id">
+                  {submittedPayload.applicationId || 'INC-2026-89421'}
+                </span>
+              </div>
+              <div className="fees-submit-modal-row">
+                <span className="fees-submit-modal-label">Proposed Company Name</span>
+                <span className="fees-submit-modal-val">{companyName}</span>
+              </div>
+              <div className="fees-submit-modal-row">
+                <span className="fees-submit-modal-label">Entity Structure</span>
+                <span className="fees-submit-modal-val">{entityStructure}</span>
+              </div>
+              <div className="fees-submit-modal-row">
+                <span className="fees-submit-modal-label">Current Status</span>
+                <span className="fees-submit-modal-val fees-submit-modal-status">Under Verification</span>
+              </div>
+            </section>
+
+            {/* Action Buttons */}
+            <div className="fees-submit-modal-actions">
+              <button
+                type="button"
+                className="fees-submit-modal-btn-primary"
+                onClick={handleContinueToTracking}
+              >
+                <span>View Application Status</span>
+                <span aria-hidden="true">&rarr;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

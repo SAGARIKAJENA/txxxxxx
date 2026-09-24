@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { useAuthStore } from '@store/index'
 import { authStorage } from '@core/auth'
 import { DetailCard } from '../../components/DetailCard/DetailCard'

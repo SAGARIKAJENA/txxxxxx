@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import type { RecentApplication, UpcomingDeadlineItem } from '../../types/dashboard.types'
@@ -52,6 +53,9 @@ export const DashboardOverviewGrid = ({
   applications = [],
   deadlines = [],
 }: DashboardOverviewGridProps) => {
+  const [showAllApplications, setShowAllApplications] = useState(false)
+  const displayedApplications = showAllApplications ? applications : applications.slice(0, 3)
+
   return (
     <section className="dashboard-overview-grid" aria-label="Dashboard Overview">
       {/* 1. Upcoming Deadlines */}
@@ -97,7 +101,7 @@ export const DashboardOverviewGrid = ({
         </div>
       </div>
 
-      {/* 2. My Applications */}
+      {/* 2. Recent Applications */}
       <div className="overview-card">
         <div className="overview-card__header">
           <div className="overview-card__header-left">
@@ -105,30 +109,54 @@ export const DashboardOverviewGrid = ({
               <HeaderDocIcon />
             </div>
             <div>
-              <h3 className="overview-card__title">My Applications</h3>
+              <h3 className="overview-card__title">Recent Applications</h3>
               <p className="overview-card__subtitle">Track and manage all your applications</p>
             </div>
           </div>
-          <Link className="overview-card__view-all" to={routePaths.applications}>
-            <span>View All</span>
-            <span aria-hidden="true">→</span>
-          </Link>
+          {applications.length > 3 ? (
+            <button
+              type="button"
+              className="overview-card__view-all overview-card__view-all--btn"
+              onClick={() => setShowAllApplications((prev) => !prev)}
+              aria-expanded={showAllApplications}
+              aria-label={showAllApplications ? 'Show fewer applications' : 'View all applications'}
+            >
+              <span>{showAllApplications ? 'Show Less' : 'View All'}</span>
+              <span aria-hidden="true">{showAllApplications ? '↑' : '→'}</span>
+            </button>
+          ) : (
+            <Link className="overview-card__view-all" to={routePaths.applications}>
+              <span>View All</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          )}
         </div>
 
         <div className="overview-card__body">
           {applications.length > 0 ? (
             <div className="overview-card__list">
-              {applications.slice(0, 3).map((app) => (
+              {displayedApplications.map((app) => (
                 <Link key={app.id} to={app.to} className="overview-card__item">
-                  <div className="overview-card__item-left">
-                    <span className="overview-card__item-title">{app.title}</span>
-                    <span className="overview-card__item-meta">{app.code} · {app.meta}</span>
+                  <div className="overview-card__item-header">
+                    <span className="overview-card__item-code">{app.code}</span>
+                    <span className={`overview-card__badge overview-card__badge--${app.statusTone}`}>
+                      {app.statusLabel}
+                    </span>
                   </div>
-                  <span className={`overview-card__badge overview-card__badge--${app.statusTone}`}>
-                    {app.statusLabel}
-                  </span>
+                  <span className="overview-card__item-title">{app.title}</span>
+                  <div className="overview-card__item-footer">
+                    <span className="overview-card__item-meta">{app.meta}</span>
+                    <span className="overview-card__item-view-details">
+                      View Details <span aria-hidden="true">&gt;</span>
+                    </span>
+                  </div>
                 </Link>
               ))}
+              {showAllApplications && applications.length > 3 && (
+                <Link to={routePaths.applications} className="overview-card__manage-link">
+                  Open Applications Manager <span aria-hidden="true">→</span>
+                </Link>
+              )}
             </div>
           ) : (
             <div className="overview-card__empty-box">

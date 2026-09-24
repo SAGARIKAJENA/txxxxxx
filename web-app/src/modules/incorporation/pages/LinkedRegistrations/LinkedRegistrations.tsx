@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
+import { StepActionBar } from '@shared/components'
+import { saveIncorporationDraft } from '../../utils/incorporationDraft'
 import './LinkedRegistrations.css'
 
 interface RegistrationItem {
@@ -14,7 +16,7 @@ export const LinkedRegistrations: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const companyType = location.state?.companyType || 'pvt_ltd'
-  const [error, setError] = useState<string>('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const [registrations, setRegistrations] = useState<RegistrationItem[]>(() => {
     if (location.state?.linkedRegistrations) {
@@ -67,7 +69,7 @@ export const LinkedRegistrations: React.FC = () => {
   })
 
   const toggleRegistration = (id: string) => {
-    setError('')
+    setErrors((prev) => ({ ...prev, [id]: '' }))
     setRegistrations((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, checked: !item.checked } : item
@@ -79,14 +81,16 @@ export const LinkedRegistrations: React.FC = () => {
     const hasPan = registrations.find((r) => r.id === 'pan')?.checked
     const hasTan = registrations.find((r) => r.id === 'tan')?.checked
 
-    if (!hasPan || !hasTan) {
-      setError(
-        'Company PAN Card and TAN Allotment are mandatory under SPICe+ Part B. Please select both to proceed.'
-      )
+    const newErrors: Record<string, string> = {}
+    if (!hasPan) newErrors.pan = 'Company PAN Card issuance is mandatory under SPICe+ Part B'
+    if (!hasTan) newErrors.tan = 'Company TAN Allotment is mandatory under SPICe+ Part B'
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
       return
     }
 
-    setError('')
+    setErrors({})
     navigate(routePaths.incorporation.reviewApplication, {
       state: {
         ...location.state,
@@ -118,83 +122,56 @@ export const LinkedRegistrations: React.FC = () => {
       {/* List */}
       <div className="linked-reg-list">
         {registrations.map((item) => (
-          <div
-            key={item.id}
-            className={`linked-reg-item ${item.checked ? 'linked-reg-item--checked' : ''}`}
-            onClick={() => toggleRegistration(item.id)}
-            role="checkbox"
-            aria-checked={item.checked}
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                toggleRegistration(item.id)
-              }
-            }}
-          >
-            <div className="linked-reg-item__content">
-              <span className="linked-reg-item__title">{item.title}</span>
-              <span className="linked-reg-item__desc">{item.description}</span>
+          <div key={item.id} style={{ display: 'flex', flexDirection: 'column' }}>
+            <div
+              className={`linked-reg-item ${item.checked ? 'linked-reg-item--checked' : ''} ${errors[item.id] ? 'linked-reg-item--error' : ''}`}
+              onClick={() => toggleRegistration(item.id)}
+              role="checkbox"
+              aria-checked={item.checked}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  toggleRegistration(item.id)
+                }
+              }}
+            >
+              <div className="linked-reg-item__content">
+                <span className="linked-reg-item__title">{item.title}</span>
+                <span className="linked-reg-item__desc">{item.description}</span>
+              </div>
+              <div className="linked-reg-item__checkbox">
+                {item.checked && (
+                  <svg
+                    className="linked-reg-item__check-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </div>
             </div>
-            <div className="linked-reg-item__checkbox">
-              {item.checked && (
-                <svg
-                  className="linked-reg-item__check-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              )}
-            </div>
+            {errors[item.id] && <span className="linked-reg-field-error">{errors[item.id]}</span>}
           </div>
         ))}
       </div>
 
-      {/* Error Alert */}
-      {error && (
-        <div style={{
-          background: '#fef2f2',
-          border: '1px solid #f87171',
-          color: '#991b1b',
-          padding: '0.75rem 1rem',
-          borderRadius: '8px',
-          margin: '1rem 0',
-          fontSize: '0.875rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-        }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>{error}</span>
-        </div>
-      )}
-
       {/* Footer Actions */}
-      <footer className="linked-reg-footer">
-        <button
-          type="button"
-          className="linked-reg-btn-back"
-          onClick={() => navigate(routePaths.incorporation.documentsKyc, { state: location.state })}
-        >
-          &larr; Back
-        </button>
-        <button
-          type="button"
-          className="linked-reg-btn-continue"
-          onClick={handleContinue}
-        >
-          Continue &rarr;
-        </button>
-      </footer>
+      <StepActionBar
+        onBack={() => navigate(routePaths.incorporation.documentsKyc, { state: location.state })}
+        onNext={handleContinue}
+        onSaveDraft={() => {
+          saveIncorporationDraft(7, 'Linked Registrations', routePaths.incorporation.linkedRegistrations, { registrations })
+          navigate(routePaths.dashboard)
+        }}
+        nextDisabled={!registrations.some((i) => i.id === 'pan' && i.checked)}
+        nextLabel="Continue"
+      />
     </div>
   )
 }

@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { filterDigits, isPositiveNumber } from '../../utils/validation'
+import { StepActionBar } from '@shared/components'
+import { saveIncorporationDraft } from '../../utils/incorporationDraft'
 import './CapitalDetails.css'
 
 export const CapitalDetails: React.FC = () => {
@@ -21,34 +23,56 @@ export const CapitalDetails: React.FC = () => {
       faceValue: '',
     }
   })
-  const [error, setError] = useState<string>('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const handleChange = (field: string, val: string) => {
-    setError('')
+    setErrors((prev) => ({ ...prev, [field]: '' }))
     setCapital((prev: any) => ({ ...prev, [field]: filterDigits(val) }))
   }
 
   const handleContinue = () => {
-    if (
-      !isPositiveNumber(capital.authorisedCapital) ||
-      !isPositiveNumber(capital.subscribedCapital) ||
-      !isPositiveNumber(capital.totalShares) ||
-      !isPositiveNumber(capital.faceValue)
-    ) {
-      setError(
-        'All capital fields (Authorised Capital, Subscribed Capital, Total Number of Shares, and Face Value) are mandatory and must be positive numbers.'
-      )
+    const newErrors: Record<string, string> = {}
+    if (!capital.authorisedCapital.trim()) {
+      newErrors.authorisedCapital = 'Authorised capital is required'
+    } else if (!isPositiveNumber(capital.authorisedCapital)) {
+      newErrors.authorisedCapital = 'Authorised capital must be greater than 0'
+    }
+
+    if (!capital.subscribedCapital.trim()) {
+      newErrors.subscribedCapital = 'Subscribed capital is required'
+    } else if (!isPositiveNumber(capital.subscribedCapital)) {
+      newErrors.subscribedCapital = 'Subscribed capital must be greater than 0'
+    } else if (Number(capital.subscribedCapital) > Number(capital.authorisedCapital)) {
+      newErrors.subscribedCapital = 'Subscribed capital cannot exceed authorised capital'
+    }
+
+    if (!capital.totalShares.trim()) {
+      newErrors.totalShares = 'Total number of shares is required'
+    } else if (!isPositiveNumber(capital.totalShares)) {
+      newErrors.totalShares = 'Total shares must be greater than 0'
+    }
+
+    if (!capital.faceValue.trim()) {
+      newErrors.faceValue = 'Face value per share is required'
+    } else if (!isPositiveNumber(capital.faceValue)) {
+      newErrors.faceValue = 'Face value must be greater than 0'
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
       return
     }
 
-    if (Number(capital.subscribedCapital) > Number(capital.authorisedCapital)) {
-      setError('Subscribed Capital cannot exceed Authorised Capital.')
-      return
-    }
-
-    setError('')
+    setErrors({})
     navigate(routePaths.incorporation.documentsKyc, {
-      state: { ...location.state, companyType, capitalDetails: capital },
+      state: {
+        ...location.state,
+        companyType,
+        capitalDetails: {
+          ...capital,
+          paidUpCapital: capital.subscribedCapital,
+        },
+      },
     })
   }
 
@@ -87,11 +111,12 @@ export const CapitalDetails: React.FC = () => {
             </label>
             <input
               type="text"
-              className="capital-details-input"
+              className={`capital-details-input ${errors.authorisedCapital ? 'capital-details-input--error' : ''}`}
               placeholder="e.g. 100000"
               value={capital.authorisedCapital}
               onChange={(e) => handleChange('authorisedCapital', e.target.value)}
             />
+            {errors.authorisedCapital && <span className="capital-field-error">{errors.authorisedCapital}</span>}
           </div>
 
           <div className="capital-details-group">
@@ -100,11 +125,12 @@ export const CapitalDetails: React.FC = () => {
             </label>
             <input
               type="text"
-              className="capital-details-input"
+              className={`capital-details-input ${errors.subscribedCapital ? 'capital-details-input--error' : ''}`}
               placeholder="e.g. 100000"
               value={capital.subscribedCapital}
               onChange={(e) => handleChange('subscribedCapital', e.target.value)}
             />
+            {errors.subscribedCapital && <span className="capital-field-error">{errors.subscribedCapital}</span>}
           </div>
 
           <div className="capital-details-group">
@@ -113,11 +139,12 @@ export const CapitalDetails: React.FC = () => {
             </label>
             <input
               type="text"
-              className="capital-details-input"
+              className={`capital-details-input ${errors.totalShares ? 'capital-details-input--error' : ''}`}
               placeholder="e.g. 10000"
               value={capital.totalShares}
               onChange={(e) => handleChange('totalShares', e.target.value)}
             />
+            {errors.totalShares && <span className="capital-field-error">{errors.totalShares}</span>}
           </div>
 
           <div className="capital-details-group">
@@ -126,11 +153,12 @@ export const CapitalDetails: React.FC = () => {
             </label>
             <input
               type="text"
-              className="capital-details-input"
+              className={`capital-details-input ${errors.faceValue ? 'capital-details-input--error' : ''}`}
               placeholder="e.g. 10"
               value={capital.faceValue}
               onChange={(e) => handleChange('faceValue', e.target.value)}
             />
+            {errors.faceValue && <span className="capital-field-error">{errors.faceValue}</span>}
           </div>
         </div>
       </section>
@@ -204,46 +232,30 @@ export const CapitalDetails: React.FC = () => {
         </div>
       </section>
 
-      {/* Error Alert */}
-      {error && (
-        <div style={{
-          background: '#fef2f2',
-          border: '1px solid #f87171',
-          color: '#991b1b',
-          padding: '0.75rem 1rem',
-          borderRadius: '8px',
-          margin: '1rem 0',
-          fontSize: '0.875rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-        }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>{error}</span>
-        </div>
-      )}
-
       {/* Footer Navigation */}
-      <footer className="capital-details-footer">
-        <button
-          type="button"
-          className="capital-details-btn-back"
-          onClick={() => navigate(routePaths.incorporation.promoterDetails, { state: location.state })}
-        >
-          &larr; Back
-        </button>
-        <button
-          type="button"
-          className="capital-details-btn-continue"
-          onClick={handleContinue}
-        >
-          Continue &rarr;
-        </button>
-      </footer>
+      <StepActionBar
+        onBack={() => navigate(routePaths.incorporation.promoterDetails, { state: location.state })}
+        onNext={handleContinue}
+        onSaveDraft={() => {
+          saveIncorporationDraft(5, 'Capital Details', routePaths.incorporation.capitalDetails, {
+            capital: {
+              ...capital,
+              paidUpCapital: capital.subscribedCapital,
+            },
+          })
+          navigate(routePaths.dashboard)
+        }}
+        nextDisabled={
+          !Boolean(
+            Number(capital.authorisedCapital || 0) > 0 &&
+            Number(capital.subscribedCapital || 0) > 0 &&
+            Number(capital.subscribedCapital || 0) <= Number(capital.authorisedCapital || 0) &&
+            Number(capital.totalShares || 0) > 0 &&
+            Number(capital.faceValue || 0) > 0
+          )
+        }
+        nextLabel="Continue"
+      />
     </div>
   )
 }

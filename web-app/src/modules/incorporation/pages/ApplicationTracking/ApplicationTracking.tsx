@@ -96,12 +96,20 @@ export const ApplicationTracking: React.FC = () => {
   const defaultName = companyType === 'opc' ? 'TaxEdge Tech (OPC) Private Limited' : 'TaxEdge Tech Private Limited'
   const companyName = state.companyDetails?.firstPreferredName || defaultName
   const applicationId = state.applicationId || 'INC-2026-89421'
-  const currentDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 
   const dateStr = state.applicationDate || '2026-09-18'
 
   return (
     <div className="app-track-page">
+      {/* Top Progress Tracker */}
+      <div className="app-track-stepbar">
+        <span className="app-track-stepbar__badge">Step 10 of 11</span>
+        <span className="app-track-stepbar__text">Application Tracking</span>
+        <div className="app-track-stepbar__line">
+          <div className="app-track-stepbar__line-fill" />
+        </div>
+      </div>
+
       {/* Header */}
       <div className="app-track-header">
         <h1 className="app-track-header__title">Application Tracking</h1>
@@ -176,7 +184,7 @@ export const ApplicationTracking: React.FC = () => {
           className="app-track-btn-receipt"
           onClick={() => navigate(routePaths.incorporation.receipt, { state })}
         >
-          View / Download Application Receipt &rarr;
+          View / Download Receipt &rarr;
         </button>
       </div>
     </div>

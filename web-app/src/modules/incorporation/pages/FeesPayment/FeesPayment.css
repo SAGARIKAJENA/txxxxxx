@@ -142,6 +142,21 @@
   gap: 0.85rem;
 }
 
+.fees-methods-list--error {
+  outline: 1.5px dashed #ef4444;
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.fees-field-error {
+  font-size: 0.76rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  line-height: 1.25;
+  display: block;
+}
+
 .fees-method-item {
   display: flex;
   align-items: center;
@@ -248,4 +263,168 @@
 .fees-pay-btn-submit:hover {
   background: #e04b15;
   transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Application Submitted Popup Modal
+   ========================================================================== */
+.fees-submit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 37, 70, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  animation: feesModalFadeIn 0.22s ease-out;
+}
+
+@keyframes feesModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fees-submit-modal-card {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 580px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 20px 48px rgba(11, 37, 70, 0.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  box-sizing: border-box;
+  animation: feesModalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes feesModalSlideUp {
+  from {
+    transform: translateY(24px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.fees-submit-modal-icon-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #e6f9f0;
+  color: #10b981;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+}
+
+.fees-submit-modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fees-submit-modal-title {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.fees-submit-modal-subtitle {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.fees-submit-modal-summary {
+  width: 100%;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.15rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.fees-submit-modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  gap: 1rem;
+}
+
+.fees-submit-modal-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.fees-submit-modal-val {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: right;
+}
+
+.fees-submit-modal-id {
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: #0b2546;
+  background: #e2e8f0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+}
+
+.fees-submit-modal-status {
+  background: #e6f9f0;
+  color: #059669;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.fees-submit-modal-actions {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.fees-submit-modal-btn-primary {
+  width: 100%;
+  background: #f25a22;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(242, 90, 34, 0.28);
+  transition: all 0.2s ease;
+}
+
+.fees-submit-modal-btn-primary:hover {
+  background: #e04b15;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(242, 90, 34, 0.35);
 }

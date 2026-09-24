@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { companyTypeOptions } from '../../data/companyRegistrationData'
 import type { CompanyEntityType } from '../../types/incorporation.types'
+import { StepActionBar } from '@shared/components'
+import { saveIncorporationDraft } from '../../utils/incorporationDraft'
 import './SelectCompanyType.css'
 
 export const SelectCompanyType: React.FC = () => {
@@ -135,22 +137,16 @@ export const SelectCompanyType: React.FC = () => {
       )}
 
       {/* Footer Navigation */}
-      <footer className="select-type-footer">
-        <button
-          type="button"
-          className="select-type-btn-cancel"
-          onClick={() => navigate(routePaths.incorporation.root)}
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          className="select-type-btn-continue"
-          onClick={handleContinue}
-        >
-          Continue &rarr;
-        </button>
-      </footer>
+      <StepActionBar
+        onBack={() => navigate(routePaths.incorporation.root)}
+        onNext={handleContinue}
+        onSaveDraft={() => {
+          saveIncorporationDraft(1, 'Select Company Type', routePaths.incorporation.selectType, { selectedType })
+          navigate(routePaths.dashboard)
+        }}
+        nextDisabled={!selectedType}
+        nextLabel="Continue"
+      />
     </div>
   )
 }

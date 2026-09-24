@@ -10,6 +10,43 @@
   box-sizing: border-box;
 }
 
+/* Step Bar */
+.app-receipt-stepbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.app-receipt-stepbar__badge {
+  background: #0b2546;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.app-receipt-stepbar__text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+.app-receipt-stepbar__line {
+  flex: 1;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+}
+.app-receipt-stepbar__line-fill {
+  width: 100%;
+  height: 100%;
+  background: #f25a22;
+  border-radius: 9999px;
+}
+
 /* Header */
 .app-receipt-header {
   display: flex;
@@ -176,5 +213,24 @@
 }
 .app-receipt-btn-download:hover {
   background: #143560;
+  transform: translateY(-1px);
+}
+.app-receipt-btn-dashboard {
+  background: #f25a22;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(242, 90, 34, 0.28);
+  transition: all 0.2s ease;
+}
+.app-receipt-btn-dashboard:hover {
+  background: #e04b15;
   transform: translateY(-1px);
 }
