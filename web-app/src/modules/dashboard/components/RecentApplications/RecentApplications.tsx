@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import type { RecentApplication } from '../../types/dashboard.types'
@@ -8,7 +9,10 @@ export interface RecentApplicationsProps {
 }
 
 export const RecentApplications = ({ applications = [] }: RecentApplicationsProps) => {
+  const [isExpanded, setIsExpanded] = useState(false)
   if (!applications.length) return null
+
+  const displayedApplications = isExpanded ? applications : applications.slice(0, 3)
 
   return (
     <section className="recent-apps" aria-labelledby="recent-apps-heading">
@@ -17,13 +21,25 @@ export const RecentApplications = ({ applications = [] }: RecentApplicationsProp
           <h2 className="recent-apps__title" id="recent-apps-heading">Recent applications</h2>
           <p className="recent-apps__subtitle">Live status across GST, ITR and loans.</p>
         </div>
-        <Link className="recent-apps__view-all" to={routePaths.applications}>
-          View all <span aria-hidden="true">→</span>
-        </Link>
+        {applications.length > 3 ? (
+          <button
+            type="button"
+            className="recent-apps__view-all"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? 'Show fewer applications' : 'View all applications'}
+          >
+            {isExpanded ? 'Show less ↑' : `View all (${applications.length}) →`}
+          </button>
+        ) : (
+          <Link className="recent-apps__view-all" to={routePaths.applications}>
+            View all <span aria-hidden="true">→</span>
+          </Link>
+        )}
       </div>
 
       <div className="recent-apps__list">
-        {applications.map((app) => (
+        {displayedApplications.map((app) => (
           <Link className="recent-app-card" key={app.id} to={app.to}>
             <div className="recent-app-card__left">
               <span className="recent-app-card__icon" aria-hidden="true">{app.icon}</span>

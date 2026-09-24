@@ -4,10 +4,8 @@ import { routePaths } from '@core/config'
 import { gstService } from '../../services/gstService'
 import type { GstCertificatePayload, GstCertificateRecord } from '../../types/gst.types'
 import { useAppStore } from '@store/index'
-import {
-  GSTCertificateForm,
-  GSTCertificateSubmitted,
-} from '../../components/certificate'
+import { GSTCertificateForm } from './GSTCertificateForm/GSTCertificateForm'
+import { GSTCertificateSubmitted } from './GSTCertificateSubmitted/GSTCertificateSubmitted'
 import './GSTCertificate.css'
 
 export default function GSTCertificate() {

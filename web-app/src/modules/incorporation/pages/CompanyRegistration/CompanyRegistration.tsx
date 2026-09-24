@@ -179,8 +179,7 @@ export const CompanyRegistration: React.FC = () => {
         <CompleteProfileModal
           isOpen={isProfileModalOpen}
           onClose={() => setIsProfileModalOpen(false)}
-          onConfirm={handleConfirmProfile}
-          mobileNumber={user?.mobile}
+          onCompleteProfile={handleConfirmProfile}
         />
       )}
     </div>

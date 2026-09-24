@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import type { DirectorDetails } from '../../types/incorporation.types'
 import { filterDigits, filterPan } from '../../utils/validation'
 import './DirectorCard.css'
@@ -10,6 +10,7 @@ interface FormFieldProps {
   required?: boolean
   type?: string
   placeholder?: string
+  error?: string
 }
 
 const DirectorFormField: React.FC<FormFieldProps> = ({
@@ -19,6 +20,7 @@ const DirectorFormField: React.FC<FormFieldProps> = ({
   required,
   type = 'text',
   placeholder = '',
+  error,
 }) => (
   <div className="director-group">
     <label className="director-label">
@@ -26,11 +28,12 @@ const DirectorFormField: React.FC<FormFieldProps> = ({
     </label>
     <input
       type={type}
-      className="director-input"
+      className={`director-input ${error ? 'director-input--error' : ''}`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
     />
+    {error && <span className="director-field-error">{error}</span>}
   </div>
 )
 
@@ -40,6 +43,7 @@ export interface DirectorCardProps {
   onChange: (id: number, field: keyof DirectorDetails, value: any) => void
   onSave?: (id: number) => void
   onCancel?: (id: number) => void
+  errors?: Record<string, string>
 }
 
 export const DirectorCard: React.FC<DirectorCardProps> = ({
@@ -48,8 +52,14 @@ export const DirectorCard: React.FC<DirectorCardProps> = ({
   onChange,
   onSave,
   onCancel,
+  errors = {},
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(Boolean(director.fullName.trim()))
+  const hasErrors = Object.keys(errors).length > 0
+  const [isCollapsed, setIsCollapsed] = useState(Boolean(director.fullName.trim()) && !hasErrors)
+
+  useEffect(() => {
+    if (hasErrors) setIsCollapsed(false)
+  }, [hasErrors])
 
   const handleFieldChange = (field: keyof DirectorDetails, val: any) => {
     if (field === 'pan') {
@@ -159,44 +169,39 @@ export const DirectorCard: React.FC<DirectorCardProps> = ({
           <section className="director-section">
             <h4 className="director-section__title">A. Basic Details</h4>
             <div className="director-grid-2">
-              <DirectorFormField label="Full Name (as in PAN)" value={director.fullName} onChange={(val) => handleFieldChange('fullName', val)} placeholder="e.g. Rajesh Kumar" required />
-              <DirectorFormField label="PAN Number" value={director.pan} onChange={(val) => handleFieldChange('pan', val)} placeholder="e.g. ABCDE1234F" required />
+              <DirectorFormField label="Full Name (as in PAN)" value={director.fullName} onChange={(val) => handleFieldChange('fullName', val)} placeholder="e.g. Rajesh Kumar" required error={errors.fullName} />
+              <DirectorFormField label="PAN Number" value={director.pan} onChange={(val) => handleFieldChange('pan', val)} placeholder="e.g. ABCDE1234F" required error={errors.pan} />
             </div>
             <div className="director-grid-2">
-              <DirectorFormField label="DIN (if already allotted)" value={director.din} onChange={(val) => handleFieldChange('din', val)} placeholder="e.g. 01234567 (Optional)" />
-              <DirectorFormField label="Date of Birth" type="date" value={director.dob} onChange={(val) => handleFieldChange('dob', val)} required />
+              <DirectorFormField label="DIN (if already allotted)" value={director.din} onChange={(val) => handleFieldChange('din', val)} placeholder="e.g. 01234567 (Optional)" error={errors.din} />
+              <DirectorFormField label="Date of Birth" type="date" value={director.dob} onChange={(val) => handleFieldChange('dob', val)} required error={errors.dob} />
             </div>
             <div className="director-grid-2">
-              <DirectorFormField label="Father's Name" value={director.fatherName} onChange={(val) => handleFieldChange('fatherName', val)} placeholder="e.g. Ramesh Kumar" required />
+              <DirectorFormField label="Father's Name" value={director.fatherName} onChange={(val) => handleFieldChange('fatherName', val)} placeholder="e.g. Ramesh Kumar" required error={errors.fatherName} />
               <div className="director-group">
-                <label className="director-label">
-                  Gender<span className="director-required"> *</span>
-                </label>
-                <select
-                  className="director-input"
-                  value={director.gender}
-                  onChange={(e) => handleFieldChange('gender', e.target.value)}
-                >
+                <label className="director-label">Gender<span className="director-required"> *</span></label>
+                <select className={`director-input ${errors.gender ? 'director-input--error' : ''}`} value={director.gender} onChange={(e) => handleFieldChange('gender', e.target.value)}>
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
+                {errors.gender && <span className="director-field-error">{errors.gender}</span>}
               </div>
             </div>
             <div className="director-grid-2">
-              <DirectorFormField label="Nationality" value={director.nationality} onChange={(val) => handleFieldChange('nationality', val)} placeholder="e.g. Indian" required />
-              <DirectorFormField label="Designation" value={director.designation} onChange={(val) => handleFieldChange('designation', val)} placeholder="e.g. Director" required />
+              <DirectorFormField label="Nationality" value={director.nationality} onChange={(val) => handleFieldChange('nationality', val)} placeholder="e.g. Indian" required error={errors.nationality} />
+              <DirectorFormField label="Designation" value={director.designation} onChange={(val) => handleFieldChange('designation', val)} placeholder="e.g. Director" required error={errors.designation} />
             </div>
-            <DirectorFormField label="Category" value={director.category} onChange={(val) => handleFieldChange('category', val)} placeholder="e.g. Promoter Director" required />
+            <DirectorFormField label="Category" value={director.category} onChange={(val) => handleFieldChange('category', val)} placeholder="e.g. Promoter Director" required error={errors.category} />
           </section>
 
           {/* B. Contact */}
           <section className="director-section">
             <h4 className="director-section__title">B. Contact</h4>
             <div className="director-grid-2">
-              <DirectorFormField label="Email Address" type="email" value={director.email} onChange={(val) => handleFieldChange('email', val)} placeholder="e.g. rajesh.kumar@example.com" required />
-              <DirectorFormField label="Mobile Number" type="tel" value={director.mobile} onChange={(val) => handleFieldChange('mobile', val)} placeholder="e.g. 9876543210" required />
+              <DirectorFormField label="Email Address" type="email" value={director.email} onChange={(val) => handleFieldChange('email', val)} placeholder="e.g. rajesh.kumar@example.com" required error={errors.email} />
+              <DirectorFormField label="Mobile Number" type="tel" value={director.mobile} onChange={(val) => handleFieldChange('mobile', val)} placeholder="e.g. 9876543210" required error={errors.mobile} />
             </div>
           </section>
 
@@ -204,49 +209,28 @@ export const DirectorCard: React.FC<DirectorCardProps> = ({
           <section className="director-section">
             <h4 className="director-section__title">C. Residency & Address</h4>
             <div className="director-group">
-              <label className="director-label">
-                Whether resident in India<span className="director-required">*</span>
-              </label>
+              <label className="director-label">Whether resident in India<span className="director-required">*</span></label>
               <div className="director-chips">
-                <button
-                  type="button"
-                  className={`director-chip ${director.isResident ? 'director-chip--active' : ''}`}
-                  onClick={() => handleFieldChange('isResident', true)}
-                >
-                  Yes
-                </button>
-                <button
-                  type="button"
-                  className={`director-chip ${!director.isResident ? 'director-chip--active' : ''}`}
-                  onClick={() => handleFieldChange('isResident', false)}
-                >
-                  No
-                </button>
+                <button type="button" className={`director-chip ${director.isResident ? 'director-chip--active' : ''}`} onClick={() => handleFieldChange('isResident', true)}>Yes</button>
+                <button type="button" className={`director-chip ${!director.isResident ? 'director-chip--active' : ''}`} onClick={() => handleFieldChange('isResident', false)}>No</button>
               </div>
             </div>
 
             <div className="director-group">
-              <label className="director-label" style={{ fontWeight: 700, marginTop: '0.25rem' }}>
-                Permanent Residential Address<span className="director-required"> *</span>
-              </label>
+              <label className="director-label" style={{ fontWeight: 700, marginTop: '0.25rem' }}>Permanent Residential Address<span className="director-required"> *</span></label>
             </div>
 
-            <DirectorFormField label="Address Line 1" value={director.addressLine1} onChange={(val) => handleFieldChange('addressLine1', val)} placeholder="Flat / Door No., Building, Street" required />
+            <DirectorFormField label="Address Line 1" value={director.addressLine1} onChange={(val) => handleFieldChange('addressLine1', val)} placeholder="Flat / Door No., Building, Street" required error={errors.addressLine1} />
             <DirectorFormField label="Address Line 2 (Optional)" value={director.addressLine2} onChange={(val) => handleFieldChange('addressLine2', val)} placeholder="Locality / Landmark (Optional)" />
             <div className="director-grid-4">
-              <DirectorFormField label="City" value={director.city} onChange={(val) => handleFieldChange('city', val)} placeholder="e.g. Mumbai" required />
-              <DirectorFormField label="District" value={director.district} onChange={(val) => handleFieldChange('district', val)} placeholder="e.g. Mumbai" required />
-              <DirectorFormField label="State" value={director.state} onChange={(val) => handleFieldChange('state', val)} placeholder="e.g. Maharashtra" required />
-              <DirectorFormField label="PIN Code" value={director.pincode} onChange={(val) => handleFieldChange('pincode', val)} placeholder="e.g. 400001" required />
+              <DirectorFormField label="City" value={director.city} onChange={(val) => handleFieldChange('city', val)} placeholder="e.g. Mumbai" required error={errors.city} />
+              <DirectorFormField label="District" value={director.district} onChange={(val) => handleFieldChange('district', val)} placeholder="e.g. Mumbai" required error={errors.district} />
+              <DirectorFormField label="State" value={director.state} onChange={(val) => handleFieldChange('state', val)} placeholder="e.g. Maharashtra" required error={errors.state} />
+              <DirectorFormField label="PIN Code" value={director.pincode} onChange={(val) => handleFieldChange('pincode', val)} placeholder="e.g. 400001" required error={errors.pincode} />
             </div>
 
             <label className="director-checkbox-label">
-              <input
-                type="checkbox"
-                className="director-checkbox"
-                checked={director.isSameAddress}
-                onChange={(e) => handleFieldChange('isSameAddress', e.target.checked)}
-              />
+              <input type="checkbox" className="director-checkbox" checked={director.isSameAddress} onChange={(e) => handleFieldChange('isSameAddress', e.target.checked)} />
               Present Residential Address same as Permanent Address
             </label>
           </section>
@@ -255,15 +239,12 @@ export const DirectorCard: React.FC<DirectorCardProps> = ({
           <section className="director-section">
             <h4 className="director-section__title">D. Share Subscription</h4>
             <div className="director-grid-2">
-              <DirectorFormField label="Number of Equity Shares Subscribed" value={director.equityShares} onChange={(val) => handleFieldChange('equityShares', val)} placeholder="e.g. 5000" required />
-              <DirectorFormField label="Amount of Equity Shares Subscribed" value={director.equityAmount} onChange={(val) => handleFieldChange('equityAmount', val)} placeholder="e.g. 50000" required />
+              <DirectorFormField label="Number of Equity Shares Subscribed" value={director.equityShares} onChange={(val) => handleFieldChange('equityShares', val)} placeholder="e.g. 5000" required error={errors.equityShares} />
+              <DirectorFormField label="Amount of Equity Shares Subscribed" value={director.equityAmount} onChange={(val) => handleFieldChange('equityAmount', val)} placeholder="e.g. 50000" required error={errors.equityAmount} />
             </div>
             <div className="director-group">
               <label className="director-label">Shareholding Percentage (READ ONLY)</label>
-              <div className="director-share-box">
-                <span>◔</span>
-                <span>{director.shareholdingPercent}</span>
-              </div>
+              <div className="director-share-box"><span>◔</span><span>{director.shareholdingPercent}</span></div>
             </div>
           </section>
 

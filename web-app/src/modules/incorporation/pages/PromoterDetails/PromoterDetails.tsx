@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { DirectorCard } from '../../components'
 import { defaultDirectors } from '../../data/companyRegistrationData'
+import { StepActionBar } from '@shared/components'
+import { saveIncorporationDraft } from '../../utils/incorporationDraft'
 import {
   isValidPan,
   isValidDin,
@@ -27,9 +29,14 @@ export const PromoterDetails: React.FC = () => {
     return defaultDirectors
   })
   const [error, setError] = useState<string>('')
+  const [directorErrors, setDirectorErrors] = useState<Record<number, Record<string, string>>>({})
 
   const handleDirectorChange = (id: number, field: keyof DirectorDetails, value: any) => {
     setError('')
+    setDirectorErrors((prev) => ({
+      ...prev,
+      [id]: { ...(prev[id] || {}), [field]: '' },
+    }))
     setDirectors((prev) =>
       prev.map((d) => (d.id === id ? { ...d, [field]: value } : d))
     )
@@ -74,80 +81,82 @@ export const PromoterDetails: React.FC = () => {
   const handleCancelDirector = (id: number) => {
     if (directors.length > 1) {
       setError('')
+      setDirectorErrors((prev) => {
+        const copy = { ...prev }
+        delete copy[id]
+        return copy
+      })
       setDirectors((prev) => prev.filter((d) => d.id !== id))
     }
   }
 
   const handleContinue = () => {
+    let minDirectorsError = ''
     if (directors.length < minDirectors) {
-      setError(
+      minDirectorsError =
         companyType === 'public'
           ? 'Public Limited Company requires at least 3 directors.'
           : isOpc
           ? 'One Person Company requires at least 1 director.'
           : 'A minimum of 2 directors/partners are required.'
-      )
-      return
     }
+    setError(minDirectorsError)
+
+    const allErrors: Record<number, Record<string, string>> = {}
+    let hasAnyError = false
 
     for (let i = 0; i < directors.length; i++) {
       const d = directors[i]
-      const label = `Director #${i + 1}${d.fullName ? ` (${d.fullName})` : ''}`
-      if (!d.fullName.trim()) {
-        setError(`${label}: Full Name is required.`)
-        return
+      const dErrors: Record<string, string> = {}
+      if (!d.fullName.trim()) dErrors.fullName = 'Full Name is required'
+      if (!d.pan.trim()) {
+        dErrors.pan = 'PAN Number is required'
+      } else if (!isValidPan(d.pan)) {
+        dErrors.pan = 'Valid 10-character PAN (e.g. ABCDE1234F) is required'
       }
-      if (!isValidPan(d.pan)) {
-        setError(`${label}: Valid 10-character PAN (e.g. ABCDE1234F) is required.`)
-        return
+      if (d.din && !isValidDin(d.din)) dErrors.din = 'DIN must be an 8-digit number'
+      if (!d.dob) dErrors.dob = 'Date of Birth is required'
+      if (!d.fatherName.trim()) dErrors.fatherName = "Father's Name is required"
+      if (!d.gender) dErrors.gender = 'Please select gender'
+      if (!d.nationality.trim()) dErrors.nationality = 'Nationality is required'
+      if (!d.designation.trim()) dErrors.designation = 'Designation is required'
+      if (!d.category.trim()) dErrors.category = 'Category is required'
+      if (!d.email.trim()) {
+        dErrors.email = 'Email Address is required'
+      } else if (!isValidEmail(d.email)) {
+        dErrors.email = 'Please enter a valid email address'
       }
-      if (d.din && !isValidDin(d.din)) {
-        setError(`${label}: DIN must be an 8-digit number if provided.`)
-        return
+      if (!d.mobile.trim()) {
+        dErrors.mobile = 'Mobile Number is required'
+      } else if (!isValidMobile(d.mobile)) {
+        dErrors.mobile = 'Please enter a valid 10-digit mobile number'
       }
-      if (!d.dob) {
-        setError(`${label}: Date of Birth is required.`)
-        return
+      if (!d.addressLine1.trim()) dErrors.addressLine1 = 'Address Line 1 is required'
+      if (!d.city.trim()) dErrors.city = 'City is required'
+      if (!d.district.trim()) dErrors.district = 'District is required'
+      if (!d.state.trim()) dErrors.state = 'State is required'
+      if (!d.pincode.trim()) {
+        dErrors.pincode = 'PIN Code is required'
+      } else if (!isValidPincode(d.pincode)) {
+        dErrors.pincode = 'Please enter a valid 6-digit PIN code'
       }
-      if (!d.fatherName.trim()) {
-        setError(`${label}: Father's Name is required.`)
-        return
-      }
-      if (!d.gender) {
-        setError(`${label}: Gender is required.`)
-        return
-      }
-      if (!isValidEmail(d.email)) {
-        setError(`${label}: Valid Email Address is required.`)
-        return
-      }
-      if (!isValidMobile(d.mobile)) {
-        setError(`${label}: Valid 10-digit Mobile Number is required.`)
-        return
-      }
-      if (!d.addressLine1.trim()) {
-        setError(`${label}: Address Line 1 is required.`)
-        return
-      }
-      if (!d.city.trim()) {
-        setError(`${label}: City is required.`)
-        return
-      }
-      if (!d.district.trim()) {
-        setError(`${label}: District is required.`)
-        return
-      }
-      if (!d.state.trim()) {
-        setError(`${label}: State is required.`)
-        return
-      }
-      if (!isValidPincode(d.pincode)) {
-        setError(`${label}: Valid 6-digit PIN Code is required.`)
-        return
+      if (!d.equityShares || Number(d.equityShares) <= 0) dErrors.equityShares = 'Number of equity shares is required'
+      if (!d.equityAmount || Number(d.equityAmount) <= 0) dErrors.equityAmount = 'Amount of equity shares is required'
+
+      if (Object.keys(dErrors).length > 0) {
+        allErrors[d.id] = dErrors
+        hasAnyError = true
       }
     }
 
+    setDirectorErrors(allErrors)
+
+    if (minDirectorsError || hasAnyError) {
+      return
+    }
+
     setError('')
+    setDirectorErrors({})
     navigate(routePaths.incorporation.capitalDetails, {
       state: { ...location.state, companyType, directors },
     })
@@ -182,6 +191,7 @@ export const PromoterDetails: React.FC = () => {
             onChange={handleDirectorChange}
             onSave={handleSaveDirector}
             onCancel={handleCancelDirector}
+            errors={directorErrors[director.id]}
           />
         ))}
 
@@ -226,22 +236,16 @@ export const PromoterDetails: React.FC = () => {
       )}
 
       {/* Footer Navigation */}
-      <footer className="promoter-details-footer">
-        <button
-          type="button"
-          className="promoter-details-btn-back"
-          onClick={() => navigate(routePaths.incorporation.registeredOffice, { state: location.state })}
-        >
-          &larr; Back
-        </button>
-        <button
-          type="button"
-          className="promoter-details-btn-continue"
-          onClick={handleContinue}
-        >
-          Continue &rarr;
-        </button>
-      </footer>
+      <StepActionBar
+        onBack={() => navigate(routePaths.incorporation.registeredOffice, { state: location.state })}
+        onNext={handleContinue}
+        onSaveDraft={() => {
+          saveIncorporationDraft(4, 'Promoter Details', routePaths.incorporation.promoterDetails, { directors })
+          navigate(routePaths.dashboard)
+        }}
+        nextDisabled={!Boolean(directors.length > 0 && directors.every(d => d.fullName?.trim() && d.pan?.trim()))}
+        nextLabel="Continue"
+      />
     </div>
   )
 }

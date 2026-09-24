@@ -127,3 +127,22 @@
   background: #e04b15;
   transform: translateY(-1px);
 }
+
+.doc-item-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-card--error {
+  border-color: #ef4444 !important;
+  background-color: #fffafb !important;
+}
+
+.docs-field-error {
+  font-size: 0.76rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  line-height: 1.25;
+  display: block;
+}

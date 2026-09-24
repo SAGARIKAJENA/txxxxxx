@@ -2,9 +2,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 0.25rem 0.75rem 3.5rem 0.75rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 0.5rem 2rem 3.5rem 2rem;
   box-sizing: border-box;
 }
 
@@ -15,7 +15,6 @@
   align-items: flex-start;
   margin-bottom: 1.25rem;
 }
-
 
 .gst-reg-header-titles {
   display: flex;
@@ -42,47 +41,56 @@
 /* Stepper Container */
 .gst-reg-stepper-container {
   margin-bottom: 1.5rem;
+  width: 100%;
 }
 
-/* 2-Column Grid Layout */
-.gst-reg-content-grid {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 1.75rem;
-  align-items: start;
-}
-
+/* Full Width Content Layout */
+.gst-reg-content-grid,
 .gst-reg-content-grid--full-width {
-  grid-template-columns: 1fr;
+  display: block;
+  width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
 }
 
 .gst-reg-main-content {
   width: 100%;
+  max-width: 100%;
   min-width: 0;
+  box-sizing: border-box;
 }
 
 .gst-reg-sidebar {
-  position: sticky;
-  top: calc(var(--header-height, 64px) + 1.25rem);
-  align-self: start;
-  width: 100%;
+  display: none;
 }
 
+/* Responsive screen size adjustments */
 @media (max-width: 1024px) {
-  .gst-reg-content-grid {
-    grid-template-columns: 1fr 310px;
-    gap: 1.25rem;
+  .gst-reg-page {
+    padding: 0.5rem 1.5rem 3rem 1.5rem;
   }
 }
 
-@media (max-width: 860px) {
-  .gst-reg-content-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 768px) {
+  .gst-reg-page {
+    padding: 0.25rem 1rem 2.5rem 1rem;
   }
 
-  .gst-reg-sidebar {
-    position: static;
-    top: auto;
+  .gst-reg-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gst-reg-page {
+    padding: 0.25rem 0.65rem 2rem 0.65rem;
+  }
+
+  .gst-reg-title {
+    font-size: 1.25rem;
+  }
+
+  .gst-reg-subtitle {
+    font-size: 0.82rem;
   }
 }

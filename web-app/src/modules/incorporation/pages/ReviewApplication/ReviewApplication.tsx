@@ -1,6 +1,8 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
+import { StepActionBar } from '@shared/components'
+import { saveIncorporationDraft } from '../../utils/incorporationDraft'
 import './ReviewApplication.css'
 
 const ReviewSection: React.FC<{
@@ -159,22 +161,15 @@ export const ReviewApplication: React.FC = () => {
       </div>
 
       {/* Footer Navigation */}
-      <footer className="review-app-footer">
-        <button
-          type="button"
-          className="review-app-btn-back"
-          onClick={() => navigate(routePaths.incorporation.linkedRegistrations, { state })}
-        >
-          &larr; Back
-        </button>
-        <button
-          type="button"
-          className="review-app-btn-continue"
-          onClick={() => navigate(routePaths.incorporation.feesPayment, { state })}
-        >
-          Continue &rarr;
-        </button>
-      </footer>
+      <StepActionBar
+        onBack={() => navigate(routePaths.incorporation.linkedRegistrations, { state })}
+        onNext={() => navigate(routePaths.incorporation.feesPayment, { state })}
+        onSaveDraft={() => {
+          saveIncorporationDraft(8, 'Review Application', routePaths.incorporation.reviewApplication, { state })
+          navigate(routePaths.dashboard)
+        }}
+        nextLabel="Continue to Payment"
+      />
     </div>
   )
 }

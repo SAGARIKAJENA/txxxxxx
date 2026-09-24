@@ -3,21 +3,21 @@ import type { RouteObject } from "react-router-dom";
 import { routePaths } from "@core/config";
 
 const Itr = lazy(() => import("./pages/Itr/Itr"));
-const FileItr = lazy(() => import("./components/FileItr/FileItr.tsx"));
-const ItrFiling = lazy(() => import("./components/ItrFiling/ItrFiling.tsx"));
-const TdsRefund = lazy(() => import("./components/TdsRefund/TdsRefund.tsx"));
+const FileItr = lazy(() => import("./pages/FileItr/FileItr.tsx"));
+const ItrFiling = lazy(() => import("./pages/ItrFiling/ItrFiling"));
+const TdsRefund = lazy(() => import("./pages/TdsRefund/TdsRefund"));
 const PreviousYearItr = lazy(
-  () => import("./components/PreviousYearItr/PreviousYearItr.tsx"),
+  () => import("./pages/PreviousYearItr/PreviousYearItr.tsx"),
 );
-const RevisedItr = lazy(() => import("./components/RevisedItr/RevisedItr.tsx"));
+const RevisedItr = lazy(() => import("./pages/RevisedItr/RevisedItr"));
 const TaxNoticeAssistance = lazy(
-  () => import("./components/TaxNoticeAssistance/TaxNoticeAssistance.tsx"),
+  () => import("./pages/TaxNoticeAssistance/TaxNoticeAssistance"),
 );
 const TdsRefundEstimator = lazy(
-  () => import("./components/TdsRefundEstimator/TdsRefundEstimator.tsx"),
+  () => import("./pages/TdsRefundEstimator/TdsRefundEstimator.tsx"),
 );
 const TaxComputation = lazy(
-  () => import("./components/TaxComputation/TaxComputation.tsx"),
+  () => import("./pages/TaxComputation/TaxComputation.tsx"),
 );
 
 export const itrRoutes: RouteObject[] = [

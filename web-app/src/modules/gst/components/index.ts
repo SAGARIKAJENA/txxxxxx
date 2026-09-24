@@ -1,21 +1,11 @@
-// GST Home Screen Components (inside GstHomeScreen/ folder)
-export * from './GstHomeScreen'
+// GST Module Shared Components
+export { GSTRegistrationStepper } from './GSTRegistrationStepper/GSTRegistrationStepper'
+export type { StepItem } from './GSTRegistrationStepper/GSTRegistrationStepper'
 
+export { GSTSidebar } from './GSTSidebar/GSTSidebar'
+export type { GSTSidebarProps } from './GSTSidebar/GSTSidebar'
 
-// Registration Components (inside registration/ folder)
-export * from './registration'
+export { GSTOrderSummary } from './GSTOrderSummary/GSTOrderSummary'
+export type { GSTOrderSummaryProps } from './GSTOrderSummary/GSTOrderSummary'
 
-// Filing Components (inside filing/ folder)
-export * from './filing'
-
-// Compliance Components (inside compliance/ folder)
-export * from './compliance'
-
-// Amendment Components (inside amendment/ folder)
-export * from './amendment'
-
-// Certificate Components (inside certificate/ folder)
-export * from './certificate'
-
-// Cancellation Components (inside cancellation/ folder)
-export * from './cancellation'
+export { GSTProofUpload, GSTAmendmentProofUpload } from './GSTProofUpload/GSTProofUpload'

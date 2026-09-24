@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { useAppStore, useAuthStore } from '@store/index'
 import { userStorage } from '@core/storage/userStorage'
 import { useDraftBlocker } from '@shared/hooks'
-import { INITIAL_DOCUMENTS } from '../../components/registration/GSTStepDocuments/gstDocuments.constants'
-import type { DocumentItem } from '../../components/registration/GSTStepDocuments/gstDocuments.types'
-import type { GstBusinessFormData, PaymentResult } from '../../components/registration'
+import { INITIAL_DOCUMENTS } from './steps/GSTStepDocuments/gstDocuments.constants'
+import type { DocumentItem } from './steps/GSTStepDocuments/gstDocuments.types'
+import type { GstBusinessFormData } from './steps/GSTStepBusiness/gstBusiness.types'
+import type { PaymentResult } from '../../types/gst.types'
 
 export const useGstRegistrationState = () => {
   const navigate = useNavigate()
@@ -128,23 +129,37 @@ export const useGstRegistrationState = () => {
     })
   }, [currentStep, businessData, documents])
 
-  // Automatically keep draft updated on any input change
+  // Automatically keep draft updated on any input change once user has completed at least Step 1
   useEffect(() => {
-    if (currentStep <= 4) {
+    if (currentStep > 1 && currentStep <= 4) {
       saveCurrentDraft()
     }
   }, [currentStep, businessData, documents, saveCurrentDraft])
 
 
+  const isBackButtonClickedRef = useRef(false)
+
+  const handleCancel = useCallback(() => {
+    isBackButtonClickedRef.current = true
+    navigate(routePaths.gst.root)
+  }, [navigate])
+
+  const isNavigationAllowed = useCallback(() => {
+    if (isBackButtonClickedRef.current) {
+      isBackButtonClickedRef.current = false
+      return true
+    }
+    return false
+  }, [])
+
   // Hook to block route navigation away from the application
   const {
     isModalOpen: isDraftModalOpen,
-    openModal: handleCancel,
     handleSaveAndExit,
     handleDiscardAndExit,
     handleKeepEditing,
   } = useDraftBlocker({
-    shouldBlock: currentStep <= 4,
+    shouldBlock: currentStep > 1 && currentStep <= 4,
     onSaveDraft: () => {
       saveCurrentDraft()
       pushToast('Application saved as draft', 'success')
@@ -154,6 +169,7 @@ export const useGstRegistrationState = () => {
       pushToast('Draft discarded', 'info')
     },
     defaultExitRoute: routePaths.dashboard,
+    isNavigationAllowed,
   })
 
   const handleBusinessChange = <K extends keyof GstBusinessFormData>(
@@ -181,6 +197,8 @@ export const useGstRegistrationState = () => {
       setCurrentStep(3)
     } else if (stepParam === 'payment' || stepParam === '4' || location.pathname.includes('payment')) {
       setCurrentStep(4)
+    } else if (stepParam === 'status' || stepParam === '5' || stepParam === 'success') {
+      setCurrentStep(5)
     } else if (stepParam === 'business' || stepParam === '1') {
       setCurrentStep(1)
     }
@@ -189,22 +207,27 @@ export const useGstRegistrationState = () => {
   const handlePaymentSuccess = (result: PaymentResult) => {
     setPaymentResult(result)
     setCurrentStep(5)
+    setSearchParams({ step: 'status' }, { replace: true })
     pushToast('Payment of ₹1,499 successful', 'success')
     window.scrollTo({ top: 0, behavior: 'smooth' })
 
     // Clear draft on submission
     userStorage.deleteDraft('gst-registration')
 
+    const appCode = result.applicationRef || `GST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 90000 + 10000))}`
+    const applicant = businessData.tradeName || businessData.legalName || businessData.signatoryName || 'GST Applicant'
+    const stateName = businessData.state || 'India'
+
     userStorage.saveUserApplication({
       id: `app-gst-${Date.now()}`,
-      code: result.applicationRef || `GST-${new Date().getFullYear()}-0001`,
+      code: appCode,
       title: 'GST Registration',
-      meta: `${businessData.signatoryName || 'New Registration'} · ${businessData.state || 'India'}`,
+      meta: `${applicant} · ${stateName}`,
       statusLabel: 'Submitted',
       statusTone: 'info',
       progress: 25,
       icon: '📄',
-      to: `/applications/track/${result.applicationRef || `GST-${new Date().getFullYear()}-0001`}`,
+      to: `/applications/track/${appCode}`,
     })
   }
 

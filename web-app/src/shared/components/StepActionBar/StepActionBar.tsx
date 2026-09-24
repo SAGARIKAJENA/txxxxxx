@@ -12,6 +12,8 @@ export interface StepActionBarProps {
   nextDisabled?: boolean
   backDisabled?: boolean
   showBack?: boolean
+  showNext?: boolean
+  hideNextWhenDisabled?: boolean
   nextType?: 'button' | 'submit'
   backTestId?: string
   nextTestId?: string
@@ -31,6 +33,8 @@ export const StepActionBar: React.FC<StepActionBarProps> = ({
   nextDisabled = false,
   backDisabled = false,
   showBack = true,
+  showNext = true,
+  hideNextWhenDisabled = false,
   nextType = 'button',
   backTestId = 'step-back-btn',
   nextTestId = 'step-continue-btn',
@@ -38,6 +42,8 @@ export const StepActionBar: React.FC<StepActionBarProps> = ({
   extraActions,
   className = '',
 }) => {
+  const isContinueVisible = showNext && (!hideNextWhenDisabled || !nextDisabled)
+
   return (
     <div className={`step-action-bar ${className}`} data-testid="step-action-bar">
       <div className="step-action-bar__left">
@@ -94,22 +100,24 @@ export const StepActionBar: React.FC<StepActionBarProps> = ({
 
         {extraActions && <div className="step-action-bar__extra">{extraActions}</div>}
 
-        <button
-          type={nextType}
-          className="step-action-bar__btn step-action-bar__btn--next"
-          onClick={nextType === 'button' ? onNext : undefined}
-          disabled={nextDisabled || isSubmitting}
-          data-testid={nextTestId}
-        >
-          {isSubmitting ? (
-            <>
-              <span className="step-action-bar__spinner" aria-hidden="true" />
-              <span>Processing...</span>
-            </>
-          ) : (
-            <span>{nextLabel}</span>
-          )}
-        </button>
+        {isContinueVisible && (
+          <button
+            type={nextType}
+            className="step-action-bar__btn step-action-bar__btn--next"
+            onClick={nextType === 'button' ? onNext : undefined}
+            disabled={nextDisabled || isSubmitting}
+            data-testid={nextTestId}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="step-action-bar__spinner" aria-hidden="true" />
+                <span>Processing...</span>
+              </>
+            ) : (
+              <span>{nextLabel}</span>
+            )}
+          </button>
+        )}
       </div>
     </div>
   )

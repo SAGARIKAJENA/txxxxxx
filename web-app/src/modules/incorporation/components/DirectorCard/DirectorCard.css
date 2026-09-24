@@ -7,7 +7,6 @@
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
   transition: all 0.2s ease;
 }
-
 .director-card__header {
   padding: 1.25rem 1.75rem;
   background: #ffffff;
@@ -16,7 +15,6 @@
   justify-content: space-between;
   border-bottom: 1px solid #f1f5f9;
 }
-
 .director-card__header-left {
   display: flex;
   align-items: center;
@@ -37,31 +35,10 @@
   flex-shrink: 0;
 }
 
-.director-card__meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.director-card__title-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.director-card__title {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.director-card__name {
-  margin: 0;
-  font-size: 0.82rem;
-  color: #64748b;
-  font-weight: 500;
-}
+.director-card__meta { display: flex; flex-direction: column; gap: 0.15rem; }
+.director-card__title-row { display: flex; align-items: center; gap: 0.5rem; }
+.director-card__title { margin: 0; font-size: 1.05rem; font-weight: 700; color: #0f172a; }
+.director-card__name { margin: 0; font-size: 0.82rem; color: #64748b; font-weight: 500; }
 
 .director-card__btn-collapse,
 .director-card__btn-edit {
@@ -78,7 +55,6 @@
   gap: 0.45rem;
   transition: all 0.15s ease;
 }
-
 .director-card__btn-collapse:hover,
 .director-card__btn-edit:hover {
   background: #f1f5f9;
@@ -190,6 +166,24 @@
   outline: none;
   border-color: #f25a22;
   box-shadow: 0 0 0 3px rgba(242, 90, 34, 0.15);
+}
+
+.director-input--error {
+  border-color: #ef4444 !important;
+  background-color: #fffafb;
+}
+
+.director-input--error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.director-field-error {
+  font-size: 0.76rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  line-height: 1.25;
+  display: block;
 }
 
 select.director-input {

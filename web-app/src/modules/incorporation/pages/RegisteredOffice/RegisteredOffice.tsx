@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { routePaths } from '@core/config'
-import { DocumentCard } from '@shared/components'
+import { DocumentCard, StepActionBar } from '@shared/components'
 import { filterDigits, isValidMobile, isValidPincode, isValidEmail } from '../../utils/validation'
+import { saveIncorporationDraft } from '../../utils/incorporationDraft'
 import './RegisteredOffice.css'
 
 interface OfficeDocItem {
@@ -19,7 +20,7 @@ export const RegisteredOffice: React.FC = () => {
   const location = useLocation()
   const locationState = location.state as Record<string, any> | null
   const companyType = locationState?.companyType || 'pvt_ltd'
-  const [error, setError] = useState<string>('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const [addressData, setAddressData] = useState({
     addressLine1: '',
@@ -59,7 +60,7 @@ export const RegisteredOffice: React.FC = () => {
   const ownershipOptions = ['Rented', 'Owned', 'Leased']
 
   const handleInputChange = (field: string, val: string) => {
-    setError('')
+    setErrors((prev) => ({ ...prev, [field]: '' }))
     if (field === 'pincode') {
       setAddressData((prev) => ({ ...prev, pincode: filterDigits(val, 6) }))
       return
@@ -72,7 +73,7 @@ export const RegisteredOffice: React.FC = () => {
   }
 
   const handleUploadDoc = (id: string, file: File) => {
-    setError('')
+    setErrors((prev) => ({ ...prev, docs: '' }))
     setDocs((prev) =>
       prev.map((d) => (d.id === id ? { ...d, isUploaded: true, fileName: file.name } : d))
     )
@@ -85,20 +86,37 @@ export const RegisteredOffice: React.FC = () => {
   }
 
   const handleContinue = () => {
-    if (!addressData.addressLine1.trim()) { setError('Please enter Premises Address Line.'); return }
-    if (!addressData.city.trim()) { setError('Please enter City.'); return }
-    if (!addressData.district.trim()) { setError('Please enter District.'); return }
-    if (!addressData.state.trim()) { setError('Please enter State.'); return }
-    if (!isValidPincode(addressData.pincode)) { setError('Please enter a valid 6-digit numeric PIN Code.'); return }
-    if (!addressData.ownershipStatus) { setError('Please select Premises Ownership Status.'); return }
-    if (!isValidEmail(addressData.email)) { setError('Please enter a valid Company Email address.'); return }
-    if (!isValidMobile(addressData.mobile)) { setError('Please enter a valid 10-digit numeric Mobile Number.'); return }
+    const newErrors: Record<string, string> = {}
+    if (!addressData.addressLine1.trim()) newErrors.addressLine1 = 'Premises address line is required'
+    if (!addressData.city.trim()) newErrors.city = 'City is required'
+    if (!addressData.district.trim()) newErrors.district = 'District is required'
+    if (!addressData.state.trim()) newErrors.state = 'State is required'
+    if (!addressData.pincode.trim()) {
+      newErrors.pincode = 'PIN Code is required'
+    } else if (!isValidPincode(addressData.pincode)) {
+      newErrors.pincode = 'Please enter a valid 6-digit numeric PIN code'
+    }
+    if (!addressData.ownershipStatus) newErrors.ownershipStatus = 'Please select premises ownership status'
+    if (!addressData.email.trim()) {
+      newErrors.email = 'Company email is required'
+    } else if (!isValidEmail(addressData.email)) {
+      newErrors.email = 'Please enter a valid company email address'
+    }
+    if (!addressData.mobile.trim()) {
+      newErrors.mobile = 'Mobile number is required'
+    } else if (!isValidMobile(addressData.mobile)) {
+      newErrors.mobile = 'Please enter a valid 10-digit numeric mobile number'
+    }
     const unuploadedDoc = docs.find((d) => d.isRequired && !d.isUploaded)
     if (unuploadedDoc) {
-      setError(`Please upload mandatory document: ${unuploadedDoc.title}`)
+      newErrors.docs = `Please upload mandatory document: ${unuploadedDoc.title}`
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
       return
     }
-    setError('')
+    setErrors({})
     navigate(routePaths.incorporation.promoterDetails, {
       state: { ...locationState, companyType, addressData, docs },
     })
@@ -114,11 +132,12 @@ export const RegisteredOffice: React.FC = () => {
       <label className="reg-office-label">{label}<span className="reg-office-required"> *</span></label>
       <input
         type={type}
-        className="reg-office-input"
+        className={`reg-office-input ${errors[field] ? 'reg-office-input--error' : ''}`}
         placeholder={placeholder}
         value={addressData[field]}
         onChange={(e) => handleInputChange(field, e.target.value)}
       />
+      {errors[field] && <span className="reg-office-field-error">{errors[field]}</span>}
     </div>
   )
 
@@ -158,7 +177,7 @@ export const RegisteredOffice: React.FC = () => {
           <label className="reg-office-label">
             Premises Ownership Status<span className="reg-office-required"> *</span>
           </label>
-          <div className="reg-office-chips">
+          <div className={`reg-office-chips ${errors.ownershipStatus ? 'reg-office-chips--error' : ''}`}>
             {ownershipOptions.map((opt) => (
               <button
                 key={opt}
@@ -170,6 +189,7 @@ export const RegisteredOffice: React.FC = () => {
               </button>
             ))}
           </div>
+          {errors.ownershipStatus && <span className="reg-office-field-error">{errors.ownershipStatus}</span>}
         </div>
 
         <div className="reg-office-info-box">
@@ -206,31 +226,20 @@ export const RegisteredOffice: React.FC = () => {
             />
           ))}
         </div>
+        {errors.docs && <span className="reg-office-field-error" style={{ marginTop: '0.5rem' }}>{errors.docs}</span>}
       </section>
 
-      {error && (
-        <div style={{ color: '#dc2626', background: '#fef2f2', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #fecaca', fontSize: '0.88rem', fontWeight: 600 }}>
-          {error}
-        </div>
-      )}
-
       {/* Footer Navigation */}
-      <footer className="reg-office-footer">
-        <button
-          type="button"
-          className="reg-office-btn-back"
-          onClick={() => navigate(routePaths.incorporation.companyDetails, { state: locationState })}
-        >
-          &larr; Back
-        </button>
-        <button
-          type="button"
-          className="reg-office-btn-continue"
-          onClick={handleContinue}
-        >
-          Continue &rarr;
-        </button>
-      </footer>
+      <StepActionBar
+        onBack={() => navigate(routePaths.incorporation.companyDetails, { state: locationState })}
+        onNext={handleContinue}
+        onSaveDraft={() => {
+          saveIncorporationDraft(3, 'Registered Office', routePaths.incorporation.registeredOffice, { addressData, docs, companyType })
+          navigate(routePaths.dashboard)
+        }}
+        nextDisabled={!Boolean(addressData.addressLine1.trim() && addressData.city.trim() && addressData.state.trim() && addressData.pincode.trim().length >= 6 && addressData.ownershipStatus && addressData.email.trim() && docs.filter(d => d.isRequired).every(d => d.isUploaded))}
+        nextLabel="Continue"
+      />
     </div>
   )
 }

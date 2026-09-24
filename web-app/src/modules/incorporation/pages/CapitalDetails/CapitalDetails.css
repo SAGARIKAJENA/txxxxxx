@@ -134,6 +134,21 @@
   border-color: #f25a22;
   box-shadow: 0 0 0 3px rgba(242, 90, 34, 0.15);
 }
+.capital-details-input--error {
+  border-color: #ef4444 !important;
+  background-color: #fffafb;
+}
+.capital-details-input--error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+.capital-field-error {
+  font-size: 0.76rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  line-height: 1.25;
+  display: block;
+}
 
 /* OPC Shareholding Allocation Notice */
 .capital-details-opc-info {

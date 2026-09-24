@@ -155,5 +155,23 @@ export const userStorage = {
   clearUserDeadlines(): void {
     localStore.remove(USER_DEADLINES_KEY)
   },
+
+  /**
+   * Resets all user-entered data, drafts, applications, and deadlines across all modules.
+   * Calling this returns the application to a brand-new user state.
+   */
+  clearAllUserData(): void {
+    this.clearUserApplications()
+    this.clearAllDrafts()
+    this.clearUserDeadlines()
+    localStore.remove(USER_APPLICATIONS_KEY)
+    localStore.remove(APPLICATION_DRAFTS_KEY)
+    localStore.remove(USER_DEADLINES_KEY)
+  },
 }
+
+if (typeof window !== 'undefined') {
+  ;(window as unknown as Record<string, unknown>).__taxedge_clear_user_data__ = () => userStorage.clearAllUserData()
+}
+
 

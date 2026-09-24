@@ -5,7 +5,7 @@ import { useCustomerSupportChat } from '../../hooks/useCustomerSupportChat'
 import './CustomerSupport.css'
 
 export const CustomerSupport = () => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   const appId = searchParams.get('appId') || undefined
   const executiveId = searchParams.get('executiveId') || undefined
