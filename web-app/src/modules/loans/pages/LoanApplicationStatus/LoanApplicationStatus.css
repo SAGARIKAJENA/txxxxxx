@@ -1,0 +1,317 @@
+.loan-status-page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem;
+  box-sizing: border-box;
+}
+
+/* Success Banner */
+.loan-success-banner {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  padding: 2.25rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
+}
+
+.loan-success-banner__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+}
+
+.loan-success-banner__icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.loan-success-banner__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #14532d;
+}
+
+.loan-success-banner__desc {
+  margin: 0;
+  max-width: 600px;
+  font-size: 0.95rem;
+  color: #166534;
+  line-height: 1.5;
+}
+
+/* Application Summary Card */
+.loan-status-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.loan-status-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 1.25rem;
+}
+
+.loan-status-card__ref {
+  font-size: 0.925rem;
+  font-weight: 700;
+  color: #083b75;
+}
+
+.loan-status-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+}
+
+.loan-status-card__main {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.loan-status-card__loan-type {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0 0 0.25rem;
+}
+
+.loan-status-card__amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.loan-status-card__meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.loan-status-card__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.loan-status-card__meta-label {
+  font-size: 0.775rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.loan-status-card__meta-value {
+  font-size: 0.925rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Timeline / Milestones */
+.loan-timeline-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.loan-timeline-card__title {
+  margin: 0 0 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.loan-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.loan-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  position: relative;
+  padding-bottom: 1.75rem;
+}
+
+.loan-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+/* Connector Line */
+.loan-timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 26px;
+  bottom: 0;
+  width: 2px;
+  background-color: #e2e8f0;
+}
+
+.loan-timeline-item:last-child::before {
+  display: none;
+}
+
+.loan-timeline-item--completed::before {
+  background-color: #10b981;
+}
+
+.loan-timeline-node {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+  background-color: #ffffff;
+}
+
+.loan-timeline-item--completed .loan-timeline-node {
+  background-color: #10b981;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px #ecfdf5;
+}
+
+.loan-timeline-item--current .loan-timeline-node {
+  background-color: #ff7a00;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px #fff7ed;
+}
+
+.loan-timeline-item--pending .loan-timeline-node {
+  border: 2px solid #cbd5e1;
+  background-color: #f8fafc;
+}
+
+.loan-timeline-node svg {
+  width: 15px;
+  height: 15px;
+}
+
+.loan-timeline-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 2px;
+}
+
+.loan-timeline-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.loan-timeline-item--pending .loan-timeline-name {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.loan-timeline-date {
+  font-size: 0.8125rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.loan-timeline-item--pending .loan-timeline-date {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Bottom Actions */
+.loan-status-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.loan-status-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.85rem;
+  border-radius: 9999px;
+  font-size: 0.925rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loan-status-btn--primary {
+  background: linear-gradient(135deg, #083b75 0%, #0e4380 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 14px rgba(8, 59, 117, 0.28);
+}
+
+.loan-status-btn--primary:hover {
+  background: linear-gradient(135deg, #052750 0%, #083b75 100%);
+  box-shadow: 0 6px 18px rgba(8, 59, 117, 0.38);
+  transform: translateY(-1px);
+}
+
+.loan-status-btn--secondary {
+  background-color: #ffffff;
+  color: #334155;
+  border: 1.5px solid #cbd5e1;
+}
+
+.loan-status-btn--secondary:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+@media (max-width: 640px) {
+  .loan-status-page {
+    padding: 1rem 1rem 3rem;
+  }
+  .loan-status-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .loan-status-btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,32 @@
+.home-loan-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.home-loan-docs__header-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.home-loan-docs__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.home-loan-docs__subtitle {
+  margin: 0 0 1rem;
+  font-size: 0.84375rem;
+  color: #64748b;
+}
+
+@media (max-width: 640px) {
+  .home-loan-docs__header-card {
+    padding: 0;
+  }
+}
