@@ -1,0 +1,5 @@
+.project-finance-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}

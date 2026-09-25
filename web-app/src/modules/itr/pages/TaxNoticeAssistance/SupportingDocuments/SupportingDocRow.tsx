@@ -153,7 +153,7 @@ export const SupportingDocRow: React.FC<SupportingDocRowProps> = ({
               <polyline points="9 14 12 11 15 14" />
               <line x1="12" y1="11" x2="12" y2="17" />
             </svg>
-            <span>Upload File</span>
+            <span>Upload</span>
           </button>
         )}
       </div>

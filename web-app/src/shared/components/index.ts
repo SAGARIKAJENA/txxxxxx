@@ -26,5 +26,6 @@ export { DocumentSection } from './DocumentCard/DocumentSection'
 export type { DocumentSectionProps } from './DocumentCard/DocumentSection'
 export { DocumentTracker } from './DocumentCard/DocumentTracker'
 export type { DocumentTrackerProps } from './DocumentCard/DocumentTracker'
+export * from './FlowStepper'
 
 

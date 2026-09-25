@@ -1,0 +1,95 @@
+.working-capital-requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.working-capital-requirements__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.working-capital-requirements__input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.working-capital-requirements__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+.working-capital-requirements__input,
+.working-capital-requirements__select {
+  padding: 0.625rem 0.875rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.875rem;
+  color: #1e293b;
+  outline: none;
+  background: #ffffff;
+  transition: border-color 0.15s ease;
+}
+
+.working-capital-requirements__input:focus,
+.working-capital-requirements__select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.working-capital-requirements__amount-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.working-capital-requirements__pill-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.working-capital-requirements__pill-btn:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.working-capital-requirements__pill-btn--active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.working-capital-requirements__slider-wrap {
+  margin-top: 1rem;
+}
+
+.working-capital-requirements__slider {
+  width: 100%;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.working-capital-requirements__slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 640px) {
+  .working-capital-requirements__grid {
+    grid-template-columns: 1fr;
+  }
+}

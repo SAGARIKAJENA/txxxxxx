@@ -4,9 +4,11 @@
 
 .flow-stepper-container {
   width: 100%;
-  padding: 1.25rem 0.5rem 1.5rem 0.5rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  padding: 0.5rem 0 1.75rem 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  box-sizing: border-box;
 }
 
 .flow-stepper-track {
@@ -14,9 +16,11 @@
   align-items: flex-start;
   justify-content: space-between;
   position: relative;
-  min-width: min-content;
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .flow-step-node-wrapper {
@@ -25,7 +29,7 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  min-width: 70px;
+  min-width: 0;
 }
 
 /* Connecting Line */
@@ -139,12 +143,13 @@
 
 /* Label styling matching Image 1 */
 .flow-step-label {
-  font-size: 0.95rem;
+  font-size: clamp(0.78rem, 1.2vw, 0.95rem);
   line-height: 1.25;
   text-align: center;
-  max-width: 100px;
+  max-width: 120px;
   transition: color 0.2s ease;
   letter-spacing: -0.01em;
+  word-break: break-word;
 }
 
 /* Interactive Hover for clickable steps */
