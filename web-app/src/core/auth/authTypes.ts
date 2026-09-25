@@ -53,6 +53,7 @@ export interface AuthUser {
   department?: string
   avatarUrl?: string
   isProfileComplete: boolean
+  businessName?: string
   // Profile and registration details
   gender?: string
   dob?: string

@@ -7,12 +7,14 @@ export interface ReviewAndSubmitProps {
   formData: HomeLoanData
   updateFormData: (fields: Partial<HomeLoanData>) => void
   onNavigateToStep: (stepNumber: number) => void
+  errors?: Record<string, string>
 }
 
 export const ReviewAndSubmit: React.FC<ReviewAndSubmitProps> = ({
   formData,
   updateFormData,
   onNavigateToStep,
+  errors = {},
 }) => {
   const docCount = Object.keys(formData.uploadedDocs || {}).length
 
@@ -31,7 +33,9 @@ export const ReviewAndSubmit: React.FC<ReviewAndSubmitProps> = ({
         items={[
           {
             label: 'Requested Amount',
-            value: `₹${(formData.loanAmount || 0).toLocaleString('en-IN')}`,
+            value: formData.loanAmount
+              ? `₹${(Number(String(formData.loanAmount).replace(/\D/g, '')) || 0).toLocaleString('en-IN')}`
+              : 'Not specified',
           },
           {
             label: 'Property Intent',
@@ -39,8 +43,20 @@ export const ReviewAndSubmit: React.FC<ReviewAndSubmitProps> = ({
           },
           {
             label: 'Tenure',
-            value: `${formData.repaymentTenureYears} Years (${formData.repaymentTenureYears * 12} Months)`,
+            value: formData.repaymentTenureYears
+              ? `${formData.repaymentTenureYears} Years (${formData.repaymentTenureYears * 12} Months)`
+              : 'Not specified',
           },
+          ...(formData.propertyStage ? [{
+            label: 'Property Stage',
+            value: formData.propertyStage,
+          }] : []),
+          ...(formData.estimatedPropertyCost ? [{
+            label: 'Estimated Property Cost',
+            value: formData.estimatedPropertyCost.startsWith('₹')
+              ? formData.estimatedPropertyCost
+              : `₹${formData.estimatedPropertyCost}`,
+          }] : []),
         ]}
       />
 
@@ -93,9 +109,11 @@ export const ReviewAndSubmit: React.FC<ReviewAndSubmitProps> = ({
           },
           {
             label: 'ITR Status',
-            value: `${formData.itrStatus?.toUpperCase()}${
-              formData.annualIncomeAsPerItr ? ` (₹${formData.annualIncomeAsPerItr})` : ''
-            }`,
+            value: formData.itrStatus
+              ? `${formData.itrStatus.toUpperCase()}${
+                  formData.annualIncomeAsPerItr ? ` (₹${formData.annualIncomeAsPerItr})` : ''
+                }`
+              : 'Not specified',
           },
         ]}
       />
@@ -132,6 +150,11 @@ export const ReviewAndSubmit: React.FC<ReviewAndSubmitProps> = ({
           <span className="home-loan-review__terms-link">Terms &amp; Conditions</span> of the Home Loan application.
         </label>
       </div>
+      {errors.termsAccepted && (
+        <span className="home-loan-field-error" style={{ marginTop: '-0.5rem', display: 'block', color: '#dc2626', fontSize: '0.8125rem' }} role="alert">
+          {errors.termsAccepted}
+        </span>
+      )}
     </div>
   )
 }

@@ -73,7 +73,7 @@ export const RevisedItr: React.FC = () => {
             amount={999}
             serviceTitle="Revised ITR Filing Assistance"
             applicationRef={ackNumber || 'REV-ITR-2025'}
-            applicantName={returnDetails?.personalInfo?.fullName || 'Sagarika Jena'}
+            applicantName={returnDetails?.personalInfo?.fullName || 'Assessee'}
             onBack={handleBack}
             onSuccess={handlePaymentSuccess}
           />

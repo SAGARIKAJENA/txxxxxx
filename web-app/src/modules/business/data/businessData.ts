@@ -218,25 +218,4 @@ export const BUSINESS_COMPLIANCE_CALENDAR: BusinessComplianceItem[] = [
   },
 ]
 
-export const SAMPLE_BUSINESS_APPLICATIONS: BusinessApplication[] = [
-  {
-    id: 'biz_app_01',
-    referenceNumber: 'BIZ-2026-1102',
-    businessName: 'Zenith Logistics Hub',
-    serviceName: 'MSME / Udyam Registration',
-    status: 'APPROVED',
-    appliedOn: '16 Sep 2026',
-    estimatedApproval: '18 Sep 2026',
-    department: 'Ministry of MSME, Govt of India',
-  },
-  {
-    id: 'biz_app_02',
-    referenceNumber: 'BIZ-2026-1189',
-    businessName: 'The Artisan Bakery & Cafe',
-    serviceName: 'FSSAI State Food License',
-    status: 'GOVT_SUBMITTED',
-    appliedOn: '19 Sep 2026',
-    estimatedApproval: '25 Sep 2026',
-    department: 'Food Safety and Standards Authority of India',
-  },
-]
+export const SAMPLE_BUSINESS_APPLICATIONS: BusinessApplication[] = []

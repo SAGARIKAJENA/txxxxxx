@@ -1,3 +1,4 @@
+import { userStorage } from '@core/storage/userStorage'
 import type { LoanApplicationBase } from '../types/loanApplication.types'
 
 const STORAGE_PREFIX = 'taxedge_loan_app_'
@@ -45,14 +46,17 @@ export const loanApplicationService = {
       hour12: true,
     })
 
+    const loanAmountNum = Number(String((formData as { loanAmount?: unknown })?.loanAmount || '').replace(/\D/g, '')) || 0
+    const tenureNum = Number((formData as { repaymentTenureYears?: unknown })?.repaymentTenureYears) || 0
+
     const application: LoanApplicationBase = {
       id: refNumber,
       refNumber,
       referenceNumber: refNumber,
       loanType,
       loanCategory: 'Capital & Financing',
-      loanAmount: (formData as { loanAmount?: number })?.loanAmount || 5000000,
-      tenureYears: (formData as { repaymentTenureYears?: number })?.repaymentTenureYears || 20,
+      loanAmount: loanAmountNum,
+      tenureYears: tenureNum,
       status: 'submitted',
       statusLabel: 'Documents Received',
       createdAt: now.toISOString(),
@@ -98,6 +102,19 @@ export const loanApplicationService = {
     }
 
     loanApplicationService.clearDraft(loanType)
+
+    userStorage.saveUserApplication({
+      id: refNumber,
+      code: refNumber,
+      title: 'Home Loan Application',
+      meta: `${formattedDate} · ₹${loanAmountNum.toLocaleString('en-IN')}`,
+      statusLabel: 'Documents Received',
+      statusTone: 'info',
+      progress: 20,
+      icon: '🏠',
+      to: `/loans/status/${refNumber}`,
+    })
+
     return application
   },
 }

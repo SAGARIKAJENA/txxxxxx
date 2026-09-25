@@ -1,12 +1,14 @@
 import type { UploadedLoanDocument } from '../../../documents/loanDocument.types'
 
-export type HomeLoanOccupation = 'salaried' | 'self-employed' | 'business-owner'
+export type HomeLoanOccupation = 'salaried' | 'self-employed' | 'business-owner' | ''
 
 export interface HomeLoanData {
   // Step 1: Requirements
-  loanAmount: number
+  loanAmount: number | string
   propertyIntent: string
   repaymentTenureYears: number
+  propertyStage?: string
+  estimatedPropertyCost?: string
 
   // Step 2: Employment & Income
   occupation: HomeLoanOccupation
@@ -19,7 +21,7 @@ export interface HomeLoanData {
   bankName: string
   accountNumber: string
   ifscCode: string
-  itrStatus: 'filed' | 'not-filed' | 'exempt'
+  itrStatus: 'filed' | 'not-filed' | 'exempt' | ''
   itrAckNumber?: string
   annualIncomeAsPerItr?: string
 

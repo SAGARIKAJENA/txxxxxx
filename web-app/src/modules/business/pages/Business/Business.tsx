@@ -217,22 +217,30 @@ export const BusinessPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {applications.map((app: BusinessApplication) => (
-                <tr key={app.id}>
-                  <td>
-                    <strong>{app.referenceNumber}</strong>
+              {applications.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#64748b', fontSize: '0.925rem' }}>
+                    No active license or registration applications yet. Choose a service above to apply.
                   </td>
-                  <td>{app.serviceName}</td>
-                  <td>{app.businessName}</td>
-                  <td>{app.appliedOn}</td>
-                  <td>
-                    <span className={`biz-status-badge biz-status-badge--${app.status.toLowerCase()}`}>
-                      {app.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td>{app.estimatedApproval}</td>
                 </tr>
-              ))}
+              ) : (
+                applications.map((app: BusinessApplication) => (
+                  <tr key={app.id}>
+                    <td>
+                      <strong>{app.referenceNumber}</strong>
+                    </td>
+                    <td>{app.serviceName}</td>
+                    <td>{app.businessName}</td>
+                    <td>{app.appliedOn}</td>
+                    <td>
+                      <span className={`biz-status-badge biz-status-badge--${app.status.toLowerCase()}`}>
+                        {app.status.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td>{app.estimatedApproval}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

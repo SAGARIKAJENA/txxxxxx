@@ -1,3 +1,4 @@
+import { authStorage } from '@core/auth'
 import { formatCurrency } from '@shared/utils'
 import type { PaymentResult } from '../../../../types/gst.types'
 import { useAppStore } from '@store/index'
@@ -12,6 +13,7 @@ interface GSTFilingReceiptProps {
 
 export const GSTFilingReceipt = ({ details, onBack }: GSTFilingReceiptProps) => {
   const pushToast = useAppStore((state) => state.pushToast)
+  const user = authStorage.getUser()
 
   const handleDownload = () => {
     pushToast('Receipt downloaded as PDF', 'success')
@@ -52,10 +54,10 @@ export const GSTFilingReceipt = ({ details, onBack }: GSTFilingReceiptProps) => 
             <div className="gst-receipt-meta-grid">
               <div className="gst-receipt-meta-col">
                 <span className="gst-receipt-eyebrow">BILLED TO</span>
-                <h4 className="gst-receipt-customer-name">Anjali Deshmukh</h4>
+                <h4 className="gst-receipt-customer-name">{user?.fullName || 'Assessee'}</h4>
                 <p className="gst-receipt-customer-addr">
-                  Shree Deshmukh Traders<br />
-                  Shop 14, Laxmi Complex, FC Road, Pune - 411004
+                  {user?.businessName || user?.fullName || 'Registered Entity'}<br />
+                  {user?.city ? `${user.city}, ${user.state || ''}` : 'Registered Address on File'}
                 </p>
               </div>
 
@@ -63,11 +65,13 @@ export const GSTFilingReceipt = ({ details, onBack }: GSTFilingReceiptProps) => 
                 <span className="gst-receipt-eyebrow">INVOICE DETAILS</span>
                 <div className="gst-receipt-info-row">
                   <span className="gst-receipt-info-k">Date:</span>
-                  <span className="gst-receipt-info-v">2 Sep 2026</span>
+                  <span className="gst-receipt-info-v">
+                    {details.dateText || new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date())}
+                  </span>
                 </div>
                 <div className="gst-receipt-info-row">
                   <span className="gst-receipt-info-k">Customer ID:</span>
-                  <span className="gst-receipt-info-v">TE-CUS-20418</span>
+                  <span className="gst-receipt-info-v">{user?.id ? user.id.slice(0, 12).toUpperCase() : 'TE-CUS'}</span>
                 </div>
                 <div className="gst-receipt-info-row">
                   <span className="gst-receipt-info-k">Application:</span>
@@ -75,7 +79,7 @@ export const GSTFilingReceipt = ({ details, onBack }: GSTFilingReceiptProps) => 
                 </div>
                 <div className="gst-receipt-info-row">
                   <span className="gst-receipt-info-k">Place of Supply:</span>
-                  <span className="gst-receipt-info-v">Maharashtra (27)</span>
+                  <span className="gst-receipt-info-v">{user?.state || 'Maharashtra'}</span>
                 </div>
               </div>
             </div>
@@ -125,7 +129,7 @@ export const GSTFilingReceipt = ({ details, onBack }: GSTFilingReceiptProps) => 
             <div className="gst-receipt-payment-footer">
               <div>
                 <span className="gst-receipt-eyebrow">PAYMENT DETAILS</span>
-                <div className="gst-receipt-pay-method">UPI · anjali@okhdfcbank</div>
+                <div className="gst-receipt-pay-method">{details.method ? `${details.method.toUpperCase()} · Paid` : 'Online Payment'}</div>
                 <div className="gst-receipt-pay-txn">{details.transactionId}</div>
               </div>
               <span className="gst-receipt-paid-badge">

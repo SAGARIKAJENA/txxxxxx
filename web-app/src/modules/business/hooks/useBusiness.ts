@@ -7,7 +7,6 @@ import type {
 import {
   BUSINESS_SERVICES,
   BUSINESS_STATS,
-  SAMPLE_BUSINESS_APPLICATIONS,
   BUSINESS_COMPLIANCE_CALENDAR,
 } from '../data/businessData'
 import { businessService } from '../services/businessService'
@@ -15,9 +14,7 @@ import { businessService } from '../services/businessService'
 export const useBusiness = () => {
   const [selectedCategory, setSelectedCategory] = useState<BusinessCategory>('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [applications, setApplications] = useState<BusinessApplication[]>(
-    SAMPLE_BUSINESS_APPLICATIONS
-  )
+  const [applications, setApplications] = useState<BusinessApplication[]>([])
 
   const filteredServices = useMemo<BusinessServiceItem[]>(() => {
     return BUSINESS_SERVICES.filter((svc: BusinessServiceItem) => {
