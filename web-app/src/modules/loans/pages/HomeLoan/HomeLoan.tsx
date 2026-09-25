@@ -26,30 +26,29 @@ const HOME_LOAN_STEPS: FlowStepItem[] = [
 ]
 
 const INITIAL_HOME_LOAN_DATA: HomeLoanData = {
-  loanAmount: 5000000,
-  propertyIntent: 'Purchase Ready-to-Move Property',
-  repaymentTenureYears: 20,
-  occupation: 'salaried',
-  monthlyIncomeRange: '₹30,000 - ₹50,000',
+  loanAmount: '',
+  propertyIntent: '',
+  repaymentTenureYears: 0,
+  propertyStage: '',
+  estimatedPropertyCost: '',
+  occupation: '',
+  monthlyIncomeRange: '',
   hasExistingEmis: false,
-  bankName: 'HDFC Bank',
-  accountNumber: '50100492817291',
-  ifscCode: 'HDFC0001234',
-  itrStatus: 'filed',
-  itrAckNumber: '928471928471928',
-  annualIncomeAsPerItr: '8,50,000',
-  uploadedDocs: {
-    pan_card: { name: 'PAN_Card_Applicant.pdf', size: '1.24 MB', uploadedAt: new Date().toISOString() },
-    aadhaar_card: { name: 'Aadhaar_Front_Back.pdf', size: '2.10 MB', uploadedAt: new Date().toISOString() },
-    address_proof: { name: 'Electricity_Bill_Aug2026.pdf', size: '0.85 MB', uploadedAt: new Date().toISOString() },
-    passport_photo: { name: 'Applicant_Photo.jpg', size: '0.45 MB', uploadedAt: new Date().toISOString() },
-  },
-  termsAccepted: true,
+  existingEmiAmount: '',
+  bankName: '',
+  accountNumber: '',
+  ifscCode: '',
+  itrStatus: '',
+  itrAckNumber: '',
+  annualIncomeAsPerItr: '',
+  uploadedDocs: {},
+  termsAccepted: false,
 }
 
 export const HomeLoan: React.FC = () => {
   const navigate = useNavigate()
   const [stepError, setStepError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const {
     formData,
@@ -66,24 +65,64 @@ export const HomeLoan: React.FC = () => {
     discardDraft,
   } = useLoanApplication<HomeLoanData>('home_loan', INITIAL_HOME_LOAN_DATA)
 
+  const handleFieldChange = (fields: Partial<HomeLoanData>) => {
+    updateFormData(fields)
+    if (Object.keys(fieldErrors).length > 0) {
+      setFieldErrors((prev) => {
+        const next = { ...prev }
+        Object.keys(fields).forEach((key) => {
+          delete next[key]
+        })
+        if (fields.uploadedDocs) {
+          Object.keys(fields.uploadedDocs).forEach((docId) => {
+            delete next[docId]
+          })
+        }
+        return next
+      })
+    }
+    if (stepError) {
+      setStepError(null)
+    }
+  }
+
   const validateCurrentStep = (): boolean => {
     setStepError(null)
+    setFieldErrors({})
+
     if (currentStep === 1) {
       const res = homeLoanValidation.validateStep1(formData)
       if (!res.isValid) {
-        setStepError(res.error || 'Please fill in required fields.')
+        setStepError(res.error || 'Please fill in all required fields.')
+        setFieldErrors(res.errors)
         return false
       }
     } else if (currentStep === 2) {
       const res = homeLoanValidation.validateStep2(formData)
       if (!res.isValid) {
-        setStepError(res.error || 'Please fill in required fields.')
+        setStepError(res.error || 'Please fill in all required fields.')
+        setFieldErrors(res.errors)
         return false
       }
     } else if (currentStep === 3) {
       const res = homeLoanValidation.validateStep3(formData)
       if (!res.isValid) {
-        setStepError(res.error || 'Please fill in required fields.')
+        setStepError(res.error || 'Please fill in all required fields.')
+        setFieldErrors(res.errors)
+        return false
+      }
+    } else if (currentStep === 4) {
+      const res = homeLoanValidation.validateStep4(formData)
+      if (!res.isValid) {
+        setStepError(res.error || 'Please upload all mandatory documents before continuing.')
+        setFieldErrors(res.errors)
+        return false
+      }
+    } else if (currentStep === 5) {
+      const res = homeLoanValidation.validateStep5(formData)
+      if (!res.isValid) {
+        setStepError(res.error || 'Please accept the Terms & Conditions before submitting.')
+        setFieldErrors(res.errors)
         return false
       }
     }
@@ -96,20 +135,14 @@ export const HomeLoan: React.FC = () => {
     if (currentStep < 5) {
       nextStep()
     } else {
-      // Step 5 Submit
-      if (!formData.termsAccepted) {
-        setStepError('Please accept the Terms & Conditions before submitting.')
-        return
-      }
-
       setIsSubmitting(true)
       try {
         const app = await loanApplicationService.submitApplication('home_loan', {
           loanType: 'home_loan',
           title: 'Home Loan Application',
           category: 'Capital & Financing',
-          requestedAmount: formData.loanAmount,
-          tenureMonths: formData.repaymentTenureYears * 12,
+          requestedAmount: Number(String(formData.loanAmount).replace(/\D/g, '')) || 5000000,
+          tenureMonths: (formData.repaymentTenureYears || 20) * 12,
           details: formData,
         })
         navigate(`/loans/status/${app.referenceNumber}`, {
@@ -126,8 +159,11 @@ export const HomeLoan: React.FC = () => {
   const handleStepClick = (stepNumber: number) => {
     if (stepNumber < currentStep) {
       setStepError(null)
+      setFieldErrors({})
       goToStep(stepNumber)
     } else if (stepNumber === currentStep + 1 && validateCurrentStep()) {
+      setStepError(null)
+      setFieldErrors({})
       goToStep(stepNumber)
     }
   }
@@ -155,22 +191,27 @@ export const HomeLoan: React.FC = () => {
 
       <div className="home-loan-page__card">
         {currentStep === 1 && (
-          <Requirements data={formData} onChange={updateFormData} />
+          <Requirements data={formData} onChange={handleFieldChange} errors={fieldErrors} />
         )}
         {currentStep === 2 && (
-          <EmploymentAndIncome data={formData} onChange={updateFormData} />
+          <EmploymentAndIncome data={formData} onChange={handleFieldChange} errors={fieldErrors} />
         )}
         {currentStep === 3 && (
-          <BankingAndITR data={formData} onChange={updateFormData} />
+          <BankingAndITR data={formData} onChange={handleFieldChange} errors={fieldErrors} />
         )}
         {currentStep === 4 && (
-          <Documents data={formData} onChange={updateFormData} />
+          <Documents data={formData} onChange={handleFieldChange} errors={fieldErrors} />
         )}
         {currentStep === 5 && (
           <ReviewAndSubmit
             formData={formData}
-            updateFormData={updateFormData}
-            onNavigateToStep={goToStep}
+            updateFormData={handleFieldChange}
+            onNavigateToStep={(step) => {
+              setStepError(null)
+              setFieldErrors({})
+              goToStep(step)
+            }}
+            errors={fieldErrors}
           />
         )}
       </div>
@@ -179,13 +220,14 @@ export const HomeLoan: React.FC = () => {
         showBack={currentStep > 1}
         onBack={() => {
           setStepError(null)
+          setFieldErrors({})
           prevStep()
         }}
         onNext={handleNext}
         onSaveDraft={() => setIsDraftModalOpen(true)}
         saveDraftLabel="Save Draft"
         nextLabel={currentStep === 5 ? (isSubmitting ? 'Submitting...' : 'Submit Application') : 'Continue'}
-        nextDisabled={isSubmitting || (currentStep === 5 && !formData.termsAccepted)}
+        nextDisabled={isSubmitting}
       />
 
       <DraftConfirmModal

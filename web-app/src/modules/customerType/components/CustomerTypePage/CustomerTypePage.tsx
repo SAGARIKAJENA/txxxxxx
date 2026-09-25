@@ -48,8 +48,8 @@ export const CustomerTypePage = () => {
         authService.startSession({
           user: completedUser,
           tokens: {
-            accessToken: authService.getAccessToken() || 'mock.access.token',
-            refreshToken: authService.getRefreshToken() || 'mock.refresh.token',
+            accessToken: authService.getAccessToken() || `tok_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+            refreshToken: authService.getRefreshToken() || `ref_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
           },
         })
       }

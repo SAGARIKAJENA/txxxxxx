@@ -24,11 +24,11 @@ export interface FullComputationModel {
   netRefundOrPayable: number
 }
 
-export const MOCK_COMPUTATION_DATA: FullComputationModel = {
-  pan: 'ABCDE1234F',
+export const INITIAL_COMPUTATION_DATA: FullComputationModel = {
+  pan: '',
   assessmentYear: 'AY 2026-27',
   financialYear: 'FY 2025-26',
-  taxpayerName: 'Meera Iyer',
+  taxpayerName: '',
   filingStatus: 'Individual (Resident)',
   heads: [
     {
@@ -70,3 +70,6 @@ export const MOCK_COMPUTATION_DATA: FullComputationModel = {
   selfAssessmentTax: 0,
   netRefundOrPayable: 23400, // Refund
 }
+
+export const MOCK_COMPUTATION_DATA = INITIAL_COMPUTATION_DATA
+

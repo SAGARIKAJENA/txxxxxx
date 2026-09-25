@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { authStorage } from '@core/auth'
 import {
-  MOCK_COMPUTATION_DATA,
+  INITIAL_COMPUTATION_DATA,
   type FullComputationModel,
 } from './TaxComputation'
 import { BarChartIcon } from '../../components/ItrIcons'
@@ -11,8 +12,12 @@ export interface TaxComputationProps {
 }
 
 export const TaxComputation = ({ onApprove }: TaxComputationProps) => {
-  const [data] = useState<FullComputationModel>(MOCK_COMPUTATION_DATA)
+  const [data] = useState<FullComputationModel>(INITIAL_COMPUTATION_DATA)
   const [isApproved, setIsApproved] = useState(false)
+  const user = authStorage.getUser()
+
+  const displayName = user?.fullName || data.taxpayerName || 'Assessee'
+  const displayPan = user?.pan || data.pan || '—'
 
   const handleApprove = () => {
     setIsApproved(true)
@@ -33,7 +38,7 @@ export const TaxComputation = ({ onApprove }: TaxComputationProps) => {
         </div>
         <h1 className="tax-comp-hero__title">Tax Computation & AIS Reconciliation</h1>
         <p className="tax-comp-hero__subtitle">
-          View your audited computation statement prepared by CA Meera Iyer before final electronic
+          View your audited computation statement prepared by your assigned TaxEdge Chartered Accountant before final electronic
           filing with the Income Tax Department.
         </p>
       </div>
@@ -54,7 +59,7 @@ export const TaxComputation = ({ onApprove }: TaxComputationProps) => {
               Statement of Total Income — {data.assessmentYear}
             </h3>
             <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
-              PAN: {data.pan} · Assessee: {data.taxpayerName} · Status: {data.filingStatus}
+              PAN: {displayPan} · Assessee: {displayName} · Status: {data.filingStatus}
             </span>
           </div>
 

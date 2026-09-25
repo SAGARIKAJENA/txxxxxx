@@ -17,20 +17,13 @@ import type {
   SupportMessage,
 } from '../types/customerSupport.types'
 
+import { userStorage } from '@core/storage/userStorage'
+
 const conversationsStore: Record<string, SupportConversation> = {
   ...INITIAL_SUPPORT_CONVERSATIONS,
 }
 
-const mockTickets: SupportItem[] = [
-  {
-    id: 'support_001',
-    reference: 'TE-Support-0001',
-    title: 'GST Monthly Filing query',
-    status: 'IN_PROGRESS',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-]
+const mockTickets: SupportItem[] = []
 
 const formatTimeNow = (): string => {
   const now = new Date()
@@ -72,13 +65,18 @@ export const customerSupportService = {
     if (env.enableMocks) {
       await new Promise((resolve) => setTimeout(resolve, 120))
 
+      const userApps = userStorage.getUserApplications()
+      const fallbackApp = userApps[0]
+      const resolvedAppRef = appId || fallbackApp?.code || 'General Helpdesk'
+      const resolvedServiceTitle = fallbackApp?.title || 'TaxEdge Client Advisory'
+
       const targetKey =
         (appId && conversationsStore[appId] ? appId : null) ||
         Object.keys(conversationsStore).find((key) => {
           const conv = conversationsStore[key]
           return executiveId ? conv.executive.id === executiveId : false
         }) ||
-        'GST-2026-00118'
+        resolvedAppRef
 
       if (conversationsStore[targetKey]) {
         return conversationsStore[targetKey]
@@ -89,11 +87,11 @@ export const customerSupportService = {
         SUPPORT_EXECUTIVES[0]
 
       const newConversation: SupportConversation = {
-        id: `conv_${appId || 'general'}`,
-        applicationId: appId || '1',
-        applicationRef: appId || 'GST-2026-00118',
-        serviceName: matchingExec.department,
-        dateLabel: `Application ${appId || 'GST-2026-00118'} · ${new Date().toLocaleDateString(
+        id: `conv_${appId || fallbackApp?.id || 'general'}`,
+        applicationId: appId || fallbackApp?.id || 'general',
+        applicationRef: resolvedAppRef,
+        serviceName: matchingExec.department || resolvedServiceTitle,
+        dateLabel: `${resolvedAppRef} · ${new Date().toLocaleDateString(
           'en-GB',
           { day: 'numeric', month: 'long', year: 'numeric' }
         )}`,
@@ -101,7 +99,7 @@ export const customerSupportService = {
         messages: [
           {
             id: `msg_init_${Date.now()}`,
-            conversationId: `conv_${appId || 'general'}`,
+            conversationId: `conv_${appId || fallbackApp?.id || 'general'}`,
             senderId: matchingExec.id,
             senderType: 'executive',
             senderName: matchingExec.name,

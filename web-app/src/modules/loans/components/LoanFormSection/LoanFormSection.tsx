@@ -18,7 +18,7 @@ export const LoanFormSection: React.FC<LoanFormSectionProps> = ({
 }) => {
   return (
     <section className={`loan-form-section ${className}`.trim()}>
-      <div className="loan-form-section__header">
+      <div className={`loan-form-section__header ${subtitle ? 'loan-form-section__header--has-subtitle' : ''}`.trim()}>
         {icon && <div className="loan-form-section__icon-box">{icon}</div>}
         <div className="loan-form-section__titles">
           <h2 className="loan-form-section__title">{title}</h2>

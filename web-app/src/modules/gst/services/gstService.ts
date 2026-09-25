@@ -1,5 +1,7 @@
 import { env } from '@core/config'
 import { AppError } from '@core/errors'
+import { authStorage } from '@core/auth'
+import { userStorage } from '@core/storage/userStorage'
 
 import { gstApi } from '../api/gstApi'
 import type {
@@ -14,75 +16,7 @@ import type {
   GstReturnPayload,
 } from '../types/gst.types'
 
-/* ------------------------------------------------------------------ *
- * Development mocks - delete this block once the API is live.
- * ------------------------------------------------------------------ */
-const iso = (daysAgo: number) => new Date(Date.now() - daysAgo * 864e5).toISOString()
-
-const mockApplications: GstApplication[] = [
-  {
-    id: 'gst_001',
-    reference: 'TE-GST-24001',
-    legalName: 'Tanvox Technologies',
-    tradeName: 'Tanvox',
-    businessType: 'private_limited',
-    state: 'Telangana',
-    pan: 'AABCT1234H',
-    gstin: '36AABCT1234H1Z5',
-    status: 'COMPLETED',
-    createdAt: iso(40),
-    updatedAt: iso(9),
-    timeline: [
-      { id: 't1', label: 'Application submitted', occurredAt: iso(40), isComplete: true },
-      { id: 't2', label: 'Documents verified', occurredAt: iso(32), isComplete: true },
-      { id: 't3', label: 'Officer review', note: 'Clarification answered', occurredAt: iso(18), isComplete: true },
-      { id: 't4', label: 'GSTIN issued', occurredAt: iso(9), isComplete: true },
-    ],
-  },
-  {
-    id: 'gst_002',
-    reference: 'TE-GST-24014',
-    legalName: 'Vasavi Traders',
-    businessType: 'proprietorship',
-    state: 'Andhra Pradesh',
-    pan: 'AXTPV9821K',
-    status: 'QUERY_RAISED',
-    createdAt: iso(12),
-    updatedAt: iso(2),
-    timeline: [
-      { id: 't1', label: 'Application submitted', occurredAt: iso(12), isComplete: true },
-      { id: 't2', label: 'Documents verified', occurredAt: iso(7), isComplete: true },
-      { id: 't3', label: 'Clarification requested', note: 'Upload the rent agreement', occurredAt: iso(2), isComplete: false },
-      { id: 't4', label: 'GSTIN issued', occurredAt: '', isComplete: false },
-    ],
-  },
-  {
-    id: 'gst_003',
-    reference: 'TE-GST-24022',
-    legalName: 'Nandi Foods LLP',
-    businessType: 'llp',
-    state: 'Karnataka',
-    pan: 'AAFFN5533D',
-    status: 'MANAGER_REVIEW',
-    createdAt: iso(5),
-    updatedAt: iso(1),
-    timeline: [
-      { id: 't1', label: 'Application submitted', occurredAt: iso(5), isComplete: true },
-      { id: 't2', label: 'Documents verified', occurredAt: iso(1), isComplete: true },
-      { id: 't3', label: 'Officer review', occurredAt: '', isComplete: false },
-      { id: 't4', label: 'GSTIN issued', occurredAt: '', isComplete: false },
-    ],
-  },
-]
-
-const mockReturns: GstReturn[] = [
-  { id: 'r1', gstin: '36AABCT1234H1Z5', returnType: 'GSTR-1', period: '2026-08', dueOn: '2026-09-11', taxPayable: 0, status: 'COMPLETED', createdAt: iso(20), updatedAt: iso(19) },
-  { id: 'r2', gstin: '36AABCT1234H1Z5', returnType: 'GSTR-3B', period: '2026-08', dueOn: '2026-09-20', taxPayable: 84_500, status: 'MANAGER_REVIEW', createdAt: iso(6), updatedAt: iso(1) },
-  { id: 'r3', gstin: '36AABCT1234H1Z5', returnType: 'GSTR-1', period: '2026-09', dueOn: '2026-10-11', taxPayable: 0, status: 'DRAFT', createdAt: iso(1), updatedAt: iso(1) },
-]
-
-const delay = (ms = 400) => new Promise((resolve) => setTimeout(resolve, ms))
-/* ------------------------------------------------------------------ */
+const delay = (ms = 300) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const matchesFilters = (application: GstApplication, filters?: GstListFilters): boolean => {
   if (filters?.status && application.status !== filters.status) return false
@@ -101,7 +35,21 @@ export const gstService = {
   async listApplications(filters?: GstListFilters): Promise<GstApplication[]> {
     if (env.enableMocks) {
       await delay()
-      return mockApplications.filter((application) => matchesFilters(application, filters))
+      const userApps = userStorage.getUserApplications().filter((a) => a.title.toLowerCase().includes('gst'))
+      const userPan = authStorage.getUser()?.pan || ''
+      const apps: GstApplication[] = userApps.map((a) => ({
+        id: a.id,
+        reference: a.code || a.id,
+        legalName: a.meta.split('·')[0]?.trim() || 'GST Registration',
+        businessType: 'proprietorship',
+        state: a.meta.split('·')[1]?.trim() || 'India',
+        pan: userPan,
+        status: (a.statusLabel.toUpperCase().replace(/\s+/g, '_') as any) || 'SUBMITTED',
+        timeline: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }))
+      return apps.filter((application) => matchesFilters(application, filters))
     }
     const response = await gstApi.listApplications(filters)
     return response.data
@@ -109,8 +57,9 @@ export const gstService = {
 
   async getApplication(id: string): Promise<GstApplication> {
     if (env.enableMocks) {
-      await delay(250)
-      const found = mockApplications.find((application) => application.id === id)
+      await delay(200)
+      const list = await this.listApplications()
+      const found = list.find((application) => application.id === id || application.reference === id)
       if (!found) throw new AppError('That GST application no longer exists.', { kind: 'notFound' })
       return found
     }
@@ -119,11 +68,12 @@ export const gstService = {
 
   async register(payload: GstRegistrationPayload): Promise<GstApplication> {
     if (env.enableMocks) {
-      await delay(600)
-      return {
-        ...mockApplications[2],
-        id: `gst_${Date.now()}`,
-        reference: `TE-GST-${Math.floor(Math.random() * 90000 + 10000)}`,
+      await delay(500)
+      const ref = `TE-GST-${Math.floor(Math.random() * 90000 + 10000)}`
+      const id = `gst_${Date.now()}`
+      const newApp: GstApplication = {
+        id,
+        reference: ref,
         legalName: payload.legalName,
         tradeName: payload.tradeName,
         businessType: payload.businessType,
@@ -132,7 +82,25 @@ export const gstService = {
         status: 'SUBMITTED',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        timeline: [
+          { id: 't1', label: 'Application submitted', occurredAt: new Date().toISOString(), isComplete: true },
+          { id: 't2', label: 'Documents verified', occurredAt: '', isComplete: false },
+          { id: 't3', label: 'Officer review', occurredAt: '', isComplete: false },
+          { id: 't4', label: 'GSTIN issued', occurredAt: '', isComplete: false },
+        ],
       }
+      userStorage.saveUserApplication({
+        id,
+        code: ref,
+        title: 'GST Registration',
+        meta: `${payload.legalName} · ${payload.state}`,
+        statusLabel: 'Submitted',
+        statusTone: 'info',
+        progress: 25,
+        icon: '📄',
+        to: `/applications/track/${ref}`,
+      })
+      return newApp
     }
     return gstApi.register(payload)
   },
@@ -140,7 +108,7 @@ export const gstService = {
   async listReturns(): Promise<GstReturn[]> {
     if (env.enableMocks) {
       await delay()
-      return mockReturns
+      return []
     }
     const response = await gstApi.listReturns()
     return response.data
@@ -203,7 +171,7 @@ export const gstService = {
         registeredContact: payload.registeredContact,
         requestType: payload.requestType,
         status: 'COMPLETED',
-        downloadUrl: '/sample-gst-certificate.pdf',
+        downloadUrl: '/gst-certificate.pdf',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }

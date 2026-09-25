@@ -1,8 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
-import {
-  GST_CERTIFICATE_CUSTOMER_RECORD,
-  GST_CERTIFICATE_REQUEST_TYPES,
-} from '../../../data/gstCertificateData'
+import { authStorage } from '@core/auth'
+import { GST_CERTIFICATE_REQUEST_TYPES } from '../../../data/gstCertificateData'
 import type { GstCertificatePayload } from '../../../types/gst.types'
 import './GSTCertificateForm.css'
 
@@ -16,6 +14,7 @@ export const GSTCertificateForm = ({
   isSubmitting = false,
   onSubmit,
 }: GSTCertificateFormProps) => {
+  const user = authStorage.getUser()
   const [gstin, setGstin] = useState('')
   const [selectedRequestType, setSelectedRequestType] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -40,9 +39,13 @@ export const GSTCertificateForm = ({
     e.preventDefault()
     if (!validate()) return
 
+    const contactText = user?.mobile
+      ? `+91 ${user.mobile}${user.email ? ` · ${user.email}` : ''}`
+      : 'Registered Signatory Authorization'
+
     onSubmit({
       gstin: gstin.trim(),
-      registeredContact: GST_CERTIFICATE_CUSTOMER_RECORD.registeredContact,
+      registeredContact: contactText,
       requestType: selectedRequestType,
     })
   }
@@ -103,8 +106,8 @@ export const GSTCertificateForm = ({
                   </svg>
                 </div>
                 <div>
-                  <p className="gcf-contact-card__phone">+91 9121336699</p>
-                  <p className="gcf-contact-card__email">sreelalam111@gmail.com</p>
+                  <p className="gcf-contact-card__phone">{user?.mobile ? `+91 ${user.mobile}` : 'Signatory Mobile on record'}</p>
+                  <p className="gcf-contact-card__email">{user?.email || 'Signatory Email on record'}</p>
                   <p className="gcf-contact-card__note">Official certificate copy will be issued to registered signatory credentials</p>
                 </div>
               </div>

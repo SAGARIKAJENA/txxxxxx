@@ -27,7 +27,7 @@ export const GSTReceiptSummaryCard = ({ details }: GSTReceiptSummaryCardProps) =
         <div className="gst-txn-summary-col">
           <span className="gst-txn-summary-label">Payment Method</span>
           <span className="gst-txn-summary-val">{details.method}</span>
-          <span className="gst-txn-summary-sub">anjali@okhdfcbank</span>
+          <span className="gst-txn-summary-sub">Verified Payment</span>
         </div>
 
         <div className="gst-txn-summary-col">

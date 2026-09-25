@@ -1,11 +1,13 @@
 import React from 'react'
 import { LoanFormSection } from '../../../../components/LoanFormSection/LoanFormSection'
 import type { HomeLoanData, HomeLoanOccupation } from '../../types/homeLoan.types'
+import { loanInputHelpers } from '../../validation/homeLoanValidation'
 import './EmploymentAndIncome.css'
 
 export interface EmploymentAndIncomeProps {
   data: HomeLoanData
   onChange: (fields: Partial<HomeLoanData>) => void
+  errors?: Record<string, string>
 }
 
 const OCCUPATION_OPTIONS: { id: HomeLoanOccupation; label: string }[] = [
@@ -25,7 +27,13 @@ const INCOME_RANGES = [
 export const EmploymentAndIncome: React.FC<EmploymentAndIncomeProps> = ({
   data,
   onChange,
+  errors = {},
 }) => {
+  const handleEmiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = loanInputHelpers.formatCurrencyString(e.target.value)
+    onChange({ existingEmiAmount: formatted })
+  }
+
   return (
     <div className="home-loan-emp">
       {/* 1. Employment & Income Category */}
@@ -54,6 +62,9 @@ export const EmploymentAndIncome: React.FC<EmploymentAndIncomeProps> = ({
             )
           })}
         </div>
+        {errors.occupation && (
+          <span className="home-loan-field-error" role="alert">{errors.occupation}</span>
+        )}
       </LoanFormSection>
 
       {/* 2. Monthly Household Income */}
@@ -74,16 +85,20 @@ export const EmploymentAndIncome: React.FC<EmploymentAndIncomeProps> = ({
           </label>
           <select
             id="home-loan-monthly-income"
-            className="home-loan-select"
-            value={data.monthlyIncomeRange}
+            className={`home-loan-select ${errors.monthlyIncomeRange ? 'home-loan-select--error' : ''}`}
+            value={data.monthlyIncomeRange || ''}
             onChange={(e) => onChange({ monthlyIncomeRange: e.target.value })}
           >
+            <option value="" disabled>Select monthly net take-home income range</option>
             {INCOME_RANGES.map((range) => (
               <option key={range} value={range}>
                 {range}
               </option>
             ))}
           </select>
+          {errors.monthlyIncomeRange && (
+            <span className="home-loan-field-error" role="alert">{errors.monthlyIncomeRange}</span>
+          )}
         </div>
       </LoanFormSection>
 
@@ -123,11 +138,16 @@ export const EmploymentAndIncome: React.FC<EmploymentAndIncomeProps> = ({
             <input
               id="home-loan-emi-val"
               type="text"
-              className="home-loan-input"
-              placeholder="e.g. 15,000"
+              inputMode="numeric"
+              className={`home-loan-input ${errors.existingEmiAmount ? 'home-loan-input--error' : ''}`}
+              placeholder="Enter total ongoing monthly EMI amount in ₹ (e.g. 15,000)"
               value={data.existingEmiAmount || ''}
-              onChange={(e) => onChange({ existingEmiAmount: e.target.value })}
+              onKeyDown={loanInputHelpers.allowOnlyNumbersKeyDown}
+              onChange={handleEmiChange}
             />
+            {errors.existingEmiAmount && (
+              <span className="home-loan-field-error" role="alert">{errors.existingEmiAmount}</span>
+            )}
           </div>
         )}
       </LoanFormSection>

@@ -1,11 +1,13 @@
 import React from 'react'
 import { LoanFormSection } from '../../../../components/LoanFormSection/LoanFormSection'
 import type { HomeLoanData } from '../../types/homeLoan.types'
+import { loanInputHelpers } from '../../validation/homeLoanValidation'
 import './BankingAndITR.css'
 
 export interface BankingAndITRProps {
   data: HomeLoanData
   onChange: (fields: Partial<HomeLoanData>) => void
+  errors?: Record<string, string>
 }
 
 const POPULAR_BANKS = [
@@ -27,7 +29,27 @@ const ITR_STATUS_OPTIONS: { id: 'filed' | 'not-filed' | 'exempt'; label: string 
   { id: 'exempt', label: 'Exempt' },
 ]
 
-export const BankingAndITR: React.FC<BankingAndITRProps> = ({ data, onChange }) => {
+export const BankingAndITR: React.FC<BankingAndITRProps> = ({ data, onChange, errors = {} }) => {
+  const handleAccountNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const clean = loanInputHelpers.digitsOnly(e.target.value, 18)
+    onChange({ accountNumber: clean })
+  }
+
+  const handleIfscChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const clean = loanInputHelpers.cleanIfsc(e.target.value)
+    onChange({ ifscCode: clean })
+  }
+
+  const handleItrAckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const clean = loanInputHelpers.digitsOnly(e.target.value, 15)
+    onChange({ itrAckNumber: clean })
+  }
+
+  const handleAnnualIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = loanInputHelpers.formatCurrencyString(e.target.value)
+    onChange({ annualIncomeAsPerItr: formatted })
+  }
+
   return (
     <div className="home-loan-bank">
       {/* 1. Primary Operating & Disbursement Bank */}
@@ -47,17 +69,20 @@ export const BankingAndITR: React.FC<BankingAndITRProps> = ({ data, onChange }) 
           </label>
           <select
             id="home-bank-select"
-            className="home-loan-select"
-            value={data.bankName}
+            className={`home-loan-select ${errors.bankName ? 'home-loan-select--error' : ''}`}
+            value={data.bankName || ''}
             onChange={(e) => onChange({ bankName: e.target.value })}
           >
-            <option value="">Select bank</option>
+            <option value="" disabled>Select your primary salary / operating bank</option>
             {POPULAR_BANKS.map((b) => (
               <option key={b} value={b}>
                 {b}
               </option>
             ))}
           </select>
+          {errors.bankName && (
+            <span className="home-loan-field-error" role="alert">{errors.bankName}</span>
+          )}
         </div>
 
         <div className="home-loan-grid-2">
@@ -68,11 +93,17 @@ export const BankingAndITR: React.FC<BankingAndITRProps> = ({ data, onChange }) 
             <input
               id="home-bank-acc"
               type="text"
-              className="home-loan-input"
-              placeholder="Enter account number"
-              value={data.accountNumber}
-              onChange={(e) => onChange({ accountNumber: e.target.value })}
+              inputMode="numeric"
+              maxLength={18}
+              className={`home-loan-input ${errors.accountNumber ? 'home-loan-input--error' : ''}`}
+              placeholder="Enter 9 to 18-digit account number (e.g. 50100492817291)"
+              value={data.accountNumber || ''}
+              onKeyDown={loanInputHelpers.allowOnlyNumbersKeyDown}
+              onChange={handleAccountNumberChange}
             />
+            {errors.accountNumber && (
+              <span className="home-loan-field-error" role="alert">{errors.accountNumber}</span>
+            )}
           </div>
 
           <div className="home-loan-form-group">
@@ -83,11 +114,15 @@ export const BankingAndITR: React.FC<BankingAndITRProps> = ({ data, onChange }) 
               id="home-bank-ifsc"
               type="text"
               maxLength={11}
-              className="home-loan-input"
-              placeholder="Enter 11-digit IFSC code (e.g. SBIN0001234)"
-              value={data.ifscCode}
-              onChange={(e) => onChange({ ifscCode: e.target.value.toUpperCase() })}
+              className={`home-loan-input ${errors.ifscCode ? 'home-loan-input--error' : ''}`}
+              placeholder="Enter 11-digit IFSC code (e.g. HDFC0001234)"
+              value={data.ifscCode || ''}
+              onKeyDown={loanInputHelpers.allowOnlyAlphanumericKeyDown}
+              onChange={handleIfscChange}
             />
+            {errors.ifscCode && (
+              <span className="home-loan-field-error" role="alert">{errors.ifscCode}</span>
+            )}
           </div>
         </div>
       </LoanFormSection>
@@ -124,6 +159,9 @@ export const BankingAndITR: React.FC<BankingAndITRProps> = ({ data, onChange }) 
               )
             })}
           </div>
+          {errors.itrStatus && (
+            <span className="home-loan-field-error" role="alert">{errors.itrStatus}</span>
+          )}
         </div>
 
         {data.itrStatus === 'filed' && (
@@ -135,12 +173,17 @@ export const BankingAndITR: React.FC<BankingAndITRProps> = ({ data, onChange }) 
               <input
                 id="home-itr-ack"
                 type="text"
+                inputMode="numeric"
                 maxLength={15}
-                className="home-loan-input"
-                placeholder="Enter 15-digit ITR acknowledgement number"
+                className={`home-loan-input ${errors.itrAckNumber ? 'home-loan-input--error' : ''}`}
+                placeholder="Enter 15-digit acknowledgement number (e.g. 928471928471928)"
                 value={data.itrAckNumber || ''}
-                onChange={(e) => onChange({ itrAckNumber: e.target.value })}
+                onKeyDown={loanInputHelpers.allowOnlyNumbersKeyDown}
+                onChange={handleItrAckChange}
               />
+              {errors.itrAckNumber && (
+                <span className="home-loan-field-error" role="alert">{errors.itrAckNumber}</span>
+              )}
             </div>
 
             <div className="home-loan-form-group">
@@ -150,11 +193,16 @@ export const BankingAndITR: React.FC<BankingAndITRProps> = ({ data, onChange }) 
               <input
                 id="home-itr-income"
                 type="text"
-                className="home-loan-input"
-                placeholder="Enter gross total annual income (₹)"
+                inputMode="numeric"
+                className={`home-loan-input ${errors.annualIncomeAsPerItr ? 'home-loan-input--error' : ''}`}
+                placeholder="Enter gross total annual income in ₹ (e.g. 8,50,000)"
                 value={data.annualIncomeAsPerItr || ''}
-                onChange={(e) => onChange({ annualIncomeAsPerItr: e.target.value })}
+                onKeyDown={loanInputHelpers.allowOnlyNumbersKeyDown}
+                onChange={handleAnnualIncomeChange}
               />
+              {errors.annualIncomeAsPerItr && (
+                <span className="home-loan-field-error" role="alert">{errors.annualIncomeAsPerItr}</span>
+              )}
             </div>
           </div>
         )}

@@ -1,3 +1,4 @@
+import { authStorage } from '@core/auth'
 import type {
   FindOriginalReturnPayload,
   OriginalReturnDetails,
@@ -39,21 +40,23 @@ export const revisedItrService = {
     // Simulate brief network delay
     await new Promise((resolve) => setTimeout(resolve, 350))
 
+    const user = authStorage.getUser()
+
     return {
       status: 'Verified from IT Portal',
       assessmentYear: payload.assessmentYear,
       itrForm: 'ITR-1',
-      grossTotalIncome: '₹8,12,400',
-      salaryOriginal: 812400,
+      grossTotalIncome: '₹0',
+      salaryOriginal: 0,
       otherOriginal: 0,
-      taxableOriginal: 492400,
+      taxableOriginal: 0,
       personalInfo: {
-        fullName: 'Sagarika Jena',
-        pan: 'XXXXX4743E',
-        dob: '02-02-2000',
-        mobile: '7008138785',
-        email: 'jenasagarika5211@gmail.com',
-        address: 'Ameerpet, Hyderabad, Telangana - 500018',
+        fullName: user?.fullName || 'Assessee',
+        pan: user?.pan ? `XXXXX${user.pan.slice(-4)}` : 'XXXXX0000X',
+        dob: user?.dob || '—',
+        mobile: user?.mobile || '—',
+        email: user?.email || '—',
+        address: user?.addressLine1 ? `${user.addressLine1}, ${user.city || ''}` : '—',
       },
     }
   },

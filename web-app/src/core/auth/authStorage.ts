@@ -3,7 +3,7 @@ import { localStore } from '../storage/localStorage'
 
 import type { AuthTokens, AuthUser, RegisteredUserRecord } from './authTypes'
 
-const SCHEMA_VERSION = 'v10_clean_cleared_storage'
+const SCHEMA_VERSION = 'v13_clean_all_data'
 try {
   if (localStore.get<string>('taxedge.auth_schema') !== SCHEMA_VERSION) {
     localStore.remove(STORAGE_KEYS.registeredUsers)
@@ -13,6 +13,15 @@ try {
     localStore.remove('taxedge.userApplications')
     localStore.remove('taxedge.applicationDrafts')
     localStore.remove('taxedge.userDeadlines')
+    localStore.remove('taxedge_loan_app_home_loan')
+    localStore.remove('taxedge_loan_app_personal_loan')
+    localStore.remove('taxedge_loan_app_business_loan')
+    localStore.remove('taxedge_loan_app_property_loan')
+    localStore.remove('taxedge_loan_app_vehicle_loan')
+    localStore.remove('taxedge_loan_app_working_capital_loan')
+    localStore.remove('taxedge_loan_app_machinery_loan')
+    localStore.remove('taxedge_loan_app_project_finance')
+    localStore.remove('taxedge_loan_app_msme_loan')
     localStore.set('taxedge.auth_schema', SCHEMA_VERSION)
   }
 } catch {

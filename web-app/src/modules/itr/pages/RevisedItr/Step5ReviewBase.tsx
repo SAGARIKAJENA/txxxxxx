@@ -1,4 +1,5 @@
 import React from 'react'
+import { authStorage } from '@core/auth'
 import type {
   OriginalReturnDetails,
   DocumentTypeId,
@@ -31,14 +32,15 @@ export const Step5ReviewBase: React.FC<Step5ReviewBaseProps> = ({
   onEditStep,
 }) => {
   const uploadedCount = Object.keys(uploadedDocuments).length
+  const user = authStorage.getUser()
 
   const personalInfo = returnDetails?.personalInfo || {
-    fullName: 'Sagarika Jena',
-    pan: 'XXXXX4743E',
-    dob: '02-02-2000',
-    mobile: '7008138785',
-    email: 'jenasagarika5211@gmail.com',
-    address: 'Ameerpet, Hyderabad, Telangana - 500018',
+    fullName: user?.fullName || 'Assessee',
+    pan: user?.pan ? `XXXXX${user.pan.slice(-4)}` : '—',
+    dob: user?.dob || '—',
+    mobile: user?.mobile || '—',
+    email: user?.email || '—',
+    address: user?.addressLine1 ? `${user.addressLine1}, ${user.city || ''}` : '—',
   }
 
   const formatInr = (val: number | string | undefined): string => {
@@ -48,16 +50,16 @@ export const Step5ReviewBase: React.FC<Step5ReviewBaseProps> = ({
     return '₹' + num.toLocaleString('en-IN')
   }
 
-  const originalGross = returnDetails?.salaryOriginal || 812400
+  const originalGross = returnDetails?.salaryOriginal || 0
   const grossDiff = revisedGross - originalGross
 
-  const originalTaxable = returnDetails?.taxableOriginal || 492400
+  const originalTaxable = returnDetails?.taxableOriginal || 0
   const taxableDiff = revisedTaxable - originalTaxable
 
   const originalDeductions = Math.max(0, originalGross - originalTaxable)
   const deductionsDiff = revisedDeductions - originalDeductions
 
-  const originalTaxAndCess = 12854
+  const originalTaxAndCess = calculateTaxLiability(originalTaxable)
   const revisedTaxAndCess = calculateTaxLiability(revisedTaxable)
   const taxDiff = revisedTaxAndCess - originalTaxAndCess
 

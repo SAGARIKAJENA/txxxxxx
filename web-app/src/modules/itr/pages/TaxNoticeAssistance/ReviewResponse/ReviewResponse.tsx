@@ -12,17 +12,19 @@ export interface ReviewResponseProps {
 
 export const ReviewResponse: React.FC<ReviewResponseProps> = ({
   formData,
-  userName = 'Sagarika Jena',
+  userName = 'Assessee',
   onEditRequest,
   onApproveAndSubmit,
   isSubmitting,
 }) => {
   const [confirmed, setConfirmed] = useState(formData.responseConfirmed || false)
 
-  const noticeRef = formData.noticeReference || 'CPCGHJ257BJDFHJJK'
-  const noticeDate = formData.noticeDate || '22 Sep 2026'
-  const pan = formData.pan || 'CASPJ4743E'
-  const ay = formData.assessmentYear || 'AY 2025–26'
+  const noticeRef = formData.noticeReference || '—'
+  const noticeDate =
+    formData.noticeDate ||
+    new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date())
+  const pan = formData.pan || '—'
+  const ay = formData.assessmentYear || 'AY 2026–27'
 
   // Extract section if available
   const sectionMatch = formData.noticeType?.match(/Section\s+([0-9a-zA-Z\(\)]+)/i)
