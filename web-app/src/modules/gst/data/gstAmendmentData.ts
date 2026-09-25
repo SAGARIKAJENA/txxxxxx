@@ -44,7 +44,7 @@ export const GST_AMENDMENT_FIELD_OPTIONS: AmendmentFieldOption[] = [
   {
     key: 'bank_account',
     label: 'Bank Account Details',
-    oldValue: 'HDFC Bank - A/C 918273645012 (IFSC: HDFC0000412, Current Account)',
+    oldValue: 'Primary bank account on record',
     placeholder: 'Enter updated bank name, account number, and IFSC',
     helperHint: 'Update primary or secondary business bank account',
     docHint: 'Proof of the change — e.g. cancelled cheque, bank statement with name & IFSC',
@@ -60,7 +60,7 @@ export const GST_AMENDMENT_FIELD_OPTIONS: AmendmentFieldOption[] = [
   {
     key: 'contact_details',
     label: 'Contact Details (Email / Mobile)',
-    oldValue: '+91 98670 41255 · anjali@shreedeshmukh.in',
+    oldValue: 'Registered contact details on record',
     placeholder: 'Enter updated mobile number and primary email address',
     helperHint: 'Update mobile number and email address for OTP and department notifications',
     docHint: 'Proof of the change — e.g. letterhead request with KYC proof',

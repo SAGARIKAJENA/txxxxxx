@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { authStorage } from '@core/auth'
 import {
   calculateRegimeTax,
   INITIAL_FILE_ITR_STATE,
@@ -12,7 +13,13 @@ export interface FileItrProps {
 }
 
 export const FileItr = ({ onSuccessFiling }: FileItrProps) => {
-  const [formData, setFormData] = useState<FileItrFormData>(INITIAL_FILE_ITR_STATE)
+  const user = authStorage.getUser()
+  const [formData, setFormData] = useState<FileItrFormData>(() => ({
+    ...INITIAL_FILE_ITR_STATE,
+    panNumber: user?.pan || '',
+    fullName: user?.fullName || '',
+    dob: user?.dob || '',
+  }))
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [assignedRef, setAssignedRef] = useState('')

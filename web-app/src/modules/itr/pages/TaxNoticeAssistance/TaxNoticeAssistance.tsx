@@ -106,7 +106,7 @@ export const TaxNoticeAssistance: React.FC = () => {
         {step === 5 && (
           <ReviewResponse
             formData={formData}
-            userName={user?.fullName || 'Sagarika Jena'}
+            userName={user?.fullName || 'Assessee'}
             onEditRequest={() => {
               setStep(1)
               window.scrollTo({ top: 0, behavior: 'smooth' })

@@ -16,7 +16,6 @@ export const SUPPORT_EXECUTIVES: SupportExecutive[] = [
     responseTime: 'Replies in ~2 mins',
     phone: '+91 20 4141 8800',
     email: 'rohit.k@taxedge.in',
-    assignedAppId: 'GST-2026-00118',
   },
   {
     id: 'exec_meera',
@@ -29,7 +28,6 @@ export const SUPPORT_EXECUTIVES: SupportExecutive[] = [
     responseTime: 'Replies in ~5 mins',
     phone: '+91 20 4141 8801',
     email: 'meera.i@taxedge.in',
-    assignedAppId: 'ITR-2026-00342',
   },
   {
     id: 'exec_ananya',
@@ -42,7 +40,6 @@ export const SUPPORT_EXECUTIVES: SupportExecutive[] = [
     responseTime: 'Replies in ~4 mins',
     phone: '+91 20 4141 8804',
     email: 'ananya.d@taxedge.in',
-    assignedAppId: 'INC-2026-00481',
   },
   {
     id: 'exec_sameer',
@@ -55,7 +52,6 @@ export const SUPPORT_EXECUTIVES: SupportExecutive[] = [
     responseTime: 'Replies within 30 mins',
     phone: '+91 20 4141 8802',
     email: 'sameer.j@taxedge.in',
-    assignedAppId: 'LN-2026-00891',
   },
   {
     id: 'exec_sneha',
@@ -68,7 +64,6 @@ export const SUPPORT_EXECUTIVES: SupportExecutive[] = [
     responseTime: 'Replies in ~10 mins',
     phone: '+91 20 4141 8803',
     email: 'sneha.p@taxedge.in',
-    assignedAppId: 'INS-2026-00412',
   },
 ]
 
@@ -79,92 +74,7 @@ export const QUICK_SUPPORT_TOPICS = [
   'Talk to an expert',
 ]
 
-export const INITIAL_SUPPORT_CONVERSATIONS: Record<string, SupportConversation> = {
-  'GST-2026-00118': {
-    id: 'conv_gst_00118',
-    applicationId: '1',
-    applicationRef: 'GST-2026-00118',
-    serviceName: 'GST Monthly Filing',
-    dateLabel: 'Application GST-2026-00118 · 28 August 2026',
-    executive: SUPPORT_EXECUTIVES[0],
-    messages: [
-      {
-        id: 'msg_welcome',
-        conversationId: 'conv_gst_00118',
-        senderId: 'exec_rohit',
-        senderType: 'executive',
-        senderName: 'TaxEdge Support',
-        text: "Hi! You're through to TaxEdge support. How can we help you today?",
-        timestamp: new Date().toISOString(),
-        formattedTime: '4:50 pm',
-        status: 'read',
-      }
-    ],
-  },
-  'ITR-2026-00342': {
-    id: 'conv_itr_00342',
-    applicationId: '2',
-    applicationRef: 'ITR-2026-00342',
-    serviceName: 'ITR-2 Filing with Capital Gains',
-    dateLabel: 'Application ITR-2026-00342 · 29 August 2026',
-    executive: SUPPORT_EXECUTIVES[1],
-    messages: [
-      {
-        id: 'msg_welcome',
-        conversationId: 'conv_itr_00342',
-        senderId: 'exec_meera',
-        senderType: 'executive',
-        senderName: 'TaxEdge Support',
-        text: "Hi! You're through to TaxEdge support. How can we help you today?",
-        timestamp: new Date().toISOString(),
-        formattedTime: '4:50 pm',
-        status: 'read',
-      },
-    ],
-  },
-  'INC-2026-00481': {
-    id: 'conv_inc_00481',
-    applicationId: '4',
-    applicationRef: 'INC-2026-00481',
-    serviceName: 'Private Limited Company Incorporation',
-    dateLabel: 'Application INC-2026-00481 · Today',
-    executive: SUPPORT_EXECUTIVES[2],
-    messages: [
-      {
-        id: 'msg_welcome',
-        conversationId: 'conv_inc_00481',
-        senderId: 'exec_ananya',
-        senderType: 'executive',
-        senderName: 'TaxEdge Support',
-        text: "Hi! You're through to TaxEdge support. How can we help you today?",
-        timestamp: new Date().toISOString(),
-        formattedTime: '4:50 pm',
-        status: 'read',
-      },
-    ],
-  },
-  'LN-2026-00891': {
-    id: 'conv_ln_00891',
-    applicationId: '3',
-    applicationRef: 'LN-2026-00891',
-    serviceName: 'MSME Working Capital Loan',
-    dateLabel: 'Application LN-2026-00891 · 30 August 2026',
-    executive: SUPPORT_EXECUTIVES[3],
-    messages: [
-      {
-        id: 'msg_welcome',
-        conversationId: 'conv_ln_00891',
-        senderId: 'exec_sameer',
-        senderType: 'executive',
-        senderName: 'TaxEdge Support',
-        text: "Hi! You're through to TaxEdge support. How can we help you today?",
-        timestamp: new Date().toISOString(),
-        formattedTime: '4:50 pm',
-        status: 'read',
-      },
-    ],
-  },
-}
+export const INITIAL_SUPPORT_CONVERSATIONS: Record<string, SupportConversation> = {}
 
 export const SUPPORT_CONTACT_METHODS: SupportContactMethod[] = [
   {

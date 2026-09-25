@@ -50,61 +50,46 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
       className={`flow-stepper-container ${className}`.trim()}
       aria-label={ariaLabel}
     >
-      <ol className="flow-stepper-track">
+      <div className="flow-stepper-track">
         {steps.map((step, index) => {
           const status = resolveStepStatus(step.stepNumber, currentStep, completedUntilStep)
           const displayLabel = step.shortLabel || step.title || `Step ${step.stepNumber}`
           const isInteractive = Boolean(onStepClick && !step.disabled)
-
-          const isPreviousCompleted =
-            index > 0 &&
-            resolveStepStatus(
-              steps[index - 1].stepNumber,
-              currentStep,
-              completedUntilStep,
-            ) === 'completed'
-
-          const isCurrentActive = status === 'active'
-
-          const connectorClass =
-            status === 'completed'
-              ? 'flow-step-connector--completed'
-              : isCurrentActive && isPreviousCompleted
-                ? 'flow-step-connector--active'
-                : ''
+          const isLast = index === steps.length - 1
+          const isLineCompleted = status === 'completed'
 
           return (
-            <li
-              key={step.stepNumber}
-              className={`flow-step-node-wrapper flow-step--${status}`}
-              aria-current={status === 'active' ? 'step' : undefined}
-            >
-              <div
-                className={`flow-step-connector ${connectorClass}`.trim()}
-                aria-hidden="true"
-              />
-
+            <div key={step.stepNumber} className="flow-step-item-wrapper">
               <button
                 type="button"
-                className="flow-step-button"
+                className={`flow-step-button flow-step-button--${status}`}
                 onClick={() => handleStepClick(step)}
                 disabled={!isInteractive}
+                aria-current={status === 'active' ? 'step' : undefined}
                 aria-label={`${displayLabel} (${status})`}
               >
-                <div className="flow-step-circle">
+                <span className="flow-step-circle">
                   {status === 'completed' ? (
                     <CheckSvgIcon />
                   ) : (
                     <span>{step.stepNumber}</span>
                   )}
-                </div>
-
+                </span>
                 <span className="flow-step-label">{displayLabel}</span>
               </button>
-            </li>
+
+              {!isLast && (
+                <div
+                  className={`flow-step-line ${
+                    isLineCompleted ? 'flow-step-line--completed' : ''
+                  }`}
+                  aria-hidden="true"
+                />
+              )}
+            </div>
           )
         })}
-      </ol>
+      </div>
     </nav>
   )
 }

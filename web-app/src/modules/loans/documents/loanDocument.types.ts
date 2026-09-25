@@ -11,5 +11,10 @@ export interface LoanDocumentDefinition {
   title: string
   subtitle: string
   isRequired: boolean
+  badgeLabel?: string
+  badgeVariant?: 'required' | 'optional'
   category?: 'identity' | 'income' | 'additional' | 'property' | 'commercial' | 'legal' | string
+  icon?: React.ReactNode
+  iconBg?: string
+  iconColor?: string
 }

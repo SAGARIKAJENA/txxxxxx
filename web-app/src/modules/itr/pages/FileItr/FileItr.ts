@@ -23,18 +23,18 @@ export interface RegimeComparison {
 }
 
 export const INITIAL_FILE_ITR_STATE: FileItrFormData = {
-  panNumber: 'ABCDE1234F',
-  fullName: 'Meera Iyer',
-  dob: '1992-08-14',
+  panNumber: '',
+  fullName: '',
+  dob: '',
   assessmentYear: '2026-27',
-  incomeSource: 'business',
+  incomeSource: 'salary',
   regime: 'new',
-  annualGrossIncome: 1450000,
-  tdsDeducted: 46800,
-  deductions80C: 150000,
-  deductions80D: 25000,
-  bankAccountNumber: '918237461920',
-  ifscCode: 'HDFC0001824',
+  annualGrossIncome: 0,
+  tdsDeducted: 0,
+  deductions80C: 0,
+  deductions80D: 0,
+  bankAccountNumber: '',
+  ifscCode: '',
 }
 
 export const calculateRegimeTax = (

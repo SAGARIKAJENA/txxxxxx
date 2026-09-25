@@ -334,8 +334,8 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       authService.startSession({
         user: registeredUser,
         tokens: {
-          accessToken: authService.getAccessToken() || 'mock.access.token',
-          refreshToken: authService.getRefreshToken() || 'mock.refresh.token',
+          accessToken: authService.getAccessToken() || `tok_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+          refreshToken: authService.getRefreshToken() || `ref_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
         },
       })
 

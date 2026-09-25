@@ -4,11 +4,11 @@ export interface CertificateRequestTypeOption {
 }
 
 export const GST_CERTIFICATE_CUSTOMER_RECORD = {
-  gstin: '27AXTPD4419K1ZP',
-  registeredContact: '+91 98670 41255 · anjali@shreedeshmukh.in',
-  mobile: '+91 98670 41255',
-  email: 'anjali@shreedeshmukh.in',
-  businessName: 'Shree Deshmukh Enterprises',
+  gstin: '',
+  registeredContact: '',
+  mobile: '',
+  email: '',
+  businessName: '',
 } as const
 
 export const GST_CERTIFICATE_REQUEST_TYPES: CertificateRequestTypeOption[] = [

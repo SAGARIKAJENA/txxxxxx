@@ -7,6 +7,8 @@ export interface DocumentCardProps {
   subtitle?: string
   desc?: string
   isRequired?: boolean
+  badge?: React.ReactNode
+  uploadIcon?: React.ReactNode
   iconBg?: string
   iconColor?: string
   isUploaded?: boolean
@@ -32,6 +34,8 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
   subtitle,
   desc,
   isRequired = false,
+  badge,
+  uploadIcon,
   iconBg = '#eff6ff',
   iconColor = '#2563eb',
   isUploaded = false,
@@ -110,9 +114,12 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
           </div>
 
           <div className="supporting-doc-item__meta">
-            <span className="supporting-doc-item__title">
-              {title} {isRequired && <span className="supporting-doc-item__required">*</span>}
-            </span>
+            <div className="supporting-doc-item__title-row">
+              <span className="supporting-doc-item__title">
+                {title} {isRequired && !badge && <span className="supporting-doc-item__required">*</span>}
+              </span>
+              {badge}
+            </div>
             {effectiveSubtitle && (
               <span className="supporting-doc-item__subtitle">{effectiveSubtitle}</span>
             )}
@@ -159,19 +166,21 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
               aria-label={`Upload ${title}`}
               data-testid={`upload-btn-${id}`}
             >
-              <svg
-                className="supporting-doc-item__cloud-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
-                <polyline points="9 14 12 11 15 14" />
-                <line x1="12" y1="11" x2="12" y2="17" />
-              </svg>
+              {uploadIcon || (
+                <svg
+                  className="supporting-doc-item__cloud-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+                  <polyline points="9 14 12 11 15 14" />
+                  <line x1="12" y1="11" x2="12" y2="17" />
+                </svg>
+              )}
               <span>{uploadLabel}</span>
             </button>
             {onToggleNotApplicable && !isRequired && (
